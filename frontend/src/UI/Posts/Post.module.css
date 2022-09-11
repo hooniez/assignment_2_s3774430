@@ -1,0 +1,28 @@
+.boxShadow {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);;
+}
+
+.avatar {
+  border: 0.5px solid #666;
+  border-radius: 50%;
+  width: 119px;
+  height: 119px;
+}
+
+.name {
+  font-weight:500;
+}
+
+.iconMargin {
+  margin-right: 0.5em;
+}
+
+.greyedOutText {
+  color: #666;
+  font-size: 0.875em;
+}
+
+.icons {
+  width: 1.3em;
+  height: 1.3em;
+}

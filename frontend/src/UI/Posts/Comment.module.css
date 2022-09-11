@@ -1,0 +1,25 @@
+.icon {
+  margin-right: 0.5em;
+  
+}
+
+.icons {
+  width: 1.3em;
+  height: 1.3em;
+}
+
+.iconMargin {
+  margin-right: 0.175em;
+}
+
+.subComment {
+  padding-right: 0px !important;
+}
+
+.toastBody {
+  padding-left: 4em;
+}
+
+.avatar {
+  width: 3.5em;
+}

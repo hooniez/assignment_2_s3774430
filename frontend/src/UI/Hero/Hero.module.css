@@ -1,0 +1,9 @@
+@media (min-width: 992px) {
+  .heroImg {
+    max-width: 500px;
+  }
+}
+
+a {
+  text-decoration: none;
+}

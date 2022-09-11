@@ -1,0 +1,11 @@
+@media (min-width: 920px) {
+  .toast {
+    width: 100%;
+    min-width: 70vw;
+    max-width: 70vw;
+  }
+}
+
+.commentForm {
+  width: 50%; 
+}
