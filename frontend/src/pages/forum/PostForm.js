@@ -166,6 +166,8 @@ export default function PostForm({
       setIsPosting(false);
     }
 
+    // Clear the contents of ReactQuill
+    document.querySelector('.ql-editor').innerHTML = '';
     setText("");
     setIsPostable(false);
     // setIsImageVisible(false);
