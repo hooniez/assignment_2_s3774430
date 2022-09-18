@@ -1,0 +1,38 @@
+.pencil {
+  margin-right: 0.5em;
+}
+
+.icons {
+  width: 1.3em;
+  height: 1.3em;
+}
+
+.chevronCompact {
+  position: absolute;
+  width: 4em;
+  height: 4em;
+  margin-top: auto;
+  margin-bottom: auto;
+  top: 0;
+  bottom: 0;
+  color: darkgrey
+}
+
+.chevronCompactLeft {
+  left: 0;
+}
+
+.chevronCompactRight {
+  right: 0;
+}
+
+.row {
+  min-height: 88vh;
+  box-sizing: border-box;
+}
+
+.avatar {
+  width: 20em;
+  height: 20em;
+  
+}

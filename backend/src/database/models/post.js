@@ -7,22 +7,26 @@ module.exports = (sequelize, DataTypes) =>
         autoIncrement: true,
         primaryKey: true,
       },
-      posted_by: {
+      postedBy: {
         type: DataTypes.STRING,
         allowNull: false,
+        references: {
+          model: "users",
+          key: "email",
+        },
       },
-      parent_id: {
+      parentId: {
         type: DataTypes.INTEGER,
       },
       text: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      date_posted: {
+      datePosted: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      is_deleted: {
+      isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },

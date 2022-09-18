@@ -1,0 +1,50 @@
+.textAreaCol {
+  padding-left: 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.formPostButton {
+  margin-left: 0.5em;
+}
+
+.cardBody {
+  padding: 1.5em 1.25em;
+}
+
+.contenteditable {
+  border: 1px solid grey;
+  border-radius: 5px;
+    max-height: 200px;
+    overflow: auto;
+    padding: 0.5rem;
+}
+
+.cardImg {
+  width: 7rem;
+  height: 7rem;
+}
+
+.uploadedImageContainer {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 0.5em;
+}
+
+.uploadedImage {
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
+  height: 60vh !important;
+}
+
+.canvasImageContainers {
+  height: 100%;
+  text-align: center;
+}
+
+.canvasImages {
+  max-height: 100%;
+}

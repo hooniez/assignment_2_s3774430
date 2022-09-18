@@ -6,12 +6,12 @@ module.exports = (sequelize, DataTypes) =>
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      img_src: {
+      imgSrc: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true,
       },
-      is_deleted: {
+      isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       }

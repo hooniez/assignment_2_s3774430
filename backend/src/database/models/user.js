@@ -4,29 +4,37 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.STRING,
       primaryKey: true
     },
-    first_name: {
+    firstName: {
       type: DataTypes.STRING(40),
       allowNull: false
     },
-    last_name: {
+    lastName: {
       type: DataTypes.STRING(40),
       allowNull: false
     },
-    password_hash: {
+    passwordHash: {
       type: DataTypes.STRING(96),
       allowNull: false
     },
-    date_joined: {
+    dateJoined: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    avatar_src: {
+    avatarSrc: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    is_blocked: {
+    isBlocked: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    secretKey: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
     
   }, {

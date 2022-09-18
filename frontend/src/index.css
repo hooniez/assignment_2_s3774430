@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.component {
+  min-height: 88vh;
+  box-sizing: border-box;
+  padding: 5em;
+}
