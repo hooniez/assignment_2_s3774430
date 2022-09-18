@@ -99,7 +99,7 @@ export default function Post({
                 alt="Avatar"
               ></img>
             </Col>
-            <Col>
+            <Col className="position-relativeo">
               <div className="d-flex justify-content-between">
                 <div>
                   <span className={styles.name}>{posterName}</span>
@@ -147,7 +147,10 @@ export default function Post({
                   </Form>
                 )}
               </Container>
-              <Image src={post.img} className="img-fluid mt-3 rounded"></Image>
+              <div className={styles.uploadedImageContainer}>
+                <img src={post.imgSrc} className={styles.uploadedImage}/>
+              </div>
+
             </Col>
           </Row>
         </Card.Body>

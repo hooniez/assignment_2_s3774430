@@ -128,7 +128,7 @@ export default function PostForm({
   // Make a post request to Cloudinary to store it and access it using its API.
   const postHandler = async (e) => {
     const imagesToUpload = document.querySelector("#imageUpload").files;
-    // Create a general JSON object contatining information about post
+    // Create a general JSON object containing information about post
     console.log(e);
     let post = {
       postedBy: user.data.email,
@@ -141,7 +141,7 @@ export default function PostForm({
 
     // If user has attached an image in her post
     if (imagesToUpload.length !== 0) {
-      console.log("y");
+      console.log("hey");
       const data = new FormData();
       data.append("file", imagesToUpload[0]);
       data.append("upload_preset", "zqlcfaas");
@@ -151,17 +151,13 @@ export default function PostForm({
         body: data,
       })
         .then((response) => response.json())
-        .then((data) => {
-          post.img = `${resUrl}/v${data.version}/${data.public_id}.${data.format}`;
-
-          e.target.querySelector("img").src = "#";
-          addPost(post, isComment, parentPostId);
+        .then(async (data) => {
+          post.imgSrc = `${resUrl}/v${data.version}/${data.public_id}.${data.format}`;
+          addPost(await createPost(post), isComment, parentPostId);
           setIsPosting(false);
         })
         .catch((error) => console.log(error));
     } else {
-      // TODO: figure out what is about the line below
-      console.log(await createPost(post));
       addPost(await createPost(post), isComment, parentPostId);
       setIsPosting(false);
     }
@@ -169,6 +165,7 @@ export default function PostForm({
     // Clear the contents of ReactQuill
     document.querySelector('.ql-editor').innerHTML = '';
     setText("");
+    setImages([]);
     setIsPostable(false);
     // setIsImageVisible(false);
     setNumCharsTyped(0);

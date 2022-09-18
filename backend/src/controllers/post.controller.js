@@ -26,6 +26,7 @@ exports.create = async (req, res) => {
     postedBy: req.body.postedBy,
     parentId: req.body.parentId,
     text: req.body.text,
+    imgSrc: req.body.imgSrc,
   });
   const newPostWithUser = await db.post.findByPk(newPost.id, {
     include: db.user,
