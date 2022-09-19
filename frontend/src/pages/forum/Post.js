@@ -50,7 +50,7 @@ export default function Post({
 
   const deleteHandler = async () => {
     await deletePost(post.id);
-    // removePost(post.postId);
+    removePost(post.postId);
     setDeleteModalHidden(true);
   };
 

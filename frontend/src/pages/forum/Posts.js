@@ -11,13 +11,13 @@ export default function Posts() {
   const [user, dispatchUser, users] = useOutletContext();
   const [posts, setPosts] = useState([]);
 
+  async function loadPosts() {
+    const currentPosts = await getPosts();
+    setPosts(currentPosts);
+  }
+
   // Load posts
   useEffect(() => {
-    async function loadPosts() {
-      const currentPosts = await getPosts();
-      setPosts(currentPosts);
-      console.log(currentPosts);
-    }
     loadPosts();
   }, []);
 
@@ -35,13 +35,11 @@ export default function Posts() {
 
   const removePost = (id) => {
     // removePost does not actually remove the post from the database, but sets its isDeleted property to false so that it is not displayed anymore.
-    posts[id].isDeleted = true;
-    // setPosts to fire its associated useEffect
-    setPosts([...posts]);
-    dispatchUser({
-      type: "DELETE_POST",
-      payload: id,
-    });
+    loadPosts();
+    // dispatchUser({
+    //   type: "DELETE_POST",
+    //   payload: id,
+    // });
   };
 
   const editPost = (id, text) => {

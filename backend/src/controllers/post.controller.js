@@ -44,8 +44,11 @@ exports.countById = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const ret = await db.post.destroy({
-    where: { id: req.params.id },
-  });
+  const ret = await db.post.update(
+    {
+      isDeleted: true,
+    },
+    { where: { id: req.params.id } }
+  );
   res.json(ret);
 };
