@@ -1,0 +1,13 @@
+.arrowDown {
+  animation: scrollDown 1s infinite;
+  
+}
+
+@keyframes scrollDown {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}

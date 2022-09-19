@@ -3,23 +3,58 @@ import PostForm from "./PostForm";
 import { Container, Row, Col } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import Post from "./Post";
-import { getPosts } from "../../data/repository";
+import {
+  getMorePosts,
+  getPosts,
+  getPostsWithoutExistingPosts,
+} from "../../data/repository";
+import { ArrowDown } from "react-bootstrap-icons";
+import styles from "./Posts.module.css";
 
 const numPosts = 5;
 
 export default function Posts() {
   const [user, dispatchUser, users] = useOutletContext();
   const [posts, setPosts] = useState([]);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
 
   async function loadPosts() {
-    const currentPosts = await getPosts();
-    setPosts(currentPosts);
+    let latestPosts = await getPosts();
+    setPosts([...latestPosts]);
   }
 
   // Load posts
   useEffect(() => {
     loadPosts();
   }, []);
+
+  const handleScroll = async (e) => {
+    let documentHeight = document.body.scrollHeight;
+    let currentScroll = window.scrollY + window.innerHeight;
+    if (documentHeight === currentScroll) {
+      let ids = posts.map((post) => post.id);
+
+      let newPosts = await getMorePosts(ids.join(","));
+      if (newPosts.length === 0) {
+        setHasMorePosts(false);
+      } else {
+        setPosts([...posts, ...newPosts]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!hasMorePosts) {
+      window.removeEventListener("scroll", handleScroll);
+    } else {
+      window.addEventListener("scroll", handleScroll);
+    }
+
+    // When the user leaves the forum, call the cleanup function
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [posts, setHasMorePosts]);
 
   const addPost = (post, isComment, parentPostId) => {
     setPosts([post, ...posts]);
@@ -80,6 +115,22 @@ export default function Posts() {
               users={users}
             ></Post>
           ))}
+          <div className="text-center mt-5">
+            {hasMorePosts ? (
+              <>
+                <div className="pb-2">
+                  <span>Scroll down to see more posts</span>
+                </div>
+                <div>
+                  <ArrowDown className={styles.arrowDown} size={48}></ArrowDown>
+                </div>
+              </>
+            ) : (
+              <div className="pb-2">
+                <span>No more posts</span>
+              </div>
+            )}
+          </div>
         </Col>
       </Row>
     </Container>

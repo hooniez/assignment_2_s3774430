@@ -54,6 +54,7 @@ exports.delete = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
+  console.log(req.body);
   let user;
 
   if (Object.keys(req.body).includes("password")) {

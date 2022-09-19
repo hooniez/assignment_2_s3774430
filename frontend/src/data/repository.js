@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 // TODO: extract the two lines below in a separate file.
 const API_HOST = "http://localhost:4000";
 const USER_KEY = "user";
@@ -33,20 +32,28 @@ async function editUser(user) {
 }
 
 // ---------------------------------- Post ----------------------------------
+
 async function getPosts() {
   const response = await axios.get(API_HOST + "/api/posts");
   return response.data;
 }
 
+async function getMorePosts(existingIds) {
+  const response = await axios.get(
+    API_HOST + `/api/posts/moreNew/${existingIds}`
+  );
+  return response.data;
+}
+
 async function getNumChildPosts(id) {
   const response = await axios.get(API_HOST + `/api/posts/count/${id}`);
-  
+
   return response.data;
 }
 
 async function createPost(post) {
   const response = await axios.post(API_HOST + "/api/posts", post);
-  return response.data; 
+  return response.data;
 }
 
 async function deletePost(id) {
@@ -60,6 +67,7 @@ export {
   deleteUser,
   editUser,
   getPosts,
+  getMorePosts,
   getNumChildPosts,
   createPost,
   deletePost,

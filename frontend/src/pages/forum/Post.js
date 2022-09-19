@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Container,
@@ -32,6 +32,7 @@ export default function Post({
   const [editHidden, setEditHidden] = useState(true);
   const [numComments, setNumComments] = useState(0);
   const [imageViewVisible, setImageViewVisible] = useState(false);
+  const [scrolledToEnd, setScrolledToEnd] = useState(false);
 
   // TODO: Fix this.
   useEffect(() => {
@@ -73,6 +74,8 @@ export default function Post({
   const imgToggleHandler = (e) => {
     setImageViewVisible(!imageViewVisible);
   }
+
+
 
   return (
     <>

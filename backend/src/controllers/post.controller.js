@@ -1,13 +1,35 @@
 const db = require("../database");
 
 // Select all root posts from the database.
-exports.all = async (req, res) => {
+exports.new = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
       parentId: null,
       isDeleted: false,
     },
-    limit: 4,
+    limit: 5,
+    order: [["datePosted", "DESC"]],
+    include: db.user,
+  });
+
+  // Can use eager loading to join tables if needed, for example:
+  // const posts = await db.post.findAll({ include: db.user });
+
+  // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
+
+  res.json(posts);
+};
+
+exports.moreNew = async (req, res) => {
+  const existingIds = req.params.existingIds.split(",");
+
+  const posts = await db.post.findAll({
+    where: {
+      parentId: null,
+      isDeleted: false,
+      id: { [db.Op.notIn]: existingIds },
+    },
+    limit: 10,
     order: [["datePosted", "DESC"]],
     include: db.user,
   });

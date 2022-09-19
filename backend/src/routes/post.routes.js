@@ -2,8 +2,11 @@ module.exports = (express, app) => {
   const controller = require("../controllers/post.controller.js");
   const router = express.Router();
 
-  // Select all posts.
-  router.get("/", controller.all);
+  // Select new posts.
+  router.get("/", controller.new);
+
+  // Select more new posts
+  router.get("/moreNew/:existingIds", controller.moreNew);
 
   // Get the number of child posts
   router.get("/count/:id", controller.countById);
