@@ -92,15 +92,15 @@ export default function Post({
         </Card.Header> */}
         <Card.Body>
           <Row className="gx-0">
-            <Col xs={{ span: 2 }}>
+            <Col className="text-center" xs={{ span: 2 }}>
               <img
                 src={avatarSrc}
                 className={`${styles.avatar} m-2`}
                 alt="Avatar"
               ></img>
             </Col>
-            <Col className="position-relativeo">
-              <div className="d-flex justify-content-between">
+            <Col xs={{ span: 10 }} className="position-relative">
+              <div className="d-flex justify-content-between pb-2">
                 <div>
                   <span className={styles.name}>{posterName}</span>
                   <span>&nbsp; &#183; &nbsp;</span>
@@ -128,7 +128,19 @@ export default function Post({
               </div>
               <Container>
                 {editHidden ? (
-                  <div dangerouslySetInnerHTML={{ __html: post.text }} />
+                    <Row className={styles.cardBodyRow}>
+                      <Col xs={{span:11}}>
+                        <div dangerouslySetInnerHTML={{ __html: post.text }}/>
+                      </Col>
+                      <Col xs={{span:1}} className="position-relative">
+                        <div className={styles.uploadedImageContainer}>
+                          <img src={post.imgSrc} className={styles.uploadedImage}/>
+                        </div>
+
+                      </Col>
+                    </Row>
+
+
                 ) : (
                   <Form onSubmit={editSubmitHandler} className="mt-3">
                     <Form.Group className="mb-3" controlId="formEditText">
@@ -147,9 +159,7 @@ export default function Post({
                   </Form>
                 )}
               </Container>
-              <div className={styles.uploadedImageContainer}>
-                <img src={post.imgSrc} className={styles.uploadedImage}/>
-              </div>
+
 
             </Col>
           </Row>
