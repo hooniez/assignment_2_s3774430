@@ -42,3 +42,8 @@
 .cardBodyRow {
   min-height: 5vh;
 }
+
+.modalDialog {
+
+  width: 100vw !important;
+}

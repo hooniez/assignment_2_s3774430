@@ -31,6 +31,7 @@ export default function Post({
   const [deleteModalHidden, setDeleteModalHidden] = useState(true);
   const [editHidden, setEditHidden] = useState(true);
   const [numComments, setNumComments] = useState(0);
+  const [imageViewVisible, setImageViewVisible] = useState(false);
 
   // TODO: Fix this.
   useEffect(() => {
@@ -68,6 +69,10 @@ export default function Post({
   const posterName = post.user.isDeleted
     ? "Deleted User"
     : `${post.user.firstName} ${post.user.lastName}`;
+
+  const imgToggleHandler = (e) => {
+    setImageViewVisible(!imageViewVisible);
+  }
 
   return (
     <>
@@ -133,8 +138,16 @@ export default function Post({
                         <div dangerouslySetInnerHTML={{ __html: post.text }}/>
                       </Col>
                       <Col xs={{span:1}} className="position-relative">
-                        <div className={styles.uploadedImageContainer}>
+                        <div className={styles.uploadedImageContainer} role='button' onClick={imgToggleHandler}>
                           <img src={post.imgSrc} className={styles.uploadedImage}/>
+                          <Modal show={imageViewVisible} onHide={imgToggleHandler} centered size='lg'>
+                              <Modal.Header closeButton></Modal.Header>
+                              <Modal.Body>
+                                <img src={post.imgSrc} className={styles.uploadedImage}/>
+                              </Modal.Body>
+
+
+                          </Modal>
                         </div>
 
                       </Col>
