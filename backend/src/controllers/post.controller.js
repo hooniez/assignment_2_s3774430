@@ -74,3 +74,25 @@ exports.delete = async (req, res) => {
   );
   res.json(ret);
 };
+
+exports.edit = async (req, res) => {
+  const editedPost = await db.post
+    .update(
+      {
+        text: req.body.text,
+        imgSrc: req.body.imgSrc,
+      },
+      {
+        where: { id: req.body.id },
+      }
+    )
+    .then(() => {
+      return db.post.findByPk(req.body.id, {
+        include: db.user,
+      });
+    })
+    .then((post) => {
+      console.log(post);
+      res.json(post);
+    });
+};

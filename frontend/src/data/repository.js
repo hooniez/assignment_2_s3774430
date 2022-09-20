@@ -60,6 +60,11 @@ async function deletePost(id) {
   await axios.delete(API_HOST + `/api/posts/delete/${id}`);
 }
 
+async function updatePost(post) {
+  const response = await axios.put(API_HOST + "/api/posts", post);
+  return response.data;
+}
+
 export {
   createUser,
   findUser,
@@ -71,4 +76,5 @@ export {
   getNumChildPosts,
   createPost,
   deletePost,
+  updatePost,
 };

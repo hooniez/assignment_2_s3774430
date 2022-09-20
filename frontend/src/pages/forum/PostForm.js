@@ -13,12 +13,12 @@ import {
   ToastContainer,
   Offcanvas,
 } from "react-bootstrap";
-import { FileEarmarkXFill, Image as ImageIcon } from "react-bootstrap-icons";
+import { FileEarmarkXFill, Image as ImageIcon, X } from "react-bootstrap-icons";
 import Image from "react-bootstrap/Image";
 import styles from "./PostForm.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { createPost } from "../../data/repository";
+import { createPost, updatePost } from "../../data/repository";
 
 const postUrl = "https://api.cloudinary.com/v1_1/duc4zmhl7/image/upload";
 const resUrl = "https://res.cloudinary.com/duc4zmhl7/image/upload";
@@ -33,15 +33,25 @@ export default function PostForm({
   replyTo,
   replyHandler,
   className,
+  isEditing,
+  post,
+  editImageChangeHandler,
+  editPost,
+  editModalToggler,
+  postImgSrc,
 }) {
   const [isPostable, setIsPostable] = useState(false);
-  const [numCharsTyped, setNumCharsTyped] = useState(0);
+  const [numCharsTyped, setNumCharsTyped] = useState(
+    post !== null ? getNumLetters(post.text) : 0
+  );
   const [progressBarVariant, setProgressBarVariant] = useState("success");
-  const [isImageVisible, setIsImageVisible] = useState(false);
+  const [isImageCanvasVisible, setIsImageCanvasVisible] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
-  const [text, setText] = useState("");
-  const [images, setImages] = useState([]);
+  const [text, setText] = useState(post === null ? "" : post.text);
+  const [imgSrc, setImgSrc] = useState(post === null ? "" : postImgSrc);
   const [showImageError, setShowImageError] = useState(false);
+  const imageUploaderRef = useRef(null);
+  const imageUploaderControlId = `imageUpload${post !== null ? post.id : ""}`;
 
   const wordLimit = 600;
 
@@ -77,45 +87,47 @@ export default function PostForm({
     };
   }, [numCharsTyped]);
 
+  // Get the number of actual letters without formatting characters
+  function getNumLetters(formattedText) {
+    return formattedText.replace(/<(.|\n)*?>/g, "").trim().length;
+  }
+
   // The useEffect above will be invoked when the handler below is called.
   const textChangeHandler = (content) => {
     // console.log(`hey ${event}`);
     setText(content);
     // console.log(text);
 
-    setNumCharsTyped(content.replace(/<(.|\n)*?>/g, "").trim().length);
+    setNumCharsTyped(getNumLetters(content));
   };
 
   const canvasCloseHandler = () => {
-    setIsImageVisible(false);
+    setIsImageCanvasVisible(false);
   };
 
   const canvasOpenHandler = () => {
-    setIsImageVisible(true);
+    setIsImageCanvasVisible(true);
   };
 
   const canvasImageRemoveHandler = () => {
-    setIsImageVisible(false);
-    setImages([]);
+    setIsImageCanvasVisible(false);
+    setImgSrc("");
   };
 
   // Upload an image onto a page
   const imageUploadHandler = (event) => {
-    let img = document.querySelector("#myImg");
-    if (event.target.files.length > 4) {
-      setShowImageError(true);
-    } else {
+    if (event.target.files.length > 0) {
       let blobs = [];
       Array.from(event.target.files).forEach((file) => {
         blobs.push(URL.createObjectURL(file));
       });
-      setImages(blobs);
-      setIsImageVisible(true);
+      setImgSrc(blobs[0]);
+      if (isEditing) {
+        editImageChangeHandler(blobs[0]);
+      } else {
+        setIsImageCanvasVisible(true);
+      }
     }
-  };
-
-  const mouseEnterHandler = (event) => {
-    console.log("mouse entered");
   };
 
   // a non-async postHandler to show a loading sign
@@ -127,21 +139,31 @@ export default function PostForm({
 
   // Make a post request to Cloudinary to store it and access it using its API.
   const postHandler = async (e) => {
-    const imagesToUpload = document.querySelector("#imageUpload").files;
+    const imagesToUpload = document.querySelector(
+      `#${imageUploaderControlId}`
+    ).files;
     // Create a general JSON object containing information about post
     console.log(e);
-    let post = {
-      postedBy: user.data.email,
-      parentId: null,
-      text: text,
-    };
-    if (isComment) {
-      post.parentId = parentPostId;
+    let newPost;
+    if (isEditing) {
+      newPost = {
+        ...post,
+        text: text,
+      };
+    } else {
+      newPost = {
+        postedBy: user.data.email,
+        parentId: null,
+        text: text,
+      };
     }
 
-    // If user has attached an image in her post
+    if (isComment) {
+      newPost.parentId = parentPostId;
+    }
+
+    // If user has just attached an image in her post
     if (imagesToUpload.length !== 0) {
-      console.log("hey");
       const data = new FormData();
       data.append("file", imagesToUpload[0]);
       data.append("upload_preset", "zqlcfaas");
@@ -152,24 +174,41 @@ export default function PostForm({
       })
         .then((response) => response.json())
         .then(async (data) => {
-          post.imgSrc = `${resUrl}/v${data.version}/${data.public_id}.${data.format}`;
-          addPost(await createPost(post), isComment, parentPostId);
+          newPost.imgSrc = `${resUrl}/v${data.version}/${data.public_id}.${data.format}`;
+          if (isEditing) {
+            editPost(newPost.id, await updatePost(newPost));
+          } else {
+            addPost(await createPost(newPost), isComment, parentPostId);
+          }
           setIsPosting(false);
+          editModalToggler();
         })
         .catch((error) => console.log(error));
     } else {
-      addPost(await createPost(post), isComment, parentPostId);
+      // If user hasn't just attached an image in her post
+      if (isEditing) {
+        // If user has deleted the image
+        if (!postImgSrc) {
+          newPost.imgSrc = null;
+        }
+        editPost(newPost.id, await updatePost(newPost));
+      } else {
+        addPost(await createPost(newPost), isComment, parentPostId);
+      }
       setIsPosting(false);
+      editModalToggler();
     }
 
-    // Clear the contents of ReactQuill
-    document.querySelector('.ql-editor').innerHTML = '';
-    setText("");
-    setImages([]);
-    setIsPostable(false);
-    // setIsImageVisible(false);
-    setNumCharsTyped(0);
-    replyToRootPost();
+    if (!isEditing) {
+      // Clear the contents of ReactQuill
+      document.querySelector(".ql-editor").innerHTML = "";
+      setText("");
+      setImgSrc("");
+      setIsPostable(false);
+      // setIsImageVisible(false);
+      setNumCharsTyped(0);
+      replyToRootPost();
+    }
   };
 
   // Reset the form's replyTo such that the user replies to the root post by default
@@ -181,7 +220,7 @@ export default function PostForm({
 
   return (
     <>
-      <Card className={className}>
+      <Card className={`${className}`}>
         <Card.Body className={styles.cardBody}>
           <Row className="gx-0">
             <Col xs={2} className="d-flex-column">
@@ -215,7 +254,8 @@ export default function PostForm({
                   theme="snow"
                   text={text}
                   onChange={textChangeHandler}
-                />
+                  defaultValue={text}
+                ></ReactQuill>
 
                 <div className="d-flex justify-content-end align-items-center mt-3">
                   <Toast
@@ -230,53 +270,46 @@ export default function PostForm({
                   </Toast>
 
                   <Offcanvas
-                    show={isImageVisible}
+                    show={isImageCanvasVisible}
                     onHide={canvasCloseHandler}
                     placement="bottom"
                     className={`${styles.canvas}`}
                   >
-                    <Button
-                      variant="secondary"
-                      className="rounded-0"
-                      onClick={canvasImageRemoveHandler}
-                    >
-                      Remove the image
-                    </Button>
                     <Offcanvas.Header closeButton>
                       <Offcanvas.Title>Preview</Offcanvas.Title>
                     </Offcanvas.Header>
-                    <Offcanvas.Body className="pt-0">
-                      {images.map((url) => (
-                        <div
-                          key={url}
-                          className={`${styles.canvasImageContainers} position-relative`}
-                        >
-                          <Image
-                            src={url}
-                            className={styles.canvasImages}
-                            fluid={true}
-                          />
-                        </div>
-                      ))}
+                    <Offcanvas.Body className="pt-0 d-flex justify-content-center">
+                      <div className={`${styles.canvasImageContainers}`}>
+                        <X
+                          className={styles.x}
+                          size={36}
+                          role="button"
+                          onClick={canvasImageRemoveHandler}
+                        ></X>
+                        <Image
+                          src={imgSrc}
+                          className={styles.canvasImages}
+                          fluid={true}
+                        />
+                      </div>
                     </Offcanvas.Body>
                   </Offcanvas>
-                  {images.map((url) => (
+                  {!isEditing && imgSrc && (
                     <div
                       className={styles.uploadedImageContainer}
                       onClick={canvasOpenHandler}
                       position="relative"
-                      key={url}
                     >
                       <Image
-                        src={url}
+                        src={imgSrc}
                         className={styles.uploadedImage}
                         role="button"
                       ></Image>
                     </div>
-                  ))}
+                  )}
 
                   {!isComment && (
-                    <Form.Group controlId="imageUpload">
+                    <Form.Group controlId={imageUploaderControlId}>
                       <Form.Label className="mb-0">
                         <ImageIcon
                           role="button"
@@ -287,6 +320,7 @@ export default function PostForm({
                       <Form.Control
                         type="file"
                         className="d-none"
+                        ref={imageUploaderRef}
                         onChange={imageUploadHandler}
                       ></Form.Control>
                     </Form.Group>
@@ -297,7 +331,7 @@ export default function PostForm({
                     disabled={!isPostable}
                     className={styles.formPostButton}
                   >
-                    Post
+                    {isEditing ? "Edit" : "Post"}
                   </Button>
                 </div>
               </Form>
@@ -305,7 +339,7 @@ export default function PostForm({
           </Row>
         </Card.Body>
       </Card>
-      {isPosting ? (
+      {isPosting && (
         <Container className="d-flex justify-content-center my-3">
           <Spinner
             as="span"
@@ -314,8 +348,6 @@ export default function PostForm({
             aria-hidden="true"
           />
         </Container>
-      ) : (
-        <div></div>
       )}
     </>
   );

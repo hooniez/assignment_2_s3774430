@@ -17,17 +17,12 @@ db.post = require("./models/post.js")(db.sequelize, DataTypes);
 db.image = require("./models/image.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
-
-db.post.belongsTo(db.user, {
-  foreignKey: {
-    name: "postedBy",
-    allowNull: false,
-  },
+db.user.hasMany(db.post, {
+  foreignKey: "postedBy",
 });
 
-// One post can have many pictures while each picture belongs to one post
-db.post.hasMany(db.image, {
-  foreignKey: { name: "id", allowNull: false },
+db.post.belongsTo(db.user, {
+  foreignKey: "postedBy",
 });
 
 // Learn more about associations here: https://sequelize.org/master/manual/assocs.html
@@ -38,7 +33,7 @@ db.sync = async () => {
   await db.sequelize.sync();
 
   // Can sync with force if the schema has become out of date - note that syncing with force is a destructive operation.
-  
+
   // await db.sequelize.sync({ force: true });
 
   await seedData();

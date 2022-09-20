@@ -26,9 +26,9 @@ module.exports = (sequelize, DataTypes) =>
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-        imgSrc: {
-            type: DataTypes.STRING
-        },
+      imgSrc: {
+        type: DataTypes.STRING,
+      },
       isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

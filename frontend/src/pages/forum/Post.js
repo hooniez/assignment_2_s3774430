@@ -9,12 +9,13 @@ import {
   Col,
   Image,
 } from "react-bootstrap";
-import { ChatTextFill, PencilFill, TrashFill } from "react-bootstrap-icons";
+import { ChatTextFill, PencilFill, TrashFill, X } from "react-bootstrap-icons";
 import Comments from "./Comments";
 import styles from "./Post.module.css";
 import convertTime from "../../util/convertTime";
 import { deletePost, getNumChildPosts } from "../../data/repository";
 import deletedUserIcon from "./delete-user.png";
+import PostForm from "./PostForm";
 
 export default function Post({
   post,
@@ -29,10 +30,10 @@ export default function Post({
 }) {
   const [commentShow, setCommentShow] = useState(false);
   const [deleteModalHidden, setDeleteModalHidden] = useState(true);
-  const [editHidden, setEditHidden] = useState(true);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [numComments, setNumComments] = useState(0);
   const [imageViewVisible, setImageViewVisible] = useState(false);
-  const [scrolledToEnd, setScrolledToEnd] = useState(false);
+  const [imgSrc, setImgSrc] = useState(post.imgSrc);
 
   // TODO: Fix this.
   useEffect(() => {
@@ -46,21 +47,28 @@ export default function Post({
     setCommentShow(!commentShow);
   };
 
+  const imageRemoveHandler = () => {
+    setImgSrc(null);
+  };
+
   const confirmDeleteHandler = () => setDeleteModalHidden(false);
   const closeDeleteHandler = () => setDeleteModalHidden(true);
 
   const deleteHandler = async () => {
     await deletePost(post.id);
-    removePost(post.postId);
+    removePost(post.id);
     setDeleteModalHidden(true);
   };
 
-  const editHandler = () => setEditHidden(false);
+  const editModalToggler = () => {
+    setEditModalVisible(!editModalVisible);
+    setImgSrc(post.imgSrc);
+  };
 
   const editSubmitHandler = (e) => {
     e.preventDefault();
     editPost(post.postId, e.target[0].value);
-    setEditHidden(true);
+    setEditModalVisible(false);
   };
 
   // If the user who posted a post has been deleted, show deletedUserIcon.
@@ -73,9 +81,11 @@ export default function Post({
 
   const imgToggleHandler = (e) => {
     setImageViewVisible(!imageViewVisible);
+  };
+
+  const editImageChangeHandler = (imgSrc) => {
+    setImgSrc(imgSrc)
   }
-
-
 
   return (
     <>
@@ -92,6 +102,57 @@ export default function Post({
             Delete
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal show={editModalVisible} onHide={editModalToggler} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PostForm
+            key={post.id}
+            user={user}
+            dispatchUser={dispatchUser}
+            addPost={addPost}
+            postId={posts.length}
+            isComment={false}
+            parentPostId={null}
+            replyTo={null}
+            replyHandler={null}
+            isEditing={true}
+            post={post}
+            editImageChangeHandler={editImageChangeHandler}
+            editPost={editPost}
+            editModalToggler={editModalToggler}
+            postImgSrc={imgSrc}
+          ></PostForm>
+        </Modal.Body>
+        {imgSrc && (
+          <div className="d-flex justify-content-center">
+            {/* <Button
+              variant="secondary"
+              className="rounded-0 d-block"
+              onClick={imageRemoveHandler}
+            >
+              Remove the image
+            </Button> */}
+
+            <div
+              className={`${styles.canvasImageContainers} position-relative`}
+            >
+              <X
+                className={styles.x}
+                size={36}
+                role="button"
+                onClick={imageRemoveHandler}
+              ></X>
+              <Image
+                src={imgSrc}
+                className={styles.canvasImages}
+                fluid={true}
+              />
+            </div>
+          </div>
+        )}
       </Modal>
       <Card className={`mt-4 ${styles.boxShadow} `}>
         {/* <Card.Header className="d-flex justify-content-between">
@@ -122,7 +183,7 @@ export default function Post({
                     <PencilFill
                       color="royalblue"
                       role="button"
-                      onClick={editHandler}
+                      onClick={editModalToggler}
                       className={`${styles.iconMargin} ${styles.icons}`}
                     ></PencilFill>
                     <TrashFill
@@ -135,48 +196,38 @@ export default function Post({
                 )}
               </div>
               <Container>
-                {editHidden ? (
-                    <Row className={styles.cardBodyRow}>
-                      <Col xs={{span:11}}>
-                        <div dangerouslySetInnerHTML={{ __html: post.text }}/>
-                      </Col>
-                      <Col xs={{span:1}} className="position-relative">
-                        <div className={styles.uploadedImageContainer} role='button' onClick={imgToggleHandler}>
-                          <img src={post.imgSrc} className={styles.uploadedImage}/>
-                          <Modal show={imageViewVisible} onHide={imgToggleHandler} centered size='lg'>
-                              <Modal.Header closeButton></Modal.Header>
-                              <Modal.Body>
-                                <img src={post.imgSrc} className={styles.uploadedImage}/>
-                              </Modal.Body>
+                <Row className={styles.cardBodyRow}>
+                  <div dangerouslySetInnerHTML={{ __html: post.text }} />
+                  <div className={styles.uploadedImageContainer}>
+                    <img
+                      src={post.imgSrc}
+                      className={styles.uploadedImage}
+                      role="button"
+                      onClick={imgToggleHandler}
+                    />
+                  </div>
 
+                  {/* <Col xs={{ span: 1 }} className="position-relative"> */}
+                  {/* <div
+                      className={styles.uploadedImageContainer}
+                      
+                    > */}
 
-                          </Modal>
-                        </div>
-
-                      </Col>
-                    </Row>
-
-
-                ) : (
-                  <Form onSubmit={editSubmitHandler} className="mt-3">
-                    <Form.Group className="mb-3" controlId="formEditText">
-                      <Form.Label visuallyHidden="true">First name</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        required
-                        defaultValue={post.text}
-                      ></Form.Control>
-                    </Form.Group>
-                    <div className="d-flex justify-content-end">
-                      <Button variant="primary" type="submit">
-                        Edit
-                      </Button>
-                    </div>
-                  </Form>
-                )}
+                  <Modal
+                    show={imageViewVisible}
+                    onHide={imgToggleHandler}
+                    centered
+                    size="lg"
+                  >
+                    <Modal.Header closeButton></Modal.Header>
+                    <Modal.Body className="text-center">
+                      <img src={post.imgSrc} className={styles.uploadedImage} />
+                    </Modal.Body>
+                  </Modal>
+                  {/* </div> */}
+                  {/* </Col> */}
+                </Row>
               </Container>
-
-
             </Col>
           </Row>
         </Card.Body>
@@ -209,4 +260,22 @@ export default function Post({
       ></Comments> */}
     </>
   );
+}
+
+{
+  /* <Form onSubmit={editSubmitHandler} className="mt-3">
+<Form.Group className="mb-3" controlId="formEditText">
+  <Form.Label visuallyHidden="true">First name</Form.Label>
+  <Form.Control
+    as="textarea"
+    required
+    defaultValue={post.text}
+  ></Form.Control>
+</Form.Group>
+<div className="d-flex justify-content-end">
+  <Button variant="primary" type="submit">
+    Edit
+  </Button>
+</div>
+</Form> */
 }

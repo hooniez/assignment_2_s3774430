@@ -70,15 +70,24 @@ export default function Posts() {
 
   const removePost = (id) => {
     // removePost does not actually remove the post from the database, but sets its isDeleted property to false so that it is not displayed anymore.
-    loadPosts();
+    setPosts(posts.filter((post) => post.id !== id));
     // dispatchUser({
     //   type: "DELETE_POST",
     //   payload: id,
     // });
   };
 
-  const editPost = (id, text) => {
-    posts[id].text = text;
+  const removeImage = (id) => {
+    // setPosts(...posts, posts.filter((post) => post.id === id))
+  };
+
+  const editPost = (id, newPost) => {
+    // Find the old post in posts and then replace with newPost
+    let oldPost = posts.filter((post) => post.id == id)[0];
+    let idx = posts.indexOf(oldPost);
+    posts[idx] = newPost;
+    console.log(oldPost);
+    console.log(newPost);
     setPosts([...posts]);
   };
 
@@ -90,8 +99,9 @@ export default function Posts() {
   return (
     <Container className="component py-5">
       <Row>
-        <Col md={{ span: 8, offset: 2 }}>
+        <Col md={{ span: 6, offset: 3 }}>
           <PostForm
+            key={0}
             user={user}
             dispatchUser={dispatchUser}
             addPost={addPost}
@@ -100,6 +110,7 @@ export default function Posts() {
             parentPostId={null}
             replyTo={null}
             replyHandler={null}
+            post={null}
           ></PostForm>
           {posts.map((post) => (
             <Post

@@ -41,10 +41,25 @@
 }
 
 .canvasImageContainers {
+  position: relative;
+  width: max-content;
   height: 100%;
   text-align: center;
 }
 
 .canvasImages {
   max-height: 100%;
+}
+
+.x {
+  position: absolute; 
+  background-color: #222;
+  border-radius: 2rem;
+  color: white;
+  top: 0.5rem;
+  left: 0.5rem;
+}
+
+.x:hover {
+  background-color: #000;
 }
