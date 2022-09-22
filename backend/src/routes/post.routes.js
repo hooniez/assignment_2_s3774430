@@ -6,7 +6,7 @@ module.exports = (express, app) => {
   router.get("/", controller.new);
 
   // Select more new posts
-  router.get("/moreNew/:existingIds", controller.moreNew);
+  router.get("/moreNew/:existingIds", controller.moreNewPosts);
 
   // Get the number of child posts
   router.get("/count/:id", controller.countById);
@@ -19,6 +19,14 @@ module.exports = (express, app) => {
 
   // Edit an existing post
   router.put("/", controller.edit);
+
+  // Select new comments
+  router.get("/:id/comments", controller.newComments);
+
+  // Select more new posts
+  router.get("/:id/moreNew/:existingIds", controller.moreNewComments);
+
+  // API_HOST + `/api/posts/${id}/moreNew/${existingIds}`
 
   // Add routes to server.
   app.use("/api/posts", router);
