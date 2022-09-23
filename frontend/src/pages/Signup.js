@@ -5,7 +5,7 @@ import formatDate from "../util/formatDate";
 import { createUser, findUser } from "../data/repository";
 import MFA from "../fragments/MFA";
 
-export default function SignUpForm() {
+export default function Signup() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);

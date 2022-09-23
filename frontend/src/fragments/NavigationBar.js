@@ -8,7 +8,6 @@ import { ToastContainer, Toast } from "react-bootstrap";
 import { useEffect, useState } from "react";
 
 export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
-
   const signOutUser = (event) => {
     dispatchUser({ type: "SIGNOUT_USER" });
   };
@@ -16,10 +15,10 @@ export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
   const isLoggedOutJSX = (
     <Nav className="d-flex justify-content-end flex-grow-1">
       <NavLink to="/signup" className="nav-link">
-        Sign Up
+        Sign up
       </NavLink>
       <NavLink to="/signin" className="nav-link">
-        Sign In
+        Sign in
       </NavLink>
     </Nav>
   );
@@ -45,7 +44,6 @@ export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
   return (
     <Navbar className={styles.navbar} bg="light" expand="lg">
       <Container className="position-relative">
-
         <NavLink to="/" className="navbar-brand">
           <img src={logo} alt="logo" width="100" height="40" />
         </NavLink>

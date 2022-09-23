@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignUpForm from "./pages/SignUpForm";
+import Signup from "./pages/Signup";
 import Hero from "./pages/hero/Hero";
 import Profile from "./pages/profile/Profile";
 import SignInForm from "./pages/SignInForm";
@@ -18,10 +18,10 @@ root.render(
     <Routes>
       <Route path="/" element={<App />}>
         <Route path="/" element={<Hero />} />
-        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/signin" element={<SignInForm />} />
-        <Route path="/posts" element={<Posts key={0} />}/>
+        <Route path="/posts" element={<Posts key={0} />} />
       </Route>
     </Routes>
   </BrowserRouter>

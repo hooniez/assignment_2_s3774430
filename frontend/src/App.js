@@ -61,58 +61,12 @@ const userReducer = (state, action) => {
 
 function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
-    data: JSON.parse(sessionStorage.getItem("user")),
-    // If sessionStorage has the key "user" defined
-    isLoggedIn: sessionStorage.getItem("user") !== null,
+    data: {},
+    isLoggedIn: false,
   });
-
-  // a mock database holding informaiton on users
-  const [users, setUsers] = useState(
-    JSON.parse(localStorage.getItem("users")) ?? {}
-  );
-
-  // If user logs in, push user to sessionStorage.
-  // If user logs out, pop user from sessionStorage.
-  useEffect(() => {
-    if (user.isLoggedIn) {
-      sessionStorage.setItem("user", JSON.stringify(user.data));
-    } else {
-      sessionStorage.removeItem("user");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.isLoggedIn]);
-
-  // Whenever there is a change in user.data
-  useEffect(() => {
-    if (user.data) {
-      sessionStorage.setItem("user", JSON.stringify(user.data));
-    } else {
-      // user.data changes to null when the user logs out
-      sessionStorage.removeItem("user");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.data]);
-
-  // // Whenever there is a change in users
-  // useEffect(() => {
-  //   localStorage.setItem("users", JSON.stringify(users));
-  // }, [users]);
-
-  const location = useLocation();
-  const background = location.state && location.state.background;
 
   return (
     <>
-      {/* <Routes location={background || location}>
-        <Route path="/posts/" element={<Posts />}>
-          <Route path="modal" element={<Comments />} />
-        </Route>
-      </Routes>
-      {background && (
-        <Routes>
-          <Route path="modal" element={<Comments />} />
-        </Routes>
-      )} */}
       <NavigationBar
         isLoggedIn={user.isLoggedIn}
         dispatchUser={dispatchUser}
