@@ -60,7 +60,12 @@ export default function PostContent({
             <div>
               <span className={styles.name}>{posterName}</span>
               <span>&nbsp;&#183;&nbsp;</span>
-              <span className={styles.greyedOutText}>{`${post.postedBy}`}</span>
+              {!post.user.isDeleted && (
+                <span
+                  className={styles.greyedOutText}
+                >{`${post.postedBy}`}</span>
+              )}
+
               <span>&nbsp;&#183;&nbsp;</span>
               <span className={styles.greyedOutText}>
                 {convertTime(post.datePosted)}

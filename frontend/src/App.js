@@ -113,7 +113,11 @@ function App() {
           <Route path="modal" element={<Comments />} />
         </Routes>
       )} */}
-      <NavigationBar isLoggedIn={user.isLoggedIn} dispatchUser={dispatchUser} />
+      <NavigationBar
+        isLoggedIn={user.isLoggedIn}
+        dispatchUser={dispatchUser}
+        user={user}
+      />
       <Outlet context={[user, dispatchUser]} />
       <Footer />
     </>

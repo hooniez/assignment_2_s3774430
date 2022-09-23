@@ -39,7 +39,7 @@ export default function SignInForm() {
       setIsPasswordMatched(true);
       setIsEmailValid(true);
       dispatchUser({ type: "SIGNIN_USER", payload: user });
-      navigate("/profile");
+      navigate("/profile", {state: {justLoggedIn: true}});
     } else {
       setIsPasswordMatched(false);
     }
@@ -50,7 +50,7 @@ export default function SignInForm() {
     setIsMFAVisible(false);
     dispatchUser({ type: "SIGNIN_USER", payload: users[user.email] });
     setIsMFAVisible(false);
-    navigate("/profile");
+    navigate("/profile", {state: {justLoggedIn: true}});
   };
 
   // const submitHandler = async (event) => {

@@ -48,9 +48,15 @@ exports.create = async (req, res) => {
 
 // Delete a user from the table
 exports.delete = async (req, res) => {
-  await db.user.destroy({
-    where: { email: req.params.email },
-  });
+  const ret = await db.user.update(
+    {
+      isDeleted: true,
+    },
+    {
+      where: { email: req.params.email },
+    }
+  );
+  res.json(ret);
 };
 
 exports.edit = async (req, res) => {

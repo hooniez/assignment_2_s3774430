@@ -4,8 +4,11 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link, NavLink } from "react-router-dom";
 import styles from "./NavigationBar.module.css";
+import { ToastContainer, Toast } from "react-bootstrap";
+import { useEffect, useState } from "react";
 
-export default function NavigationBar({ isLoggedIn, dispatchUser }) {
+export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
+
   const signOutUser = (event) => {
     dispatchUser({ type: "SIGNOUT_USER" });
   };
@@ -41,7 +44,8 @@ export default function NavigationBar({ isLoggedIn, dispatchUser }) {
 
   return (
     <Navbar className={styles.navbar} bg="light" expand="lg">
-      <Container>
+      <Container className="position-relative">
+
         <NavLink to="/" className="navbar-brand">
           <img src={logo} alt="logo" width="100" height="40" />
         </NavLink>

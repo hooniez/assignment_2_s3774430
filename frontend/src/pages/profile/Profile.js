@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   Container,
@@ -14,8 +14,9 @@ import {
   CarouselItem,
   FloatingLabel,
   Toast,
+  ToastContainer,
 } from "react-bootstrap";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronCompactLeft,
   ChevronCompactRight,
@@ -24,6 +25,7 @@ import {
   Shuffle,
   TrashFill,
 } from "react-bootstrap-icons";
+import logo from "../../logo.png";
 import styles from "./Profile.module.css";
 import { deleteUser, editUser, verifyUser } from "../../data/repository";
 
@@ -39,7 +41,11 @@ export default function Profile() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
   const [isPasswordMatched, setIsPasswordMatched] = useState(true);
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+  const { state } = useLocation();
+  const [welcomeToastVisible, setWelcomeToastVisible] = useState(
+    state == null ? false : state.justLoggedIn
+  );
+
   const newPasswordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const submitButtonRef = useRef(null);
@@ -48,6 +54,10 @@ export default function Profile() {
 
   const editShowHandler = (event) => {
     setEditHidden(!editHidden);
+  };
+
+  const welcomeToastToggler = () => {
+    setWelcomeToastVisible(!welcomeToastVisible);
   };
 
   function validatePassword(password) {
@@ -125,8 +135,6 @@ export default function Profile() {
       // If the password is being updated
 
       const password = event.target[3].value;
-      console.log(user.data.email);
-      console.log(password);
 
       const currUser = await verifyUser(user.data.email, password);
       console.log(currUser);
@@ -154,8 +162,8 @@ export default function Profile() {
     setIsSpinnerVisible(false);
   };
 
-  const deleteHandler = () => {
-    deleteUser(user.data.email);
+  const deleteHandler = async () => {
+    await deleteUser(user.data.email);
     dispatchUser({
       type: "DELETE_USER",
     });
@@ -230,7 +238,23 @@ export default function Profile() {
           lg={{ span: 6, offset: 3 }}
           xl={{ span: 4, offset: 4 }}
         >
-          <Card>
+          <Card className="position-relative">
+            <ToastContainer position="top-center">
+              <Toast
+                show={welcomeToastVisible}
+                onClose={welcomeToastToggler}
+                bg="success"
+                delay={2000}
+                autohide
+              >
+                <Toast.Header className="justify-content-between">
+                  <img src={logo} width="50" height="20" />
+                </Toast.Header>
+                <Toast.Body className="text-white">
+                  <strong>{`Welcome, ${user.data.firstName}!`}</strong>
+                </Toast.Body>
+              </Toast>
+            </ToastContainer>
             <Card.Header className="d-flex justify-content-between align-items-center">
               {editHidden ? <h1>Profile</h1> : <h1>Edit</h1>}
 

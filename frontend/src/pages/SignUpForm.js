@@ -117,7 +117,7 @@ export default function SignUpForm() {
         type: "SIGNUP_USER",
         payload: payload,
       });
-      navigate("/profile");
+      navigate("/profile", { state: { justLoggedIn: true } });
     } else {
       // If not valid, indicate to the user what inputs are not yet validated.
       // setIsEmailValid(validateEmail(email));
