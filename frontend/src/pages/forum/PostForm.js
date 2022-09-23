@@ -19,16 +19,17 @@ import styles from "./PostForm.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { createPost, updatePost } from "../../data/repository";
+import ImageUploadPreview from "./ImageUploadPreview";
 
 const postUrl = "https://api.cloudinary.com/v1_1/duc4zmhl7/image/upload";
 const resUrl = "https://res.cloudinary.com/duc4zmhl7/image/upload";
 
 export default function PostForm({
   user,
-  dispatchUser,
   addPost,
+  addComment,
   postId,
-  isComment,
+  forComments,
   parentPostId,
   replyTo,
   replyHandler,
@@ -39,19 +40,25 @@ export default function PostForm({
   editPost,
   editModalToggler,
   postImgSrc,
+  incrementNumChildPosts,
+  replyModalToggelr,
+  editParentPost,
 }) {
   const [isPostable, setIsPostable] = useState(false);
   const [numCharsTyped, setNumCharsTyped] = useState(
     post !== null ? getNumLetters(post.text) : 0
   );
   const [progressBarVariant, setProgressBarVariant] = useState("success");
-  const [isImageCanvasVisible, setIsImageCanvasVisible] = useState(false);
+  const [isImageUploadPreviewVisible, setIsImageUploadPreviewVisible] =
+    useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [text, setText] = useState(post === null ? "" : post.text);
   const [imgSrc, setImgSrc] = useState(post === null ? "" : postImgSrc);
   const [showImageError, setShowImageError] = useState(false);
   const imageUploaderRef = useRef(null);
-  const imageUploaderControlId = `imageUpload${post !== null ? post.id : ""}`;
+  const imageUploaderControlId = `imageUpload${
+    parentPostId !== null ? parentPostId : ""
+  }`;
 
   const wordLimit = 600;
 
@@ -101,16 +108,12 @@ export default function PostForm({
     setNumCharsTyped(getNumLetters(content));
   };
 
-  const canvasCloseHandler = () => {
-    setIsImageCanvasVisible(false);
+  const imageUploadPreviewToggler = () => {
+    setIsImageUploadPreviewVisible(false);
   };
 
-  const canvasOpenHandler = () => {
-    setIsImageCanvasVisible(true);
-  };
-
-  const canvasImageRemoveHandler = () => {
-    setIsImageCanvasVisible(false);
+  const imageRemoveHandler = () => {
+    setIsImageUploadPreviewVisible(false);
     setImgSrc("");
   };
 
@@ -125,7 +128,7 @@ export default function PostForm({
       if (isEditing) {
         editImageChangeHandler(blobs[0]);
       } else {
-        setIsImageCanvasVisible(true);
+        setIsImageUploadPreviewVisible(true);
       }
     }
   };
@@ -133,8 +136,22 @@ export default function PostForm({
   // a non-async postHandler to show a loading sign
   const initialPostHandler = (e) => {
     e.preventDefault();
-    setIsPosting(true);
     postHandler(e);
+  };
+
+  const resetPostForm = () => {
+    document
+      .querySelectorAll(".ql-editor")
+      .forEach((el) => (el.innerHTML = ""));
+    setText("");
+    setImgSrc("");
+    setIsPostable(false);
+    setIsPosting(false);
+    setNumCharsTyped(0);
+    document.getElementById(imageUploaderControlId).value = "";
+    if (forComments) {
+      replyModalToggelr();
+    }
   };
 
   // Make a post request to Cloudinary to store it and access it using its API.
@@ -158,12 +175,13 @@ export default function PostForm({
       };
     }
 
-    if (isComment) {
+    if (forComments) {
       newPost.parentId = parentPostId;
     }
 
     // If user has just attached an image in her post
     if (imagesToUpload.length !== 0) {
+      setIsPosting(true);
       const data = new FormData();
       data.append("file", imagesToUpload[0]);
       data.append("upload_preset", "zqlcfaas");
@@ -177,11 +195,17 @@ export default function PostForm({
           newPost.imgSrc = `${resUrl}/v${data.version}/${data.public_id}.${data.format}`;
           if (isEditing) {
             editPost(newPost.id, await updatePost(newPost));
+            editModalToggler();
           } else {
-            addPost(await createPost(newPost), isComment, parentPostId);
+            if (forComments) {
+              await createPost(newPost);
+              incrementNumChildPosts();
+              resetPostForm();
+            } else {
+              addPost(await createPost(newPost), forComments, parentPostId);
+              resetPostForm();
+            }
           }
-          setIsPosting(false);
-          editModalToggler();
         })
         .catch((error) => console.log(error));
     } else {
@@ -192,22 +216,17 @@ export default function PostForm({
           newPost.imgSrc = null;
         }
         editPost(newPost.id, await updatePost(newPost));
+        editModalToggler();
       } else {
-        addPost(await createPost(newPost), isComment, parentPostId);
+        if (forComments) {
+          await createPost(newPost);
+          incrementNumChildPosts();
+        } else {
+          // for Posts
+          addPost(await createPost(newPost));
+        }
       }
-      setIsPosting(false);
-      editModalToggler();
-    }
-
-    if (!isEditing) {
-      // Clear the contents of ReactQuill
-      document.querySelector(".ql-editor").innerHTML = "";
-      setText("");
-      setImgSrc("");
-      setIsPostable(false);
-      // setIsImageVisible(false);
-      setNumCharsTyped(0);
-      replyToRootPost();
+      resetPostForm();
     }
   };
 
@@ -220,125 +239,95 @@ export default function PostForm({
 
   return (
     <>
-      <Card className={`${className}`}>
-        <Card.Body className={styles.cardBody}>
-          <Row className="gx-0">
-            <Col xs={2} className="d-flex-column">
-              <div className="d-flex justify-content-center">
-                <Card.Img
-                  src={user.data.avatarSrc}
-                  className={styles.cardImg}
-                ></Card.Img>
-              </div>
+      <div className="d-flex">
+        <div className="d-flex-column">
+          <div className="d-flex justify-content-center">
+            <img src={user.data.avatarSrc} className={styles.cardImg} />
+          </div>
 
-              <ProgressBar
-                className="my-3"
-                variant={progressBarVariant}
-                now={Math.floor((numCharsTyped / wordLimit) * 100)}
-                label={
-                  progressBarVariant !== "success" &&
-                  `${wordLimit - numCharsTyped} letters left`
-                }
-              ></ProgressBar>
-            </Col>
-            <Col xs={10} className={`${styles.textAreaCol}`}>
-              {replyTo !== null ? (
-                <Alert variant="primary" onClose={replyToRootPost} dismissible>
-                  {replyTo}
-                </Alert>
-              ) : (
-                <></>
-              )}
-              <Form onSubmit={initialPostHandler}>
-                <ReactQuill
-                  theme="snow"
-                  text={text}
-                  onChange={textChangeHandler}
-                  defaultValue={text}
-                ></ReactQuill>
+          <ProgressBar
+            className="my-3"
+            variant={progressBarVariant}
+            now={Math.floor((numCharsTyped / wordLimit) * 100)}
+            label={
+              progressBarVariant !== "success" &&
+              `${wordLimit - numCharsTyped} letters left`
+            }
+          ></ProgressBar>
+        </div>
+        <div className={`${styles.textAreaCol} flex-grow-1`}>
+          {replyTo !== null ? (
+            <Alert variant="primary" onClose={replyToRootPost}>
+              <strong>Replying to</strong> {replyTo}
+            </Alert>
+          ) : (
+            <></>
+          )}
+          <Form onSubmit={initialPostHandler}>
+            <ReactQuill
+              theme="snow"
+              text={text}
+              onChange={textChangeHandler}
+              defaultValue={text}
+            ></ReactQuill>
 
-                <div className="d-flex justify-content-end align-items-center mt-3">
-                  <Toast
-                    onClose={() => setShowImageError(false)}
-                    show={showImageError}
-                    delay={3000}
-                    autohide
-                  >
-                    <Toast.Body className="text-danger">
-                      You can only upload 4 images at most.
-                    </Toast.Body>
-                  </Toast>
+            <div className="d-flex justify-content-end align-items-center mt-3">
+              <Toast
+                onClose={() => setShowImageError(false)}
+                show={showImageError}
+                delay={3000}
+                autohide
+              >
+                <Toast.Body className="text-danger">
+                  You can only upload 4 images at most.
+                </Toast.Body>
+              </Toast>
 
-                  <Offcanvas
-                    show={isImageCanvasVisible}
-                    onHide={canvasCloseHandler}
-                    placement="bottom"
-                    className={`${styles.canvas}`}
-                  >
-                    <Offcanvas.Header closeButton>
-                      <Offcanvas.Title>Preview</Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body className="pt-0 d-flex justify-content-center">
-                      <div className={`${styles.canvasImageContainers}`}>
-                        <X
-                          className={styles.x}
-                          size={36}
-                          role="button"
-                          onClick={canvasImageRemoveHandler}
-                        ></X>
-                        <Image
-                          src={imgSrc}
-                          className={styles.canvasImages}
-                          fluid={true}
-                        />
-                      </div>
-                    </Offcanvas.Body>
-                  </Offcanvas>
-                  {!isEditing && imgSrc && (
-                    <div
-                      className={styles.uploadedImageContainer}
-                      onClick={canvasOpenHandler}
-                      position="relative"
-                    >
-                      <Image
-                        src={imgSrc}
-                        className={styles.uploadedImage}
-                        role="button"
-                      ></Image>
-                    </div>
-                  )}
+              <ImageUploadPreview
+                isImageUploadPreviewVisible={isImageUploadPreviewVisible}
+                imageUploadPreviewToggler={imageUploadPreviewToggler}
+                imageRemoveHandler={imageRemoveHandler}
+                imgSrc={imgSrc}
+              />
 
-                  {!isComment && (
-                    <Form.Group controlId={imageUploaderControlId}>
-                      <Form.Label className="mb-0">
-                        <ImageIcon
-                          role="button"
-                          width="2em"
-                          height="2em"
-                        ></ImageIcon>
-                      </Form.Label>
-                      <Form.Control
-                        type="file"
-                        className="d-none"
-                        ref={imageUploaderRef}
-                        onChange={imageUploadHandler}
-                      ></Form.Control>
-                    </Form.Group>
-                  )}
-
-                  <Button
-                    type="submit"
-                    disabled={!isPostable}
-                    className={styles.formPostButton}
-                  >
-                    {isEditing ? "Edit" : "Post"}
-                  </Button>
+              {!isEditing && imgSrc && (
+                <div
+                  className={styles.uploadedImageContainer}
+                  onClick={imageUploadPreviewToggler}
+                  position="relative"
+                >
+                  <Image
+                    src={imgSrc}
+                    className={styles.uploadedImage}
+                    role="button"
+                  ></Image>
                 </div>
-              </Form>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+              )}
+
+              <Form.Group controlId={imageUploaderControlId}>
+                <Form.Label className="mb-0">
+                  <ImageIcon role="button" width="2em" height="2em"></ImageIcon>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  className="d-none"
+                  ref={imageUploaderRef}
+                  onChange={imageUploadHandler}
+                ></Form.Control>
+              </Form.Group>
+
+              <Button
+                type="submit"
+                disabled={!isPostable}
+                className={styles.formPostButton}
+              >
+                {isEditing ? "Edit" : "Post"}
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </div>
+
       {isPosting && (
         <Container className="d-flex justify-content-center my-3">
           <Spinner

@@ -10,6 +10,7 @@ import Profile from "./pages/profile/Profile";
 import SignInForm from "./pages/SignInForm";
 import Posts from "./pages/forum/Posts";
 import SignUpMFA from "./fragments/MFA";
+import Comments from "./pages/forum/Comments";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -20,7 +21,7 @@ root.render(
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/signin" element={<SignInForm />} />
-        <Route path="/posts" element={<Posts />} />
+        <Route path="/posts" element={<Posts key={0} />}/>
       </Route>
     </Routes>
   </BrowserRouter>

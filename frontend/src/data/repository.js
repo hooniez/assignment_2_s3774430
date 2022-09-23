@@ -65,6 +65,20 @@ async function updatePost(post) {
   return response.data;
 }
 
+// Comments
+
+async function getComments(id) {
+  const response = await axios.get(API_HOST + `/api/posts/${id}/comments`);
+  return response.data;
+}
+
+async function getMoreComments(id, existingIds) {
+  const response = await axios.get(
+    API_HOST + `/api/posts/${id}/moreNew/${existingIds}`
+  );
+  return response.data;
+}
+
 export {
   createUser,
   findUser,
@@ -77,4 +91,6 @@ export {
   createPost,
   deletePost,
   updatePost,
+  getComments,
+  getMoreComments,
 };

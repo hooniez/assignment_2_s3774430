@@ -1,0 +1,39 @@
+.offcanvas {
+  height: 60vh !important;
+  z-index: 1075 !important;
+}
+
+.offcanvasBackdrop {
+  z-index: 1070 !important;
+}
+
+.offcanvasImageContainer {
+  position: relative;
+  width: max-content;
+  height: 100%;
+  text-align: center;
+}
+
+.offcanvasImage {
+  max-height: 100%;
+}
+
+.x {
+  position: absolute; 
+  background-color: #222;
+  border-radius: 2rem;
+  color: white;
+  top: 0.5rem;
+  left: 0.5rem;
+}
+
+.x:hover {
+  background-color: #000;
+}
+
+.offcanvasHeaderContainer {
+  width: 50vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

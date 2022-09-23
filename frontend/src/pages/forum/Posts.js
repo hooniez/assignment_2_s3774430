@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PostForm from "./PostForm";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import Post from "./Post";
 import {
@@ -10,17 +10,37 @@ import {
 } from "../../data/repository";
 import { ArrowDown } from "react-bootstrap-icons";
 import styles from "./Posts.module.css";
+import { getComments } from "../../data/repository";
+import { getMoreComments } from "../../data/repository";
 
-const numPosts = 5;
-
-export default function Posts() {
-  const [user, dispatchUser, users] = useOutletContext();
+export default function Posts({
+  parentPost,
+  defaultUser,
+  scrollableComponent,
+  editParentPost,
+  removeParentPost,
+}) {
+  const [user = defaultUser, dispatchUser] = useOutletContext();
   const [posts, setPosts] = useState([]);
   const [hasMorePosts, setHasMorePosts] = useState(true);
+  const mostOuterElement = useRef(null);
+  const postLimits = 10;
 
   async function loadPosts() {
-    let latestPosts = await getPosts();
-    setPosts([...latestPosts]);
+    let newPosts;
+    if (parentPost == null) {
+      newPosts = await getPosts();
+      setPosts([...newPosts]);
+      if (newPosts.length < 10) {
+        setHasMorePosts(false);
+      }
+    } else {
+      newPosts = await getComments(parentPost.id);
+      setPosts([...newPosts]);
+      if (newPosts.length < 10) {
+        setHasMorePosts(false);
+      }
+    }
   }
 
   // Load posts
@@ -29,43 +49,68 @@ export default function Posts() {
   }, []);
 
   const handleScroll = async (e) => {
-    let documentHeight = document.body.scrollHeight;
-    let currentScroll = window.scrollY + window.innerHeight;
-    if (documentHeight === currentScroll) {
-      let ids = posts.map((post) => post.id);
+    let elementToListenToScroll;
+    if (parentPost == null) {
+      elementToListenToScroll = window;
+      let documentHeight = document.body.scrollHeight;
+      let currentScroll =
+        elementToListenToScroll.scrollY + elementToListenToScroll.innerHeight;
+      console.log(currentScroll);
+      if (documentHeight === currentScroll) {
+        let ids = posts.map((post) => post.id);
 
-      let newPosts = await getMorePosts(ids.join(","));
-      if (newPosts.length === 0) {
-        setHasMorePosts(false);
-      } else {
-        setPosts([...posts, ...newPosts]);
+        let newPosts = await getMorePosts(ids.join(","));
+        if (newPosts.length === 0) {
+          setHasMorePosts(false);
+        } else {
+          setPosts([...posts, ...newPosts]);
+        }
+      }
+    } else {
+      elementToListenToScroll = document.getElementById(
+        `modalBody${parentPost.id}`
+      );
+      if (
+        elementToListenToScroll.scrollHeight -
+          elementToListenToScroll.scrollTop ===
+        elementToListenToScroll.clientHeight
+      ) {
+        let ids = posts.map((post) => post.id);
+
+        let newPosts = await getMoreComments(parentPost.id, ids.join(","));
+        if (newPosts.length === 0) {
+          setHasMorePosts(false);
+        } else {
+          setPosts([...posts, ...newPosts]);
+        }
       }
     }
   };
 
   useEffect(() => {
-    if (!hasMorePosts) {
-      window.removeEventListener("scroll", handleScroll);
+    let elementToListenToScroll;
+    if (parentPost == null) {
+      elementToListenToScroll = window;
     } else {
-      window.addEventListener("scroll", handleScroll);
+      elementToListenToScroll = document.getElementById(
+        `modalBody${parentPost.id}`
+      );
+    }
+
+    if (!hasMorePosts) {
+      elementToListenToScroll.removeEventListener("scroll", handleScroll);
+    } else {
+      elementToListenToScroll.addEventListener("scroll", handleScroll);
     }
 
     // When the user leaves the forum, call the cleanup function
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      elementToListenToScroll.removeEventListener("scroll", handleScroll);
     };
   }, [posts, setHasMorePosts]);
 
-  const addPost = (post, isComment, parentPostId) => {
+  const addPost = (post) => {
     setPosts([post, ...posts]);
-    // dispatchUser({
-    //   type: "ADD_POST",
-    //   payload: posts.length,
-    // });
-    // If the post being added is a comment
-    // if (isComment) {
-    //   posts[parentPostId].children.push(post.postId);
-    // }
   };
 
   const removePost = (id) => {
@@ -86,8 +131,6 @@ export default function Posts() {
     let oldPost = posts.filter((post) => post.id == id)[0];
     let idx = posts.indexOf(oldPost);
     posts[idx] = newPost;
-    console.log(oldPost);
-    console.log(newPost);
     setPosts([...posts]);
   };
 
@@ -97,51 +140,73 @@ export default function Posts() {
   }, [posts]);
 
   return (
-    <Container className="component py-5">
+    <Container className="component py-0" ref={mostOuterElement}>
       <Row>
-        <Col md={{ span: 6, offset: 3 }}>
-          <PostForm
-            key={0}
-            user={user}
-            dispatchUser={dispatchUser}
-            addPost={addPost}
-            postId={posts.length}
-            isComment={false}
-            parentPostId={null}
-            replyTo={null}
-            replyHandler={null}
-            post={null}
-          ></PostForm>
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              user={user}
-              dispatchUser={dispatchUser}
-              post={post}
-              posts={posts}
-              childId={posts.length}
-              addPost={addPost}
-              removePost={removePost}
-              editPost={editPost}
-              users={users}
-            ></Post>
-          ))}
-          <div className="text-center mt-5">
-            {hasMorePosts ? (
-              <>
-                <div className="pb-2">
-                  <span>Scroll down to see more posts</span>
-                </div>
-                <div>
-                  <ArrowDown className={styles.arrowDown} size={48}></ArrowDown>
-                </div>
-              </>
-            ) : (
-              <div className="pb-2">
-                <span>No more posts</span>
+        <Col lg={{ span: 6, offset: 3 }}>
+          <Row>
+            <Col lg={{ span: 10, offset: 1 }}>
+              {parentPost != null ? (
+                <Post
+                  post={parentPost}
+                  user={user}
+                  editPost={editParentPost}
+                  rootPost={true}
+                  removePost={removeParentPost}
+                ></Post>
+              ) : (
+                <Card className="mt-5">
+                  <Card.Body className={styles.cardBody}>
+                    <PostForm
+                      key={0}
+                      user={user}
+                      dispatchUser={dispatchUser}
+                      addPost={addPost}
+                      postId={posts.length}
+                      forComments={false}
+                      parentPostId={null}
+                      replyTo={null}
+                      replyHandler={null}
+                      post={null}
+                    ></PostForm>
+                  </Card.Body>
+                </Card>
+              )}
+
+              <hr></hr>
+              {posts.map((post) => (
+                <Post
+                  key={post.id}
+                  user={user}
+                  dispatchUser={dispatchUser}
+                  post={post}
+                  posts={posts}
+                  childId={posts.length}
+                  addPost={addPost}
+                  removePost={removePost}
+                  editPost={editPost}
+                ></Post>
+              ))}
+              <div className="text-center mt-5">
+                {hasMorePosts ? (
+                  <>
+                    <div className="pb-2">
+                      <span>Scroll down to see more posts</span>
+                    </div>
+                    <div>
+                      <ArrowDown
+                        className={styles.arrowDown}
+                        size={48}
+                      ></ArrowDown>
+                    </div>
+                  </>
+                ) : (
+                  <div className="pb-2">
+                    <span>No more posts</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Container>

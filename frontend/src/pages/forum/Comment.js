@@ -8,49 +8,51 @@ import {
 } from "react-bootstrap-icons";
 import convertTime from "../../util/convertTime";
 import styles from "./Comment.module.css";
-import getTotalNumChildPosts from "./getTotalNumChildPosts";
 import deletedUserIcon from "./delete-user.png";
+import { deletePost } from "../../data/repository";
+import EditModal from "./EditModal";
+import { getNumChildPosts } from "../../data/repository";
 
 export default function Comment({
-  parentPost,
   posts,
   commentId,
   user,
-  dispatchUser,
-  addPost,
-  removePost,
-  editPost,
+  deleteComment,
+  editComment,
   replyHandler,
   expandComment,
-  users,
-  childrenToShow,
   className,
+  comment,
 }) {
-  const [editHidden, setEditHidden] = useState(true);
-  const [deleteModalHidden, setDeleteModalHidden] = useState(true);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [moreCommentsVisible, setMoreCommentsVisible] = useState(false);
   const [initiallyRendered, setInitiallyRendered] = useState(false);
+  const [numComments, setNumComments] = useState(0);
 
-  const editHandler = () => setEditHidden(false);
+  const editButtonOnClickHandler = () => setEditModalVisible(true);
 
-  const confirmDeleteHandler = () => setDeleteModalHidden(false);
-  const closeDeleteHandler = () => setDeleteModalHidden(true);
+  const confirmDeleteHandler = () => setDeleteModalVisible(true);
+  const closeDeleteHandler = () => setDeleteModalVisible(false);
+
+  async function setNumChildPosts() {
+    setNumComments(await getNumChildPosts(comment.id));
+  }
 
   // Focus the textarea
   const replyClickHandler = () => {
-    replyHandler(commentId, posts[commentId].postBy);
-    document.querySelector(".modal-content textarea").focus();
+    replyHandler(comment.id, comment.postedBy);
+    document.querySelector(".modal .ql-editor").focus();
   };
 
-  const deleteHandler = () => {
-    removePost(commentId);
-    setDeleteModalHidden(true);
+  const deleteHandler = async () => {
+    await deletePost(comment.id);
+    deleteComment(comment.id);
+    setDeleteModalVisible(false);
   };
 
-  const editSubmitHandler = (e) => {
-    e.preventDefault();
-    editPost(commentId, e.target[0].value);
-    setEditHidden(true);
+  const editModalToggler = () => {
+    setEditModalVisible(!editModalVisible);
   };
 
   const moreCommentsHandler = () => {
@@ -58,30 +60,48 @@ export default function Comment({
   };
 
   // If the number of child cocmments to show changes
+  // useEffect(() => {
+  //   if (!initiallyRendered) {
+  //     setInitiallyRendered(true);
+  //   } else {
+  //     setMoreCommentsVisible(true);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [childrenToShow.length]);
+
+  // Fetch the number of child posts (comments) to the current comment
   useEffect(() => {
-    if (!initiallyRendered) {
-      setInitiallyRendered(true);
-    } else {
-      setMoreCommentsVisible(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [childrenToShow.length]);
+    setNumChildPosts();
+  }, []);
 
   // If the user who posted a comment has been deleted, show deletedUserIcon.
-  const avatarSrc =
-    users[posts[commentId].postBy]?.avatarsrc ?? deletedUserIcon;
+  const avatarSrc = comment.user.isDeleted
+    ? deletedUserIcon
+    : comment.user.avatarSrc;
 
   // If the user who posted a post has been deleted, show Delted User.
-  const posterName =
-    users[posts[commentId].postBy] == null
-      ? "Deleted User"
-      : `${users[posts[commentId].postBy]?.firstName} ${
-          users[posts[commentId].postBy]?.lastName
-        }`;
+  const posterName = comment.user.isDeleted
+    ? "Deleted User"
+    : `${comment.user.firstName} ${comment.user.lastName}`;
 
   return (
     <>
-      <Modal show={!deleteModalHidden} onHide={closeDeleteHandler}>
+      <EditModal
+        editModalVisible={editModalVisible}
+        editModalToggler={editModalToggler}
+        postId={comment.id}
+        user={user}
+        post={comment}
+        editStateCallback={editComment}
+        backdropClassName={styles.modalBackdrop}
+        className={styles.modalDialog}
+      />
+      <Modal
+        backdropClassName={styles.modalBackdrop}
+        className={styles.modalDialog}
+        show={deleteModalVisible}
+        onHide={closeDeleteHandler}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Delete Comment</Modal.Title>
         </Modal.Header>
@@ -97,7 +117,7 @@ export default function Comment({
       </Modal>
       <Toast.Header
         closeButton={false}
-        className={`d-flex justify-content-between ${className}`}
+        className={`d-flex justify-content-between `}
       >
         <div className="d-flex ">
           <img
@@ -108,16 +128,18 @@ export default function Comment({
           <div className="d-flex align-items-center">
             <strong className="me-auto">{posterName}</strong>
             <span>&nbsp; &#183; &nbsp;</span>
-            <small>{convertTime(posts[commentId].datePosted)}</small>
+            <small className={styles.time}>
+              {convertTime(comment.datePosted)}
+            </small>
           </div>
         </div>
 
-        {posts[commentId].postBy === user.data.email && (
+        {comment.postedBy === user.data.email && (
           <div>
             <PencilFill
               role="button"
               className={`${styles.icon} ${styles.icons}`}
-              onClick={editHandler}
+              onClick={editButtonOnClickHandler}
               color="royalblue"
             ></PencilFill>
             <TrashFill
@@ -130,23 +152,7 @@ export default function Comment({
         )}
       </Toast.Header>
       <Toast.Body className={`${className} ${styles.toastBody}`}>
-        {editHidden ? (
-          posts[commentId].text
-        ) : (
-          <Form onSubmit={editSubmitHandler}>
-            <Form.Group className="mb-3" controlId="formEditText">
-              <Form.Label visuallyHidden="true">Text</Form.Label>
-              <Form.Control
-                as="textarea"
-                required
-                defaultValue={posts[commentId].text}
-              ></Form.Control>
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Edit
-            </Button>
-          </Form>
-        )}
+        <div dangerouslySetInnerHTML={{ __html: comment.text }} />
 
         <div className="mt-3">
           <span onClick={replyClickHandler} role="button">
@@ -161,10 +167,10 @@ export default function Comment({
               className={`${styles.icons} ${styles.iconMargin}`}
               color="slategrey"
             />
-            <small>{getTotalNumChildPosts(posts[commentId], posts)}</small>
+            <small>{numComments}</small>
           </div>
         </div>
-        {moreCommentsVisible ? (
+        {/* {moreCommentsVisible ? (
           childrenToShow.map((postIdx) => (
             <React.Fragment key={postIdx}>
               <hr></hr>
@@ -189,7 +195,7 @@ export default function Comment({
           ))
         ) : (
           <></>
-        )}
+        )} */}
       </Toast.Body>
     </>
   );

@@ -7,7 +7,7 @@ exports.new = async (req, res) => {
       parentId: null,
       isDeleted: false,
     },
-    limit: 5,
+    limit: 10,
     order: [["datePosted", "DESC"]],
     include: db.user,
   });
@@ -107,7 +107,7 @@ exports.newComments = async (req, res) => {
       parentId: req.params.id,
       isDeleted: false,
     },
-    limit: 5,
+    limit: 10,
     include: db.user,
   });
 
@@ -128,7 +128,7 @@ exports.moreNewComments = async (req, res) => {
       isDeleted: false,
       id: { [db.Op.notIn]: existingIds },
     },
-    limit: 5,
+    limit: 10,
     include: db.user,
   });
 

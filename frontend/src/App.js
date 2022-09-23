@@ -2,7 +2,9 @@ import { useState, useEffect, useReducer } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "./fragments/Footer";
 import NavigationBar from "./fragments/NavigationBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, Routes, Route, useLocation } from "react-router-dom";
+import Comments from "./pages/forum/Comments";
+import Posts from "./pages/forum/Posts";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -96,8 +98,21 @@ function App() {
   //   localStorage.setItem("users", JSON.stringify(users));
   // }, [users]);
 
+  const location = useLocation();
+  const background = location.state && location.state.background;
+
   return (
     <>
+      {/* <Routes location={background || location}>
+        <Route path="/posts/" element={<Posts />}>
+          <Route path="modal" element={<Comments />} />
+        </Route>
+      </Routes>
+      {background && (
+        <Routes>
+          <Route path="modal" element={<Comments />} />
+        </Routes>
+      )} */}
       <NavigationBar isLoggedIn={user.isLoggedIn} dispatchUser={dispatchUser} />
       <Outlet context={[user, dispatchUser]} />
       <Footer />

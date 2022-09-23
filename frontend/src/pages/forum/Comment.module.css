@@ -16,10 +16,27 @@
   padding-right: 0px !important;
 }
 
+/* .toastHeader {
+  padding-right: 0em;
+} */
+
 .toastBody {
   padding-left: 4em;
+  padding-right:4em;
 }
 
 .avatar {
   width: 3.5em;
+}
+
+.modalBackdrop {
+  z-index: 1060 !important;
+}
+
+.modalDialog {
+  z-index: 1065 !important;
+}
+
+.time {
+  padding-right: 1.5em;
 }

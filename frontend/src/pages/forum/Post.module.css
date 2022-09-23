@@ -2,51 +2,33 @@
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);;
 }
 
-.avatar {
-  border: 0.5px solid #666;
-  border-radius: 50%;
-  width: 6vh;
-  height: 6vh;
-}
 
 .name {
   font-weight:500;
-}
-
-.iconMargin {
-  margin-right: 0.5em;
-}
-
-.greyedOutText {
-  color: #666;
-  font-size: 0.875em;
-}
-
-.icons {
-  width: 1.3em;
-  height: 1.3em;
-}
-
-.uploadedImageContainer {
-  max-height: 30vh;
-}
-
-.uploadedImage {
+}.uploadedImage {
   border-radius: 1rem;
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 100% !important;
+  /* max-height: 100% !important;
+  width: auto; */
+  height: auto;
 }
 
-.cardBodyRow {
-  min-height: 5vh;
-}
+
 
 .modalDialog {
 
   width: 100vw !important;
 }
 
-.canvasImageContainers {
+.crudModalBackdrop {
+  z-index: 1060 !important;
+}
+
+.crudModal {
+  z-index: 1065 !important;
+}
+
+/* .canvasImageContainers {
   position: relative;
   width: max-content;
   text-align: center;
@@ -72,4 +54,4 @@
 
 .x:hover {
   background-color: #000;
-}
+} */

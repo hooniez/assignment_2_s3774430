@@ -11,28 +11,32 @@ export default function NavigationBar({ isLoggedIn, dispatchUser }) {
   };
 
   const isLoggedOutJSX = (
-    <>
+    <Nav className="d-flex justify-content-end flex-grow-1">
       <NavLink to="/signup" className="nav-link">
         Sign Up
       </NavLink>
       <NavLink to="/signin" className="nav-link">
         Sign In
       </NavLink>
-    </>
+    </Nav>
   );
 
   const isLoggedInJSX = (
-    <>
-      <NavLink to="/profile" className="nav-link">
-        Profile
-      </NavLink>
-      <NavLink to="/posts" className="nav-link">
-        Posts
-      </NavLink>
-      <Link to="/" className="nav-link" onClick={signOutUser}>
-        Sign Out
-      </Link>
-    </>
+    <Nav className="d-flex justify-content-between flex-grow-1">
+      <div className="d-flex">
+        <NavLink to="/profile" className="nav-link">
+          Profile
+        </NavLink>
+        <NavLink to="/posts" className="nav-link">
+          Posts
+        </NavLink>
+      </div>
+      <div>
+        <Link to="/" className="nav-link" onClick={signOutUser}>
+          Sign Out
+        </Link>
+      </div>
+    </Nav>
   );
 
   return (
@@ -43,9 +47,7 @@ export default function NavigationBar({ isLoggedIn, dispatchUser }) {
         </NavLink>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            {isLoggedIn ? isLoggedInJSX : isLoggedOutJSX}
-          </Nav>
+          {isLoggedIn ? isLoggedInJSX : isLoggedOutJSX}
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -1,11 +1,23 @@
 @media (min-width: 920px) {
   .toast {
-    width: 100%;
-    min-width: 70vw;
-    max-width: 70vw;
+    width: fit-content;
+    max-width: 50vw;
   }
 }
 
 .commentForm {
   width: 50%; 
+}
+
+.toastWrapper {
+  position: relative;
+  width: 50vw;
+  height: 100%;
+}
+
+.modalHeaderContainer {
+  width: 50vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

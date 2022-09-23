@@ -1,0 +1,7 @@
+.uploadedImage {
+  border-radius: 1rem;
+  max-width: 100% !important;
+  /* max-height: 100% !important;
+  width: auto; */
+  height: auto;
+}

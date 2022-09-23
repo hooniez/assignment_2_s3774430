@@ -1,0 +1,64 @@
+.avatar {
+  border: 0.5px solid #666;
+  border-radius: 50%;
+  width: 3em;
+  height: 3em;
+  height: auto;
+}
+
+.verticalLineContainer {
+  /* position: relative; */
+  height: calc(100% - 3em);
+}
+
+.verticalLine {
+  border-left: 1px solid grey;
+  
+}
+
+.contentContainer {
+  padding-left: 1em;
+}
+
+.contentContainer p {
+  margin-bottom: 0.5em;
+  
+}
+
+.uploadedImageContainer {
+
+  max-height: 50vh;
+
+}
+
+.uploadedImage {
+  border-radius: 1rem;
+  max-width: 100% !important;
+  max-height: 50vh !important;
+  width: auto;
+  height: auto;
+}
+
+
+.uploadedImageContainer {
+  margin-bottom: 0.5em;
+
+}
+
+.iconMargin {
+  margin-right: 0.3em;
+}
+
+.greyedOutText {
+  color: #666;
+  font-size: 0.875em;
+}
+
+.icons {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.name {
+  font-weight:500;
+}
