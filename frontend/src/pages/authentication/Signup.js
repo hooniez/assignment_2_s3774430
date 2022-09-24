@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import formatDate from "../util/formatDate";
-import { createUser, findUser } from "../data/repository";
-import MFA from "../fragments/MFA";
+import formatDate from "../../util/formatDate";
+import { createUser, findUser } from "../../data/repository";
+import MFA from "./MFA";
 
 export default function Signup() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
@@ -13,9 +13,8 @@ export default function Signup() {
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
   const [isMFAVisible, setIsMFAVisible] = useState(false);
 
-  const [user, setUser] = useState({});
-
-  const [, dispatchUser, users] = useOutletContext();
+  const [, dispatchUser] = useOutletContext();
+  const [MFApayload, setMFAPayload] = useState(null);
   const navigate = useNavigate();
 
   // a list of avatars from whcih to assign to a user
@@ -86,118 +85,77 @@ export default function Signup() {
     setIsPasswordVisble(!isPasswordVisible);
   };
 
-  const submitHandler = async (event) => {
+  const signupWithoutMFA = async (payload) => {
+    await createUser(payload);
+    dispatchUser({
+      type: "SIGNIN_USER",
+      payload: payload,
+    });
+    navigate("/profile", { state: { justLoggedIn: true } });
+  };
+
+  const signupSubmitHandler = async (event) => {
     event.preventDefault();
 
-    let email = event.target[2].value.toLowerCase();
-    let password = event.target[3].value;
-    let confirmedPassword = event.target[4].value;
+    let email = document.getElementById("formSignupEmail").value.toLowerCase();
+    let password = document.getElementById("formSignupPassword").value;
+    let confirmedPassword = document.getElementById(
+      "formSignupPasswordConfirm"
+    ).value;
 
     // Make sure to check whether all the entries are valid once more
-    if (
-      // validateEmail(email) &&
-      validatePassword(password) &&
-      confirmPassword(confirmedPassword)
-    ) {
+    if (validatePassword(password) && confirmPassword(confirmedPassword)) {
       let payload = {
         email: email,
-        firstName: event.target[0].value,
-        lastName: event.target[1].value,
+        firstName: document.getElementById("formSignupFirstName").value,
+        lastName: document.getElementById("formSignupLastName").value,
         password: confirmedPassword,
         dateJoined: formatDate(),
         avatarSrc: `https://avatars.dicebear.com/api/${
           avatars[Math.floor(Math.random() * avatars.length)]
         }/${email}.svg`,
         isBlocked: false,
-        secretKey: 0,
+        secretKey: null,
       };
-      setUser(payload);
-      await createUser(payload);
-      dispatchUser({
-        type: "SIGNUP_USER",
-        payload: payload,
-      });
-      navigate("/profile", { state: { justLoggedIn: true } });
+      signupWithoutMFA(payload);
+      // setupMFA(payload);
     } else {
       // If not valid, indicate to the user what inputs are not yet validated.
-      // setIsEmailValid(validateEmail(email));
       setIsPasswordValid(validatePassword(password));
       setIsPasswordIdentical(confirmPassword(confirmedPassword));
     }
   };
 
-  // The function gets called within MFA if the user has successfully scanned the QR code and typed in the OTP
-  const signUpAuthenticatedUser = async (secretKey) => {
-    const payload = { ...user, secretKey: secretKey };
-    await createUser(payload);
-    dispatchUser({
-      type: "SIGNUP_USER",
-      payload: payload,
-    });
-    navigate("/profile");
+  const setupMFA = async (payload) => {
+    setMFAPayload(payload);
+    setIsMFAVisible(true);
   };
 
-  // const togglePasswordVisability = () => {
-  //   setIsPasswordVisble(!isPasswordVisible);
-  // };
-
-  // const submitHandler = (event) => {
-  //   event.preventDefault();
-
-  //   let email = event.target[2].value.toLowerCase();
-  //   let password = event.target[3].value;
-  //   let confirmedPassword = event.target[4].value;
-
-  //   // Make sure to check whether all the entries are valid once more
-  //   if (
-  //     validateEmail(email) &&
-  //     validatePassword(password) &&
-  //     confirmPassword(confirmedPassword)
-  //   ) {
-  //     setUser({
-  //       ...user,
-  //       email: email,
-  //       firstName: event.target[0].value,
-  //       lastName: event.target[1].value,
-  //       password: confirmedPassword,
-  //       dateJoined: formatDate(),
-  //       avatarSrc: `https://avatars.dicebear.com/api/${
-  //         avatars[Math.floor(Math.random() * avatars.length)]
-  //       }/${email}.svg`,
-  //       isBlocked: false,
-  //     });
-  //     setIsMFAVisible(true);
-  //   } else {
-  //     // If not valid, indicate to the user what inputs are not yet validated.
-  //     setIsEmailValid(validateEmail(email));
-  //     setIsPasswordValid(validatePassword(password));
-  //     setIsPasswordIdentical(confirmPassword(confirmedPassword));
-  //   }
-  // };
-
-  // // The function gets called within MFA if the user has successfully scanned the QR code and typed in the OTP
-  // const signUpAuthenticatedUser = async (secretKey) => {
-  //   const payload = { ...user, secretKey: secretKey };
-  //   await createUser(payload);
-  //   dispatchUser({
-  //     type: "SIGNUP_USER",
-  //     payload: payload,
-  //   });
-  //   navigate("/profile");
-  // };
+  // The function gets called within MFA if the user has successfully scanned the QR code and typed in the OTP
+  const signupWithMFA = async (secretKey) => {
+    await createUser({ ...MFApayload, secretKey: secretKey });
+    dispatchUser({
+      type: "SIGNIN_USER",
+      payload: { ...MFApayload, secretKey: secretKey },
+    });
+    navigate("/profile", { state: { justLoggedIn: true } });
+  };
 
   return (
     <Container className="component">
-      <MFA
-        show={isMFAVisible}
-        setShow={setIsMFAVisible}
-        hideQRcode={false}
-        onSuccess={signUpAuthenticatedUser}
-        user={user}
-      ></MFA>
+      {MFApayload != null && (
+        <MFA
+          isMFAVisible={isMFAVisible}
+          setIsMFAVisible={setIsMFAVisible}
+          forComponent={"signup"}
+          MFApayload={MFApayload}
+          onSuccess={signupWithMFA}
+        ></MFA>
+      )}
+
       <Row>
         <Col lg={{ span: 4, offset: 4 }}>
-          <Form className="my-5" onSubmit={submitHandler}>
+          <Form className="my-5" onSubmit={signupSubmitHandler}>
             <header className="mb-5">
               <h1 className="text-center">Sign up</h1>
             </header>
@@ -255,9 +213,12 @@ export default function Signup() {
                 isInvalid={!isPasswordIdentical}
                 onChange={confirmPasswordHandler}
               />
-              <Form.Control.Feedback type="invalid">
-                Passwords are not identical
-              </Form.Control.Feedback>
+              {!isPasswordIdentical && (
+                <Form.Control.Feedback type="invalid">
+                  Passwords are not identical
+                </Form.Control.Feedback>
+              )}
+
               <Form.Text className="text-muted mt-1">
                 Use 8 or more character with a mix of lowercase and uppercase
                 letters, numbers & symbols

@@ -4,12 +4,12 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Signup from "./pages/Signup";
+import Signup from "./pages/authentication/Signup";
 import Hero from "./pages/hero/Hero";
 import Profile from "./pages/profile/Profile";
-import SignInForm from "./pages/SignInForm";
+import SignInForm from "./pages/authentication/Signin";
 import Posts from "./pages/forum/Posts";
-import SignUpMFA from "./fragments/MFA";
+import SignUpMFA from "./pages/authentication/MFA";
 import Comments from "./pages/forum/Comments";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

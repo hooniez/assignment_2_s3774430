@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { Form, Button, Modal, Spinner } from "react-bootstrap";
 import axios from "axios";
-import Loading from "../fragments/Loading";
+import Loading from "../../fragments/Loading";
 
-export default function MFA({ show, setShow, onSuccess, hideQRcode, user }) {
+export default function MFA({
+  isMFAVisible,
+  setIsMFAVisible,
+  forComponent,
+  MFApayload,
+  onSuccess,
+}) {
   // When the prop hideQRcode is true, MFA is used in SignInForm
   const [qrcodeSrc, setQrcodeSrc] = useState("");
-  const [secret, setSecret] = useState(user.secret);
+  const [secret, setSecret] = useState(MFApayload.secret);
   const [isOTPcorrect, setIsOTPcorrect] = useState(true);
   const [isLoadingVisible, setIsLoadingVisible] = useState(false);
   const url = "https://google-authenticator.p.rapidapi.com";
@@ -34,7 +40,7 @@ export default function MFA({ show, setShow, onSuccess, hideQRcode, user }) {
       params: {
         secret: secretKey,
         issuer: "lan",
-        account: `${user.firstName} ${user.lastName}`,
+        account: `${MFApayload.firstName} ${MFApayload.lastName}`,
       },
       headers: {
         "X-RapidAPI-Key": apiKey,
@@ -46,16 +52,16 @@ export default function MFA({ show, setShow, onSuccess, hideQRcode, user }) {
   }
 
   useEffect(() => {
-    if (show) {
+    if (isMFAVisible) {
       // If sign-in
-      if (hideQRcode) {
-        setSecret(user.secret);
+      if (forComponent === "signin") {
+        setSecret(MFApayload.secretKey);
       } else {
         getQrCode();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show]);
+  }, [isMFAVisible]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -74,13 +80,13 @@ export default function MFA({ show, setShow, onSuccess, hideQRcode, user }) {
 
     axios.request(options).then((response) => {
       if (response.data === "True") {
-        if (hideQRcode) {
+        if (forComponent === "signin") {
           onSuccess();
         } else {
           onSuccess(secret);
         }
         setIsOTPcorrect(true);
-        setShow(false);
+        setIsMFAVisible(false);
         setIsLoadingVisible(false);
       } else {
         setIsOTPcorrect(false);
@@ -90,27 +96,32 @@ export default function MFA({ show, setShow, onSuccess, hideQRcode, user }) {
   };
 
   const handleClose = () => {
-    setShow(false);
+    setIsMFAVisible(false);
     setIsOTPcorrect(true);
   };
 
   const modalJSX = () => (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={isMFAVisible} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title className="text-center" hidden={hideQRcode}>
-          Scan the QR code in Google Authenticator
-        </Modal.Title>
+        {forComponent !== "signin" && (
+          <Modal.Title className="text-center">
+            Scan the QR code in Google Authenticator
+          </Modal.Title>
+        )}
       </Modal.Header>
       <Modal.Body className="d-flex-column">
-        <div className="d-flex justify-content-center" hidden={hideQRcode}>
-          {qrcodeSrc === "" ? (
-            <Spinner animation="border" role="status" className="my-3">
-              <span className="visually-hidden">Spinner</span>
-            </Spinner>
-          ) : (
-            <img className="my-3" src={qrcodeSrc} alt="QR code" />
-          )}
-        </div>
+        {forComponent !== "signin" && (
+          <div className="d-flex justify-content-center">
+            {qrcodeSrc === "" ? (
+              <Spinner animation="border" role="status" className="my-3">
+                <span className="visually-hidden">Spinner</span>
+              </Spinner>
+            ) : (
+              <img className="my-3" src={qrcodeSrc} alt="QR code" />
+            )}
+          </div>
+        )}
+
         <div className="d-flex justify-content-center">
           <Form onSubmit={submitHandler}>
             <Form.Group className="mb-3 text-center" controlId="authCode">

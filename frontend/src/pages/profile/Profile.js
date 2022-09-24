@@ -34,7 +34,9 @@ export default function Profile() {
   const [editHidden, setEditHidden] = useState(true);
   const [deleteModalHidden, setDeleteModalHidden] = useState(true);
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false);
-  const [avatarUrls, setAvatarUrls] = useState([user.data.avatarSrc]);
+  const [avatarUrls, setAvatarUrls] = useState(
+    user.data !== null && [user.data.avatarSrc]
+  );
   const [currAvatarIdx, setCurrAvatarIdx] = useState(0);
   const [passwordInputHidden, setPasswordInputHidden] = useState(true);
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
@@ -165,7 +167,7 @@ export default function Profile() {
   const deleteHandler = async () => {
     await deleteUser(user.data.email);
     dispatchUser({
-      type: "DELETE_USER",
+      type: "SIGNOUT_USER",
     });
     navigate("/");
   };
@@ -251,7 +253,7 @@ export default function Profile() {
                   <img src={logo} width="50" height="20" />
                 </Toast.Header>
                 <Toast.Body className="text-white">
-                  <strong>{`Welcome, ${user.data.firstName}!`}</strong>
+                  <strong>{`Welcome, ${user.data?.firstName}!`}</strong>
                 </Toast.Body>
               </Toast>
             </ToastContainer>
@@ -307,7 +309,7 @@ export default function Profile() {
             <Card.Body>
               <Card.Title>
                 <h2 hidden={!editHidden}>
-                  {user.data.firstName + " " + user.data.lastName}
+                  {user.data?.firstName + " " + user.data?.lastName}
                 </h2>
               </Card.Title>
               <Form className="my-5" hidden={editHidden} onSubmit={editHandler}>
@@ -320,7 +322,7 @@ export default function Profile() {
                     <Form.Control
                       type="text"
                       required
-                      defaultValue={user.data.firstName}
+                      defaultValue={user.data?.firstName}
                     ></Form.Control>
                   </FloatingLabel>
                 </Form.Group>
@@ -329,7 +331,7 @@ export default function Profile() {
                     <Form.Control
                       type="text"
                       required
-                      defaultValue={user.data.lastName}
+                      defaultValue={user.data?.lastName}
                     ></Form.Control>
                   </FloatingLabel>
                 </Form.Group>
@@ -430,11 +432,11 @@ export default function Profile() {
                 <>
                   <hr />
                   <Card.Subtitle className="mb-2 text-muted">
-                    {user.data.email}
+                    {user.data?.email}
                   </Card.Subtitle>
                   <hr />
                   <Card.Text>
-                    Joined: {new Date(user.data.dateJoined).toDateString()}
+                    Joined: {new Date(user.data?.dateJoined).toDateString()}
                   </Card.Text>
                 </>
               )}

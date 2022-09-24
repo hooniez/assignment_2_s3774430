@@ -10,33 +10,54 @@ exports.all = async (req, res) => {
 
 // Select one user from the database.
 exports.one = async (req, res) => {
-  const user = await db.user.findByPk(req.params.email);
+  const user = await db.user.findOne({
+    where: {
+      email: req.params.email,
+      isDeleted: false,
+    },
+  });
+  console.log(user);
 
   res.json(user);
 };
 
 // Select one user from the database if username and password are a match.
 exports.login = async (req, res) => {
-  const user = await db.user.findByPk(req.query.email);
+  const user = await db.user.findOne({
+    where: {
+      email: req.query.email,
+      isDeleted: false,
+    },
+  });
 
-  if (
-    user === null ||
-    (await argon2.verify(user.passwordHash, req.query.password)) === false
-  )
-    // Login failed.
-    res.json(null);
-  else res.json(user);
+  let error;
+  if (user === null) {
+    error = {"error": "No such user exists"}
+    res.json(error);
+  } else {
+    if ((await argon2.verify(user.passwordHash, req.query.password)) === false) {
+      error = {"error": "Incorrect email or password"}
+      res.json(error);
+    } else if (user.isBlocked) {
+      error = {"error": "The user is blocked"}
+      res.json(error);
+    } else {
+      res.json(user);
+    }
+  }
 };
 
 // Create a user in the database.
 exports.create = async (req, res) => {
-  const hash = await argon2.hash(req.body.password, { type: argon2.argon2id });
+  const passwordHash = await argon2.hash(req.body.password, {
+    type: argon2.argon2id,
+  });
 
   const user = await db.user.create({
     email: req.body.email,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    passwordHash: hash,
+    passwordHash: passwordHash,
     dateJoined: req.body.dateJoined,
     avatarSrc: req.body.avatarSrc,
     isBlocked: req.body.isBlocked,

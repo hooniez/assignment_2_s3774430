@@ -14,7 +14,6 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 // Include models.
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
-db.image = require("./models/image.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
 db.user.hasMany(db.post, {
@@ -30,11 +29,11 @@ db.post.belongsTo(db.user, {
 // Include a sync option with seed data logic included.
 db.sync = async () => {
   // Sync schema.
-  await db.sequelize.sync();
+  // await db.sequelize.sync();
 
   // Can sync with force if the schema has become out of date - note that syncing with force is a destructive operation.
 
-  // await db.sequelize.sync({ force: true });
+  await db.sequelize.sync({ force: true });
 
   await seedData();
 };
@@ -45,34 +44,35 @@ async function seedData() {
   if (!userExists) {
     const argon2 = require("argon2");
 
-    let hash = await argon2.hash("abc123", { type: argon2.argon2id });
+    let hash = await argon2.hash("abcDEF1!", { type: argon2.argon2id });
     await db.user.create({
-      email: "mbolger@gmail.com",
-      firstName: "Matthew",
-      lastName: "Bolger",
+      email: "myeonghoon@gmail.com",
+      firstName: "Myeonghoon",
+      lastName: "Sun",
+      avatarSrc:
+        "https://avatars.dicebear.com/api/bottts/0.7036963182906151.svg",
       passwordHash: hash,
-      avatarSrc: "null",
-      secretKey: "null",
     });
 
-    hash = await argon2.hash("def456", { type: argon2.argon2id });
+    hash = await argon2.hash("abcDEF1!", { type: argon2.argon2id });
     await db.user.create({
-      email: "shekhar@gmail.com",
-      firstName: "Shekhar",
-      lastName: "Kalra",
+      email: "hara@gmail.com",
+      firstName: "Hara",
+      lastName: "Sun",
+      avatarSrc:
+        "https://avatars.dicebear.com/api/adventurer/0.8556760661642577.svg",
       passwordHash: hash,
-      avatarSrc: "null",
-      secretKey: "null",
+      isDeleted: true,
     });
 
-    hash = await argon2.hash("def456", { type: argon2.argon2id });
+    hash = await argon2.hash("abcDEF1!", { type: argon2.argon2id });
     await db.user.create({
-      email: "twiley@gmail.com",
-      firstName: "Timothy",
-      lastName: "Wiley",
+      email: "jihoon@gmail.com",
+      firstName: "Jihoon",
+      lastName: "Sun",
+      avatarSrc: "https://avatars.dicebear.com/api/micah/0.940096983925274.svg",
+      isBlocked: true,
       passwordHash: hash,
-      avatarSrc: "null",
-      secretKey: "null",
     });
   }
 
@@ -81,35 +81,32 @@ async function seedData() {
   if (!postExists) {
     await db.post.create({
       id: 1,
-      postedBy: "shekhar@gmail.com",
+      postedBy: 1,
       parentId: null,
       text: "Hello, my name is sk",
     });
 
     await db.post.create({
-      id: 2,
-      postedBy: "shekhar@gmail.com",
+      postedBy: 1,
       parentId: null,
       text: "Hello again",
     });
 
     await db.post.create({
-      id: 3,
-      postedBy: "mbolger@gmail.com",
+      postedBy: 2,
       parentId: 1,
       text: "Hello sk, i'm bolger",
     });
 
     await db.post.create({
-      id: 4,
-      postedBy: "twiley@gmail.com",
+      postedBy: 3,
       parentId: null,
       text: "Hello world, i'm the T",
     });
 
     await db.post.create({
       id: 5,
-      postedBy: "mbolger@gmail.com",
+      postedBy: 3,
       parentId: 1,
       text: "Hello sk, i'm bolger, but with a passion for saying the same thing twice",
     });

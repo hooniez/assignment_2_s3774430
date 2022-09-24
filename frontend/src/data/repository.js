@@ -79,7 +79,32 @@ async function getMoreComments(id, existingIds) {
   return response.data;
 }
 
-// const 
+const mockUsers = [
+  {
+    id: 1,
+    email: "myeonghoon@gmail.com",
+    firstName: "Myeonghoon",
+    lastName: "Sun",
+    passwordHash: "abcDEF1!",
+    dateJoined: "2022-09-24 06:50:44",
+    avatarSrc: "https://avatars.dicebear.com/api/bottts/0.7036963182906151.svg",
+    isBlocked: false,
+    isDeleted: false,
+    secretKey: null,
+  },
+  {
+    id: 2,
+    email: "hara@gmail.com",
+    firstName: "Hara",
+    lastName: "Sun",
+    passwordHash: "abcDEF1!",
+    dateJoined: "2022-09-24 06:50:44",
+    avatarSrc: "https://avatars.dicebear.com/api/bottts/0.7036963182906151.svg",
+    isBlocked: false,
+    isDeleted: true,
+    secretKey: null,
+  },
+];
 
 export {
   createUser,
@@ -95,4 +120,5 @@ export {
   updatePost,
   getComments,
   getMoreComments,
+  mockUsers,
 };

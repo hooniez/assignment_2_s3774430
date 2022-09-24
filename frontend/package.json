@@ -9,12 +9,6 @@
     "assert": "^2.0.0",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
-    "buffer": "^6.0.3",
-    "crypto": "^1.0.1",
-    "fs": "^0.0.1-security",
-    "https": "^1.0.0",
-    "net": "^1.0.2",
-    "os": "^0.1.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-bootstrap-icons": "^1.8.4",
@@ -23,17 +17,14 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",
-    "tls": "^0.0.1",
-    "twilio": "^3.80.1",
-    "url": "^0.11.0",
-    "util": "^0.12.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "jest-preview": "jest-preview"
   },
   "eslintConfig": {
     "extends": [
@@ -52,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "msw": "^0.47.3"
   }
 }

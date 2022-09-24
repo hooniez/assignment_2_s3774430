@@ -1,6 +1,5 @@
-import Container from "react-bootstrap/esm/Container";
+import { Container, Navbar } from "react-bootstrap";
 import logo from "../logo.png";
-import Navbar from "react-bootstrap/Navbar";
 import styles from "./Footer.module.css";
 
 export default function Footer() {

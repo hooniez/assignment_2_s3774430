@@ -8,12 +8,6 @@ import Posts from "./pages/forum/Posts";
 
 const userReducer = (state, action) => {
   switch (action.type) {
-    case "SIGNUP_USER":
-      return {
-        ...state,
-        data: action.payload,
-        isLoggedIn: true,
-      };
     case "SIGNIN_USER":
       return {
         ...state,
@@ -31,29 +25,6 @@ const userReducer = (state, action) => {
         ...state,
         data: action.payload,
       };
-    case "DELETE_USER":
-      return {
-        ...state,
-        isLoggedIn: false,
-      };
-    case "ADD_POST":
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          posts: [...state.data.posts, action.payload],
-        },
-      };
-    case "DELETE_POST":
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          // Filter out the post the use has just deleted
-          posts: state.data.posts.filter((post) => post !== action.payload),
-        },
-      };
-
     default:
       throw new Error();
   }
@@ -61,17 +32,13 @@ const userReducer = (state, action) => {
 
 function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
-    data: {},
+    data: null,
     isLoggedIn: false,
   });
 
   return (
     <>
-      <NavigationBar
-        isLoggedIn={user.isLoggedIn}
-        dispatchUser={dispatchUser}
-        user={user}
-      />
+      <NavigationBar isLoggedIn={user.isLoggedIn} dispatchUser={dispatchUser} />
       <Outlet context={[user, dispatchUser]} />
       <Footer />
     </>
