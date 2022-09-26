@@ -32,7 +32,8 @@
 }
 
 .avatar {
-  width: 20em;
-  height: 20em;
-  
+  width: 12.5em;
+  height: 12.5em;
+  border: 1px solid #000;
+  border-radius: 50%;
 }

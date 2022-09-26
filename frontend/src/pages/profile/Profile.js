@@ -234,12 +234,7 @@ export default function Profile() {
         </Modal.Footer>
       </Modal>
       <Row className={`${styles.row} py-5`}>
-        <Col
-          xs={{ span: 10, offset: 1 }}
-          sm={{ span: 8, offset: 2 }}
-          lg={{ span: 6, offset: 3 }}
-          xl={{ span: 4, offset: 4 }}
-        >
+        <Col lg={{ span: 6, offset: 3 }}>
           <Card className="position-relative">
             <ToastContainer position="top-center">
               <Toast
@@ -257,9 +252,7 @@ export default function Profile() {
                 </Toast.Body>
               </Toast>
             </ToastContainer>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              {editHidden ? <h1>Profile</h1> : <h1>Edit</h1>}
-
+            <Card.Header className="d-flex justify-content-end align-items-center">
               <div>
                 {editHidden ? (
                   <PencilFill
@@ -286,7 +279,13 @@ export default function Profile() {
                 />
               </div>
             </Card.Header>
-            <div className="position-relative d-flex justify-content-center">
+            <div
+              className={`position-relative d-flex pt-4 ${
+                editHidden
+                  ? "justify-content-between px-4"
+                  : "justify-content-center"
+              }`}
+            >
               <ChevronCompactLeft
                 className={`${styles.chevronCompact} ${styles.chevronCompactLeft}`}
                 role="button"
@@ -296,9 +295,13 @@ export default function Profile() {
               <img
                 variant="top"
                 src={avatarUrls[currAvatarIdx]}
-                className={`mt-5 ${styles.avatar}`}
+                className={`${styles.avatar}`}
                 alt="Avatar"
               />
+              <div hidden={!editHidden}>
+                <Button className="btn-secondary">Follow</Button>
+              </div>
+
               <ChevronCompactRight
                 className={`${styles.chevronCompact} ${styles.chevronCompactRight}`}
                 role="button"
@@ -431,7 +434,6 @@ export default function Profile() {
 
               {editHidden && (
                 <>
-                  <hr />
                   <Card.Subtitle className="mb-2 text-muted">
                     {user.data?.email}
                   </Card.Subtitle>
