@@ -27,7 +27,7 @@ const resUrl = "https://res.cloudinary.com/duc4zmhl7/image/upload";
 export default function PostForm({
   user,
   addPost,
-  addComment,
+
   postId,
   forComments,
   parentPostId,
@@ -43,6 +43,8 @@ export default function PostForm({
   incrementNumChildPosts,
   replyModalToggelr,
   editParentPost,
+  addComment,
+  incrementNumChildPostsRoot,
 }) {
   const [isPostable, setIsPostable] = useState(false);
   const [numCharsTyped, setNumCharsTyped] = useState(
@@ -169,7 +171,7 @@ export default function PostForm({
       };
     } else {
       newPost = {
-        postedBy: user.data.email,
+        postedBy: user.data.id,
         parentId: null,
         text: text,
       };
@@ -198,8 +200,16 @@ export default function PostForm({
             editModalToggler();
           } else {
             if (forComments) {
-              await createPost(newPost);
+              if (addComment == null) {
+                await createPost(newPost);
+              } else {
+                addComment(await createPost(newPost));
+              }
+
               incrementNumChildPosts();
+              if (incrementNumChildPostsRoot != null) {
+                incrementNumChildPostsRoot();
+              }
               resetPostForm();
             } else {
               addPost(await createPost(newPost), forComments, parentPostId);
@@ -215,12 +225,21 @@ export default function PostForm({
         if (!postImgSrc) {
           newPost.imgSrc = null;
         }
+
         editPost(newPost.id, await updatePost(newPost));
         editModalToggler();
       } else {
         if (forComments) {
-          await createPost(newPost);
+          if (addComment == null) {
+            await createPost(newPost);
+          } else {
+            addComment(await createPost(newPost));
+          }
+
           incrementNumChildPosts();
+          if (incrementNumChildPostsRoot != null) {
+            incrementNumChildPostsRoot();
+          }
         } else {
           // for Posts
           addPost(await createPost(newPost));

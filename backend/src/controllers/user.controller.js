@@ -32,14 +32,16 @@ exports.login = async (req, res) => {
 
   let error;
   if (user === null) {
-    error = {"error": "No such user exists"}
+    error = { error: "No such user exists" };
     res.json(error);
   } else {
-    if ((await argon2.verify(user.passwordHash, req.query.password)) === false) {
-      error = {"error": "Incorrect email or password"}
+    if (
+      (await argon2.verify(user.passwordHash, req.query.password)) === false
+    ) {
+      error = { error: "Incorrect email or password" };
       res.json(error);
     } else if (user.isBlocked) {
-      error = {"error": "The user is blocked"}
+      error = { error: "The user is blocked" };
       res.json(error);
     } else {
       res.json(user);
@@ -81,7 +83,6 @@ exports.delete = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
-  console.log(req.body);
   let user;
 
   if (Object.keys(req.body).includes("password")) {
@@ -90,7 +91,7 @@ exports.edit = async (req, res) => {
       type: argon2.argon2id,
     });
 
-    user = await db.user.update(
+    ret = await db.user.update(
       {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -103,7 +104,7 @@ exports.edit = async (req, res) => {
     );
   } else {
     console.log("doesn't include");
-    user = await db.user.update(
+    ret = await db.user.update(
       {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -114,5 +115,6 @@ exports.edit = async (req, res) => {
       }
     );
   }
-  return res.json(user);
+
+  return res.json(ret);
 };

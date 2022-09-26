@@ -55,7 +55,7 @@ test("Do not show 'Passwords are identical' when identical passwords are typed",
   fireEvent.change(confirmInput, { target: { value: "abcDEF1!" } });
 
   fireEvent.click(signupSubmitButton);
-
+  
   expect(screen.queryByText("Passwords are not identical")).toBeNull();
 });
 

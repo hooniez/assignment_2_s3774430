@@ -8,9 +8,10 @@ export default function ReplyModal({
   backdropClassName,
   post,
   user,
-
+  addComment,
   numComments,
   incrementNumChildPosts,
+  incrementNumChildPostsRoot
 }) {
   return (
     <Modal
@@ -33,6 +34,8 @@ export default function ReplyModal({
             numComments={numComments}
             isReplying={true}
             incrementNumChildPosts={incrementNumChildPosts}
+            incrementNumChildPostsRoot={incrementNumChildPostsRoot}
+            addComment={addComment}
           />
         </Container>
       </Modal.Body>

@@ -36,11 +36,14 @@ import DeleteModal from "./DeleteModal";
 export default function Post({
   post,
   user,
-  addPost,
+  addComment,
   removePost,
   editPost,
   editParentPost,
   rootPost,
+  incrementNumChildPostsRoot,
+  decrementNumChildPostsRoot,
+  numCommentsRoot,
 }) {
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -52,7 +55,8 @@ export default function Post({
   const [imgSrc, setImgSrc] = useState(post.imgSrc);
 
   async function setNumChildPosts() {
-    setNumComments(await getNumChildPosts(post.id));
+    const numChildPosts = await getNumChildPosts(post.id);
+    setNumComments(numChildPosts);
   }
 
   const incrementNumChildPosts = () => {
@@ -78,11 +82,15 @@ export default function Post({
   const deleteModalToggler = () => setDeleteModalVisible(!deleteModalVisible);
 
   const deletePostHandler = async () => {
+    // If it is the root post being deleted
     if (rootPost) {
       commentsModalToggler();
     }
     await deletePost(post.id);
     removePost(post.id);
+
+    decrementNumChildPostsRoot();
+
     deleteModalToggler();
   };
 
@@ -111,7 +119,7 @@ export default function Post({
 
   return (
     <>
-      <Card className={`my-4 ${styles.boxShadow} `}>
+      <Card data-test-post={post.id} className={`my-4 ${styles.boxShadow} `}>
         <Card.Body>
           <PostContent
             post={post}
@@ -123,6 +131,7 @@ export default function Post({
             replyModalToggler={replyModalToggler}
             numComments={numComments}
             isReplying={false}
+            numCommentsRoot={numCommentsRoot}
           />
         </Card.Body>
       </Card>
@@ -132,6 +141,7 @@ export default function Post({
         className={styles.crudModal}
         backdropClassName={styles.crudModalBackdrop}
         deletePostHandler={deletePostHandler}
+        decrementNumChildPostsRoot={decrementNumChildPostsRoot}
       />
       <EditModal
         editModalVisible={editModalVisible}
@@ -156,6 +166,8 @@ export default function Post({
         user={user}
         numComments={numComments}
         incrementNumChildPosts={incrementNumChildPosts}
+        addComment={addComment}
+        incrementNumChildPostsRoot={incrementNumChildPostsRoot}
       />
 
       <ImageModal
@@ -175,6 +187,8 @@ export default function Post({
           commentsModalToggler={commentsModalToggler}
           editPost={editPost}
           removePost={removePost}
+          incrementNumChildPostsRoot={incrementNumChildPosts}
+          decrementNumChildPostsRoot={decrementNumChildPosts}
         ></Comments>
       )}
     </>

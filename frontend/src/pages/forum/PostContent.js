@@ -24,6 +24,9 @@ export default function PostContent({
   replyModalToggler,
   isReplying,
   incrementNumChildPosts,
+  incrementNumChildPostsRoot,
+  addComment,
+  numCommentsRoot,
 }) {
   // const location = useLocation();
   // If the user who posted a post has been deleted, show deletedUserIcon.
@@ -33,6 +36,9 @@ export default function PostContent({
   const posterName = post.user.isDeleted
     ? "Deleted User"
     : `${post.user.firstName} ${post.user.lastName}`;
+
+  // If the user who posted a post has been deleted, show nothing.
+  const posterEmail = post.user.isDeleted ? "" : `${post.user.email}`;
 
   return (
     <>
@@ -59,11 +65,13 @@ export default function PostContent({
           <div className="d-flex justify-content-between pb-1">
             <div>
               <span className={styles.name}>{posterName}</span>
-              <span>&nbsp;&#183;&nbsp;</span>
               {!post.user.isDeleted && (
-                <span
-                  className={styles.greyedOutText}
-                >{`${post.postedBy}`}</span>
+                <>
+                  <span>&nbsp;&#183;&nbsp;</span>
+                  <span
+                    className={styles.greyedOutText}
+                  >{`${posterEmail}`}</span>
+                </>
               )}
 
               <span>&nbsp;&#183;&nbsp;</span>
@@ -72,15 +80,17 @@ export default function PostContent({
               </span>
             </div>
 
-            {post.postedBy === user.data.email && !isReplying && (
+            {post.postedBy === user.data.id && !isReplying && (
               <div>
                 <PencilFill
+                  title={`pencil${post.id}`}
                   color="royalblue"
                   role="button"
                   onClick={editModalToggler}
                   className={`${styles.iconMargin} ${styles.icons}`}
                 ></PencilFill>
                 <TrashFill
+                  title={`trash${post.id}`}
                   color="royalblue"
                   role="button"
                   onClick={deleteModalToggler}
@@ -113,9 +123,11 @@ export default function PostContent({
           {/* </div> */}
           {/* </Col> */}
           {!isReplying && (
-            <Row>
+            <Row className="mt-3">
               <Col xs={3}>
                 <ArrowReturnRight
+                  title={`arrow${post.id}`}
+                  data-test-icon={`arrow${post.id}`}
                   role="button"
                   onClick={replyModalToggler}
                 ></ArrowReturnRight>
@@ -138,10 +150,16 @@ export default function PostContent({
                   role="button"
                 >
                   <Chat
+                    data-test-icon={`chat${post.id}`}
                     className={`${styles.iconMargin} ${styles.icons}`}
                     color="slategrey"
                   />
-                  <span className={styles.greyedOutText}>{numComments}</span>
+                  <span
+                    data-test-span={`numComments${post.id}`}
+                    className={styles.greyedOutText}
+                  >
+                    {numCommentsRoot == null ? numComments : numCommentsRoot}
+                  </span>
                 </div>
               </Col>
               <Col xs={3}>
@@ -173,11 +191,13 @@ export default function PostContent({
             // addComment={addComment}
             // deleteComment={deleteComment}
             // postId={commentId}
+            addComment={addComment}
             forComments={true}
             parentPostId={post.id}
-            replyTo={post.postedBy}
+            replyTo={post.user.email}
             post={null}
             incrementNumChildPosts={incrementNumChildPosts}
+            incrementNumChildPostsRoot={incrementNumChildPostsRoot}
             replyModalToggelr={replyModalToggler}
           />
         </>

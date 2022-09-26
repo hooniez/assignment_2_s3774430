@@ -65,6 +65,7 @@ exports.countById = async (req, res) => {
       isDeleted: false,
     },
   });
+
   res.json(count);
 };
 
@@ -95,7 +96,6 @@ exports.edit = async (req, res) => {
       });
     })
     .then((post) => {
-      console.log(post);
       res.json(post);
     });
 };

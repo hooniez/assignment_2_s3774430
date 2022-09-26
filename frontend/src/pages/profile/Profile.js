@@ -121,8 +121,8 @@ export default function Profile() {
     if (passwordInputHidden) {
       payload = {
         ...payload,
-        firstName: event.target[0].value,
-        lastName: event.target[1].value,
+        firstName: document.getElementById("floatingFirstName").value,
+        lastName: document.getElementById("floatingLastName").value,
         avatarSrc: avatarUrls[currAvatarIdx],
       };
       await editUser(payload);
@@ -144,8 +144,8 @@ export default function Profile() {
         console.log("hello");
         payload = {
           ...payload,
-          firstName: event.target[0].value,
-          lastName: event.target[1].value,
+          firstName: document.getElementById("floatingFirstName").value,
+          lastName: document.getElementById("floatingLastName").value,
           avatarSrc: avatarUrls[currAvatarIdx],
           password: event.target[4].value,
         };
@@ -267,6 +267,7 @@ export default function Profile() {
                     color="royalblue"
                     role="button"
                     onClick={editShowHandler}
+                    data-test-icon="pencil"
                   />
                 ) : (
                   <PersonCircle

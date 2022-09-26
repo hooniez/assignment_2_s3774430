@@ -104,7 +104,55 @@ const mockUsers = [
     isDeleted: true,
     secretKey: null,
   },
+  {
+    id: 3,
+    email: "jihoon@gmail.com",
+    firstName: "Jihoon",
+    lastName: "Sun",
+    passwordHash: "abcDEF1!",
+    dateJoined: "2022-09-24 06:50:44",
+    avatarSrc: "https://avatars.dicebear.com/api/micah/0.940096983925274.svg",
+    isBlocked: false,
+    isDeleted: false,
+    secretKey: null,
+  },
 ];
+
+const mockPost = [
+  {
+    id: 1,
+    postedBy: 1,
+    parentId: null,
+    text: "Hello, is anyone on the forum?",
+    datePosted: "2022-09-25 09:39:18",
+    imgSrc: null,
+    isDeleted: 0,
+    user: mockUsers[0]
+  },
+];
+
+const mockComments = [
+  {
+    id: 2,
+    postedBy: 1,
+    parentId: 1,
+    text: "Please disregard this message. I was lonely",
+    datePosted: "2022-09-25 09:49:18",
+    imgSrc: null,
+    isDeleted: 0,
+    user: mockUsers[0]
+  },
+  {
+    id: 3,
+    postedBy: 3,
+    parentId: 1,
+    text: "Oh, Myeonghoon! I'm lonely too :(",
+    datePosted: "2022-09-25 09:59:18",
+    imgSrc: null,
+    isDeleted: 0,
+    user: mockUsers[2]
+  },
+]
 
 export {
   createUser,
@@ -121,4 +169,6 @@ export {
   getComments,
   getMoreComments,
   mockUsers,
+  mockPost,
+  mockComments,
 };

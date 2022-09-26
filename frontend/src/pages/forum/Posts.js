@@ -16,15 +16,16 @@ import { getMoreComments } from "../../data/repository";
 export default function Posts({
   parentPost,
   defaultUser,
-  scrollableComponent,
   editParentPost,
   removeParentPost,
+  incrementNumChildPostsRoot,
+  decrementNumChildPostsRoot,
+  numComments,
 }) {
   const [user = defaultUser, dispatchUser] = useOutletContext();
   const [posts, setPosts] = useState([]);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const mostOuterElement = useRef(null);
-  const postLimits = 10;
 
   async function loadPosts() {
     let newPosts;
@@ -42,6 +43,8 @@ export default function Posts({
       }
     }
   }
+
+  
 
   // Load posts
   useEffect(() => {
@@ -134,6 +137,10 @@ export default function Posts({
     setPosts([...posts]);
   };
 
+  const addComment = (post) => {
+    setPosts([...posts, post]);
+  };
+
   // Every time a post is added, edited, or deleted, update localStorage
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
@@ -149,9 +156,12 @@ export default function Posts({
                 <Post
                   post={parentPost}
                   user={user}
+                  addComment={addComment}
                   editPost={editParentPost}
                   rootPost={true}
                   removePost={removeParentPost}
+                  incrementNumChildPostsRoot={incrementNumChildPostsRoot}
+                  numCommentsRoot={numComments}
                 ></Post>
               ) : (
                 <Card className="mt-5">
@@ -184,6 +194,8 @@ export default function Posts({
                   addPost={addPost}
                   removePost={removePost}
                   editPost={editPost}
+                  
+                  decrementNumChildPostsRoot={decrementNumChildPostsRoot}
                 ></Post>
               ))}
               <div className="text-center mt-5">
