@@ -11,7 +11,12 @@ import {
   Megaphone,
 } from "react-bootstrap-icons";
 import PostForm from "./PostForm";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  findUser,
+  getAllFollowers,
+  getAllFollowing,
+} from "../../data/repository";
 
 export default function PostContent({
   post,
@@ -28,7 +33,7 @@ export default function PostContent({
   addComment,
   numCommentsRoot,
 }) {
-  // const location = useLocation();
+  let navigate = useNavigate();
   // If the user who posted a post has been deleted, show deletedUserIcon.
   const avatarSrc = post.user.isDeleted ? deletedUserIcon : post.user.avatarSrc;
 
@@ -40,26 +45,30 @@ export default function PostContent({
   // If the user who posted a post has been deleted, show nothing.
   const posterEmail = post.user.isDeleted ? "" : `${post.user.email}`;
 
+  const visitProfile = async () => {
+    console.log(post.user);
+    navigate(`../profiles/${posterEmail}`, {
+      state: {
+        user: await findUser(posterEmail),
+        justLoggedIn: false,
+        following: await getAllFollowing(post.user.id),
+        followers: await getAllFollowers(post.user.id),
+      },
+    });
+  };
+
   return (
     <>
       <div className="d-flex">
-        {isReplying ? (
-          <div>
-            <img
-              src={avatarSrc}
-              className={`${styles.avatar}`}
-              alt="Avatar"
-            ></img>
-          </div>
-        ) : (
-          <div>
-            <img
-              src={avatarSrc}
-              className={`${styles.avatar}`}
-              alt="Avatar"
-            ></img>
-          </div>
-        )}
+        <div>
+          <img
+            src={avatarSrc}
+            className={`${styles.avatar}`}
+            alt="Avatar"
+            onClick={visitProfile}
+            role="button"
+          ></img>
+        </div>
 
         <div className={`${styles.contentContainer} flex-grow-1`}>
           <div className="d-flex justify-content-between pb-1">

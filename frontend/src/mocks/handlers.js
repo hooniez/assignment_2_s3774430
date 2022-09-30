@@ -1,31 +1,27 @@
 import { rest } from "msw";
-import { mockComments, mockPost } from "../data/repository";
+import {
+  mockComments,
+  mockPost,
+  mockUsers,
+  mockPostToAdd,
+} from "../data/repository";
 
 const API_HOST = "http://localhost:4000";
 
 // API calls being mocked
 export const handlers = [
+  // findUser(email) in repository.js mocked below
+  rest.get(`${API_HOST}/api/users/select/:email`, (req, res, ctx) => {
+    return res(ctx.json(mockUsers[0]));
+  }),
+
   // verifyUser(email, password) in repository.js mocked below
   rest.get(`${API_HOST}/api/users/login`, (req, res, ctx) => {
     const email = req.url.searchParams.get("email");
     const password = req.url.searchParams.get("password");
     // If the user is successfully verified,
     if (email === "myeonghoon@gmail.com" && password === "abcDEF1!") {
-      return res(
-        ctx.json({
-          avatarSrc:
-            "https://avatars.dicebear.com/api/bottts/0.7036963182906151.svg",
-          dateJoined: "2022-09-24T04:48:41.000Z",
-          email: "myeonghoon@gmail.com",
-          firstName: "Myeonghoon",
-          id: 1,
-          isBlocked: false,
-          isDeleted: false,
-          lastName: "Sun",
-          passwordHash: "abcDEF1!",
-          secretKey: null,
-        })
-      );
+      return res(ctx.json(mockUsers[0]));
     } else if (email === "myeonghoon@gmail.com" && password !== "abcDEF1!") {
       return res(ctx.json({ error: "Incorrect email or password" }));
     } else if (email === "hara@gmail.com" && password === "abcDEF1!") {
@@ -69,5 +65,20 @@ export const handlers = [
   // updatePost(post) in repository.js mocked below
   rest.put(API_HOST + "/api/posts", (req, res, ctx) => {
     return res(ctx.json([1]));
+  }),
+
+  // createPost(post) in repository.js mocked below
+  rest.post(API_HOST + "/api/posts", (req, res, ctx) => {
+    return res(ctx.json(mockPostToAdd));
+  }),
+
+  // getAllFollowing(id) in repository.js mocked below
+  rest.get(API_HOST + `/api/follows/getAllFollowing/:id`, (req, res, ctx) => {
+    return res(ctx.json([]));
+  }),
+
+  // getAllFollowers(id) in repository.js mocked below
+  rest.get(API_HOST + `/api/follows/getAllFollowers/:id`, (req, res, ctx) => {
+    return res(ctx.json([]));
   }),
 ];

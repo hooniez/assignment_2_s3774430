@@ -11,6 +11,7 @@ import SignInForm from "./pages/authentication/Signin";
 import Posts from "./pages/forum/Posts";
 import SignUpMFA from "./pages/authentication/MFA";
 import Comments from "./pages/forum/Comments";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,7 +20,7 @@ root.render(
       <Route path="/" element={<App />}>
         <Route path="/" element={<Hero />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profiles/:email" element={<Profile />} />
         <Route path="/signin" element={<SignInForm />} />
         <Route path="/posts" element={<Posts key={0} />} />
       </Route>

@@ -16,7 +16,6 @@ exports.one = async (req, res) => {
       isDeleted: false,
     },
   });
-  console.log(user);
 
   res.json(user);
 };

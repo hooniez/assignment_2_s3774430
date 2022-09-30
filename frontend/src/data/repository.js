@@ -79,6 +79,40 @@ async function getMoreComments(id, existingIds) {
   return response.data;
 }
 
+// Follow
+
+// Create a follow entry
+async function follow(followingEmail, followedEmail) {
+  const response = await axios.post(
+    API_HOST + `/api/follows/${followingEmail}/${followedEmail}`
+  );
+  return response.data;
+}
+
+// Delete a follow entry
+async function unfollow(followingEmail, followedEmail) {
+  const response = await axios.delete(
+    API_HOST + `/api/follows/${followingEmail}/${followedEmail}`
+  );
+  return response.data;
+}
+
+// Get all the users whom the logged-in user follows
+async function getAllFollowing(id) {
+  const response = await axios.get(
+    API_HOST + `/api/follows/getAllFollowing/${id}`
+  );
+  return response.data;
+}
+
+// Get all users who are following the logged-in user
+async function getAllFollowers(id) {
+  const response = await axios.get(
+    API_HOST + `/api/follows/getAllFollowers/${id}`
+  );
+  return response.data;
+}
+
 const mockUsers = [
   {
     id: 1,
@@ -123,13 +157,24 @@ const mockPost = [
     id: 1,
     postedBy: 1,
     parentId: null,
-    text: "Hello, is anyone on the forum?",
+    text: "<p>Hello, is anyone on the forum?</p>",
     datePosted: "2022-09-25 09:39:18",
     imgSrc: null,
     isDeleted: 0,
-    user: mockUsers[0]
+    user: mockUsers[0],
   },
 ];
+
+const mockPostToAdd = {
+  id: 4,
+  postedBy: 1,
+  parentId: null,
+  text: "<p>Hey everyone</p>",
+  datePosted: "2022-09-25 10:00:18",
+  imgSrc: null,
+  isDeleted: 0,
+  user: mockUsers[0],
+};
 
 const mockComments = [
   {
@@ -140,7 +185,7 @@ const mockComments = [
     datePosted: "2022-09-25 09:49:18",
     imgSrc: null,
     isDeleted: 0,
-    user: mockUsers[0]
+    user: mockUsers[0],
   },
   {
     id: 3,
@@ -150,9 +195,9 @@ const mockComments = [
     datePosted: "2022-09-25 09:59:18",
     imgSrc: null,
     isDeleted: 0,
-    user: mockUsers[2]
+    user: mockUsers[2],
   },
-]
+];
 
 export {
   createUser,
@@ -171,4 +216,9 @@ export {
   mockUsers,
   mockPost,
   mockComments,
+  mockPostToAdd,
+  follow,
+  unfollow,
+  getAllFollowing,
+  getAllFollowers,
 };

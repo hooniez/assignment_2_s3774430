@@ -88,8 +88,9 @@ export default function Post({
     }
     await deletePost(post.id);
     removePost(post.id);
-
-    decrementNumChildPostsRoot();
+    if (decrementNumChildPostsRoot) {
+      decrementNumChildPostsRoot();
+    }
 
     deleteModalToggler();
   };

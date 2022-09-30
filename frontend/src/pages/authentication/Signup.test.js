@@ -55,7 +55,7 @@ test("Do not show 'Passwords are identical' when identical passwords are typed",
   fireEvent.change(confirmInput, { target: { value: "abcDEF1!" } });
 
   fireEvent.click(signupSubmitButton);
-  
+
   expect(screen.queryByText("Passwords are not identical")).toBeNull();
 });
 
@@ -87,4 +87,3 @@ test("Show 2 instacnes of 'Use 8 or more character with a mix of lowercase and u
     )
   ).toHaveLength(2);
 });
-

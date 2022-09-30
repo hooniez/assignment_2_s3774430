@@ -43,7 +43,7 @@ beforeEach(async () => {
       <Routes>
         <Route path="/" element={<App />}>
           <Route path="/signin" element={<Signin />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profiles/:email" element={<Profile />} />
           <Route path="/posts" element={<Posts />} />
         </Route>
       </Routes>

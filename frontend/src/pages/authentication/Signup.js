@@ -86,12 +86,13 @@ export default function Signup() {
   };
 
   const signupWithoutMFA = async (payload) => {
-    await createUser(payload);
     dispatchUser({
       type: "SIGNIN_USER",
       payload: payload,
     });
-    navigate("/profile", { state: { justLoggedIn: true } });
+    navigate(`/profiles/${payload.email}`, {
+      state: { user: await createUser(payload), justLoggedIn: true },
+    });
   };
 
   const signupSubmitHandler = async (event) => {
@@ -138,7 +139,9 @@ export default function Signup() {
       type: "SIGNIN_USER",
       payload: { ...MFApayload, secretKey: secretKey },
     });
-    navigate("/profile", { state: { justLoggedIn: true } });
+    navigate(`/profiles/${MFApayload.email}`, {
+      state: { justLoggedIn: true },
+    });
   };
 
   return (

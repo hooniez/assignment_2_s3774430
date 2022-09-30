@@ -162,7 +162,7 @@ export default function PostForm({
       `#${imageUploaderControlId}`
     ).files;
     // Create a general JSON object containing information about post
-    console.log(e);
+
     let newPost;
     if (isEditing) {
       newPost = {

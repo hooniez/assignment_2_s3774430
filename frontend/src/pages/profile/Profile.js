@@ -3,15 +3,11 @@ import {
   Card,
   Container,
   Form,
-  Tabs,
-  Tab,
   Button,
   Modal,
   Row,
   Col,
   Spinner,
-  Carousel,
-  CarouselItem,
   FloatingLabel,
   Toast,
   ToastContainer,
@@ -22,21 +18,24 @@ import {
   ChevronCompactRight,
   PencilFill,
   PersonCircle,
-  Shuffle,
   TrashFill,
 } from "react-bootstrap-icons";
 import logo from "../../logo.png";
 import styles from "./Profile.module.css";
-import { deleteUser, editUser, verifyUser } from "../../data/repository";
+import {
+  deleteUser,
+  editUser,
+  verifyUser,
+  follow,
+  unfollow,
+} from "../../data/repository";
+import Posts from "../forum/Posts";
 
 export default function Profile() {
   const [user, dispatchUser, ,] = useOutletContext();
   const [editHidden, setEditHidden] = useState(true);
   const [deleteModalHidden, setDeleteModalHidden] = useState(true);
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false);
-  const [avatarUrls, setAvatarUrls] = useState(
-    user.data !== null && [user.data.avatarSrc]
-  );
   const [currAvatarIdx, setCurrAvatarIdx] = useState(0);
   const [passwordInputHidden, setPasswordInputHidden] = useState(true);
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
@@ -45,8 +44,17 @@ export default function Profile() {
   const [isPasswordMatched, setIsPasswordMatched] = useState(true);
   const { state } = useLocation();
   const [welcomeToastVisible, setWelcomeToastVisible] = useState(
-    state == null ? false : state.justLoggedIn
+    state.justLoggedIn
   );
+  const [avatarUrls, setAvatarUrls] = useState(
+    state.user !== null && [state.user.avatarSrc]
+  );
+  // States related to follow
+  const [isFollowed, setIsFollowed] = useState(
+    user.following?.includes(state.user.id)
+  );
+  const [following, setFollowing] = useState(state.following);
+  const [followers, setFollowers] = useState(state.followers);
 
   const newPasswordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
@@ -139,7 +147,6 @@ export default function Profile() {
       const password = event.target[3].value;
 
       const currUser = await verifyUser(user.data.email, password);
-      console.log(currUser);
       if (currUser !== null) {
         console.log("hello");
         payload = {
@@ -217,8 +224,27 @@ export default function Profile() {
     }/${Math.random()}.svg`;
   };
 
+  const getMonthAndYear = () => {
+    let dateUnits = new Date(state.user.dateJoined).toDateString().split(" ");
+    return dateUnits[1] + " " + dateUnits[3];
+  };
+
+  const followHandler = async () => {
+    if (!isFollowed) {
+      await follow(user.data.email, state.user.email);
+      setIsFollowed(true);
+      setFollowers([...followers, user.data.id]);
+    } else {
+      await unfollow(user.data.email, state.user.email);
+      setIsFollowed(false);
+      setFollowers(
+        followers.filter((followerId) => followerId != user.data.id)
+      );
+    }
+  };
+
   return (
-    <Container>
+    <Container key={state.user.id}>
       <Modal show={!deleteModalHidden} onHide={closeDeleteHandler}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Account</Modal.Title>
@@ -253,31 +279,33 @@ export default function Profile() {
               </Toast>
             </ToastContainer>
             <Card.Header className="d-flex justify-content-end align-items-center">
-              <div>
-                {editHidden ? (
-                  <PencilFill
-                    className={`${styles.icons} ${styles.pencil}`}
-                    color="royalblue"
-                    role="button"
-                    onClick={editShowHandler}
-                    data-test-icon="pencil"
-                  />
-                ) : (
-                  <PersonCircle
-                    className={`${styles.icons} ${styles.pencil}`}
-                    color="royalblue"
-                    role="button"
-                    onClick={clickSubmitButton}
-                  />
-                )}
+              {user.data?.id === state.user.id && (
+                <div>
+                  {editHidden ? (
+                    <PencilFill
+                      className={`${styles.icons} ${styles.pencil}`}
+                      color="royalblue"
+                      role="button"
+                      onClick={editShowHandler}
+                      data-test-icon="pencil"
+                    />
+                  ) : (
+                    <PersonCircle
+                      className={`${styles.icons} ${styles.pencil}`}
+                      color="royalblue"
+                      role="button"
+                      onClick={clickSubmitButton}
+                    />
+                  )}
 
-                <TrashFill
-                  className={styles.icons}
-                  onClick={confirmDeleteHandler}
-                  color="royalblue"
-                  role="button"
-                />
-              </div>
+                  <TrashFill
+                    className={styles.icons}
+                    onClick={confirmDeleteHandler}
+                    color="royalblue"
+                    role="button"
+                  />
+                </div>
+              )}
             </Card.Header>
             <div
               className={`position-relative d-flex pt-4 ${
@@ -298,9 +326,13 @@ export default function Profile() {
                 className={`${styles.avatar}`}
                 alt="Avatar"
               />
-              <div hidden={!editHidden}>
-                <Button className="btn-secondary">Follow</Button>
-              </div>
+              {user.data?.id !== state.user.id && (
+                <div hidden={!editHidden}>
+                  <Button className="btn-secondary" onClick={followHandler}>
+                    {isFollowed ? "Unfollow" : "Follow"}
+                  </Button>
+                </div>
+              )}
 
               <ChevronCompactRight
                 className={`${styles.chevronCompact} ${styles.chevronCompactRight}`}
@@ -313,7 +345,9 @@ export default function Profile() {
             <Card.Body>
               <Card.Title>
                 <h2 hidden={!editHidden}>
-                  {user.data?.firstName + " " + user.data?.lastName}
+                  {user.data?.id === state.user.id
+                    ? user.data?.firstName + " " + user.data?.lastName
+                    : state.user.firstName + " " + state.user.lastName}
                 </h2>
               </Card.Title>
               <Form className="my-5" hidden={editHidden} onSubmit={editHandler}>
@@ -434,17 +468,30 @@ export default function Profile() {
 
               {editHidden && (
                 <>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    {user.data?.email}
+                  <Card.Subtitle className="mb-4 text-muted">
+                    {user.data?.id == state.user.id
+                      ? user.data?.email
+                      : state.user.email}
                   </Card.Subtitle>
-                  <hr />
-                  <Card.Text>
-                    Joined: {new Date(user.data?.dateJoined).toDateString()}
-                  </Card.Text>
+
+                  <Card.Subtitle className="mb-4 text-muted">
+                    Joined: {getMonthAndYear()}
+                  </Card.Subtitle>
+                  <Card.Subtitle className="d-flex">
+                    <div className="me-2">
+                      <strong>{following.length}</strong>
+                      <small className="text-muted"> Following</small>
+                    </div>
+                    <div>
+                      <strong>{followers.length}</strong>
+                      <small className="text-muted"> Followers</small>
+                    </div>
+                  </Card.Subtitle>
                 </>
               )}
             </Card.Body>
           </Card>
+          {(isFollowed || (user.data.id === state.user.id)) && (<Posts></Posts>)}
         </Col>
       </Row>
     </Container>

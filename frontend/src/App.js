@@ -25,6 +25,17 @@ const userReducer = (state, action) => {
         ...state,
         data: action.payload,
       };
+    case "UPDATE_FOLLOWING":
+      return {
+        ...state,
+        following: action.payload,
+      };
+    case "UPDATE_FOLLOWERS":
+      return {
+        ...state,
+        followers: action.payload,
+      };
+
     default:
       throw new Error();
   }
@@ -33,12 +44,19 @@ const userReducer = (state, action) => {
 function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
     data: null,
+    following: null,
+    followed: null,
+    followers: null,
     isLoggedIn: false,
   });
 
   return (
     <>
-      <NavigationBar isLoggedIn={user.isLoggedIn} dispatchUser={dispatchUser} />
+      <NavigationBar
+        user={user}
+        isLoggedIn={user.isLoggedIn}
+        dispatchUser={dispatchUser}
+      />
       <Outlet context={[user, dispatchUser]} />
       <Footer />
     </>

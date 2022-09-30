@@ -13,11 +13,7 @@ import Posts from "./Posts";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { act } from "react-dom/test-utils";
-import { mockUsers } from "../../data/repository";
-import { unmountComponentAtNode } from "react-dom";
-import { JustifyLeft } from "react-bootstrap-icons";
-import { hasUncaughtExceptionCaptureCallback } from "process";
-import { edit } from "../../../../backend/src/controllers/post.controller";
+import { mockUsers, mockPostToAdd } from "../../data/repository";
 
 let utils;
 let users;
@@ -46,7 +42,7 @@ beforeEach(async () => {
       <Routes>
         <Route path="/" element={<App />}>
           <Route path="/signin" element={<Signin />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profiles/:email" element={<Profile />} />
           <Route path="/posts" element={<Posts />} />
         </Route>
       </Routes>
@@ -73,8 +69,7 @@ beforeEach(async () => {
   });
   // assign post with the mock post outer most div
   post = container.querySelector("[data-test-post='1']");
-  commentsButton = post.querySelector("[data-test-icon='chat1']");
-  numComments = post.querySelector("[data-test-span='numComments1']");
+
   postFromTextField = container.querySelector("[contenteditable='true']");
 });
 
@@ -86,7 +81,7 @@ afterEach(() => {
 test("Correctly display a new post when it is added via the PostForm component and an updated post when an existing post is edited via the EditModal", async () => {
   // Type in text
   await act(async () => {
-    postFromTextField.innerHTML = "<p>Hey everyone</p>";
+    postFromTextField.innerHTML = mockPostToAdd.text;
   });
 
   // Click Post
@@ -116,7 +111,6 @@ test("Correctly display a new post when it is added via the PostForm component a
 
   // Click the Edit button to save
   editButton = screen.getByRole("button", { name: "Edit" });
-  console.log(editButton);
   await act(async () => {
     fireEvent.click(editButton);
   });

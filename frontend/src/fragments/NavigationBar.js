@@ -26,7 +26,16 @@ export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
   const isLoggedInJSX = (
     <Nav className="d-flex justify-content-between flex-grow-1">
       <div className="d-flex">
-        <NavLink to="/profile" className="nav-link">
+        <NavLink
+          to={`/profiles/${user.data?.email}`}
+          state={{
+            user: user.data,
+            justLoggedIn: false,
+            following: user.following,
+            followers: user.followers,
+          }}
+          className="nav-link"
+        >
           Profile
         </NavLink>
         <NavLink to="/posts" className="nav-link">

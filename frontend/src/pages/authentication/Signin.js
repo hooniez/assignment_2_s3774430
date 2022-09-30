@@ -10,7 +10,12 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import logo from "../../logo.png";
-import { findUser, verifyUser } from "../../data/repository";
+import {
+  findUser,
+  getAllFollowing,
+  getAllFollowers,
+  verifyUser,
+} from "../../data/repository";
 import MFA from "./MFA";
 
 export default function Signin() {
@@ -25,9 +30,32 @@ export default function Signin() {
   const [, dispatchUser] = useOutletContext();
   const navigate = useNavigate();
 
-  const signinWithoutMFA = (user) => {
+  const signinWithoutMFA = async (user) => {
     dispatchUser({ type: "SIGNIN_USER", payload: user });
-    navigate("/profile", { state: { justLoggedIn: true } });
+
+    // Get the ids of all the users whom the logged-in user follows
+    const following = await getAllFollowing(user.id);
+    dispatchUser({
+      type: "UPDATE_FOLLOWING",
+      payload: following,
+    });
+
+    // Get the ids of all the users who follow the logged-in user
+    const followers = await getAllFollowers(user.id);
+
+    dispatchUser({
+      type: "UPDATE_FOLLOWERS",
+      payload: followers,
+    });
+
+    navigate(`/profiles/${user.email}`, {
+      state: {
+        user: user,
+        justLoggedIn: true,
+        following: following,
+        followers: followers,
+      },
+    });
   };
 
   const setupMFA = (user) => {
@@ -35,10 +63,12 @@ export default function Signin() {
     setIsMFAVisible(true);
   };
 
-  const signinWithMFA = () => {
+  const signinWithMFA = async () => {
     setIsMFAVisible(false);
     dispatchUser({ type: "SIGNIN_USER", payload: MFApayload });
-    navigate("/profile", { state: { justLoggedIn: true } });
+    navigate(`/profiles/${MFApayload.email}`, {
+      state: { user: await findUser(MFApayload.email), justLoggedIn: true },
+    });
   };
 
   const signinSubmitHandler = async (event) => {

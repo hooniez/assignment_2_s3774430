@@ -14,6 +14,7 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 // Include models.
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
+db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
 db.user.hasMany(db.post, {
@@ -23,6 +24,13 @@ db.user.hasMany(db.post, {
 db.post.belongsTo(db.user, {
   foreignKey: "postedBy",
 });
+
+db.user.belongsToMany(db.user, {
+  as: "followed",
+  through: db.follow,
+});
+
+// Create a junction table called Follow to keep track of who follows whom
 
 // Learn more about associations here: https://sequelize.org/master/manual/assocs.html
 
@@ -71,7 +79,17 @@ async function seedData() {
       firstName: "Jihoon",
       lastName: "Sun",
       avatarSrc: "https://avatars.dicebear.com/api/micah/0.940096983925274.svg",
-      isBlocked: true,
+      isBlocked: false,
+      passwordHash: hash,
+    });
+
+    hash = await argon2.hash("abcDEF1!", { type: argon2.argon2id });
+    await db.user.create({
+      email: "hwangkyu@gmail.com",
+      firstName: "Hwangkyu",
+      lastName: "Sun",
+      avatarSrc: "https://avatars.dicebear.com/api/micah/0.940096983925273.svg",
+      isBlocked: false,
       passwordHash: hash,
     });
   }
@@ -83,7 +101,7 @@ async function seedData() {
       id: 1,
       postedBy: 1,
       parentId: null,
-      text: "Hello, my name is sk",
+      text: "Hello, my name is Myeonghoon",
     });
 
     await db.post.create({
@@ -95,22 +113,80 @@ async function seedData() {
     await db.post.create({
       postedBy: 2,
       parentId: 1,
-      text: "Hello sk, i'm bolger",
+      text: "Hello sk, my name is Hara",
     });
 
     await db.post.create({
       postedBy: 3,
       parentId: null,
-      text: "Hello world, i'm the T",
+      text: "Hello world, i'm Jihoon",
     });
 
     await db.post.create({
       id: 5,
       postedBy: 3,
       parentId: 1,
-      text: "Hello sk, i'm bolger, but with a passion for saying the same thing twice",
+      text: "Hello, Myeonghoon. I'm Jihoon",
+    });
+
+    await db.post.create({
+      id: 6,
+      postedBy: 4,
+      parentId: null,
+      text: "Hello, my name is Hwangkyu",
+    });
+  }
+
+  let followExists = (await db.follow.count()) > 0;
+
+  if (!followExists) {
+    await db.follow.create({
+      userId: 1,
+      followedId: 3,
+    });
+
+    await db.follow.create({
+      userId: 1,
+      followedId: 4,
+    });
+
+    await db.follow.create({
+      userId: 3,
+      followedId: 1,
+    });
+
+    await db.follow.create({
+      userId: 3,
+      followedId: 4,
     });
   }
 }
 
 module.exports = db;
+
+// module.exports = (sequelize, DataTypes) =>
+//   sequelize.define(
+//     "follow",
+//     {
+//       followingId: {
+//         type: DataTypes.INTEGER,
+//         primaryKey: true,
+//         references: {
+//           model: "users",
+//           key: "id",
+//         },
+//       },
+//       followedId: {
+//         type: DataTypes.INTEGER,
+//         primaryKey: true,
+//         references: {
+//           model: "users",
+//           key: "id",
+//         },
+//       },
+//     },
+//     {
+//       // Don't add the timestamp attributes (updatedAt, createdAt).
+//       timestamps: false,
+//     }
+//   );
