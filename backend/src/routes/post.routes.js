@@ -8,7 +8,13 @@ module.exports = (express, app) => {
   // Select more new posts
   router.get("/moreNew/:existingIds", controller.moreNewPosts);
 
-  // Get the number of child posts
+  // Select new posts posted by a particular user
+  router.get("/:id/:limit/:offset", controller.newById);
+
+  // Get the total number of root posts posted by a particular user
+  router.get("/count/user/:id", controller.totalCountById);
+
+  // Get the number of child posts by the parent post id
   router.get("/count/:id", controller.countById);
 
   // Create a new post.

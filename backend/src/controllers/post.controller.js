@@ -42,6 +42,34 @@ exports.moreNewPosts = async (req, res) => {
   res.json(posts);
 };
 
+exports.newById = async (req, res) => {
+  const posts = await db.post.findAll({
+    where: {
+      postedBy: Number(req.params.id),
+      parentId: null,
+      isDeleted: false,
+    },
+    offset: Number(req.params.offset),
+    limit: Number(req.params.limit),
+
+    order: [["datePosted", "DESC"]],
+    include: db.user,
+  });
+  res.json(posts);
+};
+
+exports.totalCountById = async (req, res) => {
+  // console.log(req.params.id);
+  const count = await db.post.count({
+    where: {
+      postedBy: Number(req.params.id),
+      parentId: null,
+      isDeleted: false,
+    },
+  });
+  res.json(count);
+};
+
 // Create a post in the database.
 exports.create = async (req, res) => {
   const newPost = await db.post.create({

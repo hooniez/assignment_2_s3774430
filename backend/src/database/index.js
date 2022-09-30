@@ -98,42 +98,94 @@ async function seedData() {
 
   if (!postExists) {
     await db.post.create({
-      id: 1,
       postedBy: 1,
       parentId: null,
       text: "Hello, my name is Myeonghoon",
+      datePosted: "2022-09-30 05:14:01",
     });
 
     await db.post.create({
       postedBy: 1,
       parentId: null,
       text: "Hello again",
+      datePosted: "2022-09-30 05:14:02",
     });
 
     await db.post.create({
       postedBy: 2,
       parentId: 1,
-      text: "Hello sk, my name is Hara",
+      text: "Hello Myeonghoon, my name is Hara",
+      datePosted: "2022-09-30 05:14:03",
     });
 
     await db.post.create({
       postedBy: 3,
       parentId: null,
       text: "Hello world, i'm Jihoon",
+      datePosted: "2022-09-30 05:14:04",
     });
 
     await db.post.create({
-      id: 5,
       postedBy: 3,
       parentId: 1,
       text: "Hello, Myeonghoon. I'm Jihoon",
+      datePosted: "2022-09-30 05:14:05",
     });
 
     await db.post.create({
-      id: 6,
       postedBy: 4,
       parentId: null,
       text: "Hello, my name is Hwangkyu",
+      datePosted: "2022-09-30 05:14:06",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "Just had so much sundae and now I'm going to just work until I fall asleep",
+      datePosted: "2022-09-30 05:14:07",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "I've been posting so many posts and no one's going to emulate my pace",
+      datePosted: "2022-09-30 05:14:08",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "I can feel the summer heat creeping in as I'm typing away",
+      datePosted: "2022-09-30 05:14:09",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "CT is screaming in background for attention",
+      datePosted: "2022-09-30 05:14:10",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "Hmm, my eyes are hurting so much from staring into the monitor",
+      datePosted: "2022-09-30 05:14:11",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "Is there a reason why I'm posting so many posts like I'm schizophreniac? yes, to see the effects of infinite scrolling",
+      datePosted: "2022-09-30 05:14:12",
+    });
+
+    await db.post.create({
+      postedBy: 1,
+      parentId: null,
+      text: "Welcome to the social media built to broadcast my thoughts",
+      datePosted: "2022-09-30 05:14:12",
     });
   }
 
