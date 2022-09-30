@@ -28,7 +28,7 @@ import { deletePost, getNumChildPosts } from "../../data/repository";
 import PostForm from "./PostForm";
 import EditModal from "./EditModal";
 import PostContent from "./PostContent";
-import Posts from "./Posts";
+import PostsPage from "./PostsPage";
 import ReplyModal from "./ReplyModal";
 import ImageModal from "./ImageModal";
 import DeleteModal from "./DeleteModal";

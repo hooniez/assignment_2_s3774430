@@ -34,13 +34,25 @@ async function editUser(user) {
 // ---------------------------------- Post ----------------------------------
 
 async function getPosts() {
-  const response = await axios.get(API_HOST + "/api/posts");
+  const response = await axios.get(API_HOST + `/api/posts`);
   return response.data;
 }
 
-async function getMorePosts(existingIds) {
+async function getMorePosts(offset) {
   const response = await axios.get(
-    API_HOST + `/api/posts/moreNew/${existingIds}`
+    API_HOST + `/api/posts/moreNew/${offset}`
+  );
+  return response.data;
+}
+
+async function getPostsByUser(userId) {
+  const response = await axios.get(API_HOST + `/api/posts/${userId}`);
+  return response.data;
+}
+
+async function getMorePostsByUser(userId, offset) {
+  const response = await axios.get(
+    API_HOST + `/api/posts/${userId}/moreNew/${offset}`
   );
   return response.data;
 }
@@ -221,4 +233,6 @@ export {
   unfollow,
   getAllFollowing,
   getAllFollowers,
+  getPostsByUser,
+  getMorePostsByUser
 };

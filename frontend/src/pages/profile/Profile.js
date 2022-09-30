@@ -11,6 +11,7 @@ import {
   FloatingLabel,
   Toast,
   ToastContainer,
+  AccordionButton,
 } from "react-bootstrap";
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -28,6 +29,8 @@ import {
   verifyUser,
   follow,
   unfollow,
+  getUserPosts,
+  getTotalNumPosts,
 } from "../../data/repository";
 import Posts from "../forum/Posts";
 
@@ -47,14 +50,23 @@ export default function Profile() {
     state.justLoggedIn
   );
   const [avatarUrls, setAvatarUrls] = useState(
-    state.user !== null && [state.user.avatarSrc]
+    user.data?.id === state.user.id
+      ? [user.data?.avatarSrc]
+      : [state.user.avatarSrc]
   );
   // States related to follow
   const [isFollowed, setIsFollowed] = useState(
     user.following?.includes(state.user.id)
   );
-  const [following, setFollowing] = useState(state.following);
-  const [followers, setFollowers] = useState(state.followers);
+  const [following, setFollowing] = useState(
+    user.data?.id === state.user.id ? user.following : state.following
+  );
+  const [followers, setFollowers] = useState(
+    user.data?.id === state.user.id ? user.followers : state.followers
+  );
+  const [posts, setPosts] = useState([]);
+  const [numPages, setNumPages] = useState(0);
+  const postLimit = 5;
 
   const newPasswordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
@@ -65,6 +77,15 @@ export default function Profile() {
   const editShowHandler = (event) => {
     setEditHidden(!editHidden);
   };
+
+  // const loadPosts = async () => {
+  //   setPosts(await getUserPosts(state.user.id, postLimit, posts.length));
+  // };
+
+  // useEffect(() => {
+  //   // Load user posts
+  //   loadPosts();
+  // }, []);
 
   const welcomeToastToggler = () => {
     setWelcomeToastVisible(!welcomeToastVisible);
@@ -232,10 +253,18 @@ export default function Profile() {
   const followHandler = async () => {
     if (!isFollowed) {
       await follow(user.data.email, state.user.email);
+      dispatchUser({
+        type: "UPDATE_FOLLOWING",
+        payload: [...user.following, state.user.id],
+      });
       setIsFollowed(true);
       setFollowers([...followers, user.data.id]);
     } else {
       await unfollow(user.data.email, state.user.email);
+      dispatchUser({
+        type: "UPDATE_FOLLOWING",
+        payload: user.following.filter((id) => id != state.user.id),
+      });
       setIsFollowed(false);
       setFollowers(
         followers.filter((followerId) => followerId != user.data.id)
@@ -491,7 +520,13 @@ export default function Profile() {
               )}
             </Card.Body>
           </Card>
-          {(isFollowed || (user.data.id === state.user.id)) && (<Posts></Posts>)}
+          {(isFollowed || user.data?.id === state.user.id) && (
+            <Posts
+              onProfile={true}
+              profileUser={state.user}
+              user={user.data}
+            ></Posts>
+          )}
         </Col>
       </Row>
     </Container>

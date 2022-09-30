@@ -4,7 +4,7 @@ import PostForm from "./PostForm";
 import styles from "./Comments.module.css";
 import { getComments } from "../../data/repository";
 import { XLg } from "react-bootstrap-icons";
-import Posts from "./Posts";
+import PostsPage from "./PostsPage";
 
 export default function Comments({
   user,
@@ -15,7 +15,7 @@ export default function Comments({
   parentPost,
   numComments,
   incrementNumChildPostsRoot,
-  decrementNumChildPostsRoot
+  decrementNumChildPostsRoot,
 }) {
   return (
     <Modal
@@ -36,7 +36,7 @@ export default function Comments({
             <p className="tex">No comments yet</p>
           </div>
         ) : (
-          <Posts
+          <PostsPage
             key={parentPost.id}
             numComments={numComments}
             parentPost={parentPost}
@@ -45,7 +45,7 @@ export default function Comments({
             removeParentPost={removePost}
             incrementNumChildPostsRoot={incrementNumChildPostsRoot}
             decrementNumChildPostsRoot={decrementNumChildPostsRoot}
-          ></Posts>
+          ></PostsPage>
         )}
       </Modal.Body>
     </Modal>

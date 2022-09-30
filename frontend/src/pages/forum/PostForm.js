@@ -171,7 +171,7 @@ export default function PostForm({
       };
     } else {
       newPost = {
-        postedBy: user.data.id,
+        postedBy: user?.data.id,
         parentId: null,
         text: text,
       };
@@ -261,7 +261,7 @@ export default function PostForm({
       <div className="d-flex">
         <div className="d-flex-column">
           <div className="d-flex justify-content-center">
-            <img src={user.data.avatarSrc} className={styles.cardImg} />
+            <img src={user?.data?.avatarSrc} className={styles.cardImg} />
           </div>
 
           <ProgressBar

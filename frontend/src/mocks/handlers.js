@@ -39,6 +39,11 @@ export const handlers = [
     return res(ctx.json(mockPost));
   }),
 
+  // getPostsByUser(userId) in repository.js mocked below
+  rest.get(`${API_HOST}/api/posts/:userId`, (req, res, ctx) => {
+    return res(ctx.json(mockPost));
+  }),
+
   // getNumChildPosts(id) in repository.js mocked below
   rest.get(`${API_HOST}/api/posts/count/:id`, (req, res, ctx) => {
     const postId = req.params.id;

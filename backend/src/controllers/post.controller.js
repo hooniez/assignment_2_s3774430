@@ -1,5 +1,7 @@
 const db = require("../database");
 
+const POST_LIMIT = 10;
+
 // Select all root posts from the database.
 exports.new = async (req, res) => {
   const posts = await db.post.findAll({
@@ -7,7 +9,7 @@ exports.new = async (req, res) => {
       parentId: null,
       isDeleted: false,
     },
-    limit: 10,
+    limit: POST_LIMIT,
     order: [["datePosted", "DESC"]],
     include: db.user,
   });
@@ -16,20 +18,34 @@ exports.new = async (req, res) => {
   // const posts = await db.post.findAll({ include: db.user });
 
   // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
+
+  res.json(posts);
+};
+
+exports.newByUserId = async (req, res) => {
+  const posts = await db.post.findAll({
+    where: {
+      postedBy: Number(req.params.userId),
+      parentId: null,
+      isDeleted: false,
+    },
+    limit: POST_LIMIT,
+
+    order: [["datePosted", "DESC"]],
+    include: db.user,
+  });
 
   res.json(posts);
 };
 
 exports.moreNewPosts = async (req, res) => {
-  const existingIds = req.params.existingIds.split(",");
-
   const posts = await db.post.findAll({
     where: {
       parentId: null,
       isDeleted: false,
-      id: { [db.Op.notIn]: existingIds },
     },
-    limit: 10,
+    limit: POST_LIMIT,
+    offset: Number(req.params.offset),
     order: [["datePosted", "DESC"]],
     include: db.user,
   });
@@ -42,19 +58,19 @@ exports.moreNewPosts = async (req, res) => {
   res.json(posts);
 };
 
-exports.newById = async (req, res) => {
+exports.moreNewPostsByUserId = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
-      postedBy: Number(req.params.id),
+      postedBy: Number(req.params.userId),
       parentId: null,
       isDeleted: false,
     },
+    limit: POST_LIMIT,
     offset: Number(req.params.offset),
-    limit: Number(req.params.limit),
-
     order: [["datePosted", "DESC"]],
     include: db.user,
   });
+
   res.json(posts);
 };
 
@@ -135,7 +151,7 @@ exports.newComments = async (req, res) => {
       parentId: req.params.id,
       isDeleted: false,
     },
-    limit: 10,
+    limit: POST_LIMIT,
     include: db.user,
   });
 
@@ -156,7 +172,7 @@ exports.moreNewComments = async (req, res) => {
       isDeleted: false,
       id: { [db.Op.notIn]: existingIds },
     },
-    limit: 10,
+    limit: POST_LIMIT,
     include: db.user,
   });
 

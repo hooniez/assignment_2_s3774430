@@ -27,6 +27,7 @@ export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
     <Nav className="d-flex justify-content-between flex-grow-1">
       <div className="d-flex">
         <NavLink
+          end
           to={`/profiles/${user.data?.email}`}
           state={{
             user: user.data,

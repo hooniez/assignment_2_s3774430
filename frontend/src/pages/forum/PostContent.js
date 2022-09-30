@@ -47,7 +47,7 @@ export default function PostContent({
 
   const visitProfile = async () => {
     console.log(post.user);
-    navigate(`../profiles/${posterEmail}`, {
+    navigate(`/profiles/${posterEmail}`, {
       state: {
         user: await findUser(posterEmail),
         justLoggedIn: false,
@@ -89,7 +89,7 @@ export default function PostContent({
               </span>
             </div>
 
-            {post.postedBy === user.data.id && !isReplying && (
+            {post.postedBy === user?.data.id && !isReplying && (
               <div>
                 <PencilFill
                   title={`pencil${post.id}`}

@@ -1,36 +1,45 @@
-import { useState, useEffect, useRef } from "react";
-import PostForm from "./PostForm";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import { useOutletContext } from "react-router-dom";
-import Post from "./Post";
+import { useState, useEffect } from "react";
+
 import {
   getMorePosts,
   getPosts,
-  getPostsWithoutExistingPosts,
+  getMorePostsByUser,
+  getPostsByUser,
 } from "../../data/repository";
-import { ArrowDown } from "react-bootstrap-icons";
-import styles from "./Posts.module.css";
+
 import { getComments } from "../../data/repository";
 import { getMoreComments } from "../../data/repository";
+import Post from "./Post";
+import { Card } from "react-bootstrap";
+import styles from "./Posts.module.css";
+import { ArrowDown } from "react-bootstrap-icons";
+import PostForm from "./PostForm";
 
 export default function Posts({
   parentPost,
-  defaultUser,
+  user,
   editParentPost,
   removeParentPost,
   incrementNumChildPostsRoot,
   decrementNumChildPostsRoot,
   numComments,
+  dispatchUser,
+  onProfile,
+  profileUser,
 }) {
-  const [user = defaultUser, dispatchUser] = useOutletContext();
   const [posts, setPosts] = useState([]);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  const mostOuterElement = useRef(null);
 
   async function loadPosts() {
     let newPosts;
     if (parentPost == null) {
-      newPosts = await getPosts();
+      if (onProfile) {
+        console.log(user.id);
+        newPosts = await getPostsByUser(profileUser.id);
+      } else {
+        newPosts = await getPosts();
+      }
+
       setPosts([...newPosts]);
       if (newPosts.length < 10) {
         setHasMorePosts(false);
@@ -43,9 +52,6 @@ export default function Posts({
       }
     }
   }
-
-  
-
   // Load posts
   useEffect(() => {
     loadPosts();
@@ -61,8 +67,15 @@ export default function Posts({
       console.log(currentScroll);
       if (documentHeight === currentScroll) {
         let ids = posts.map((post) => post.id);
+        let newPosts;
+        if (onProfile) {
+          console.log("working1");
+          newPosts = await getMorePostsByUser(profileUser.id, posts.length);
+        } else {
+          console.log("working2");
+          newPosts = await getMorePosts(posts.length);
+        }
 
-        let newPosts = await getMorePosts(ids.join(","));
         if (newPosts.length === 0) {
           setHasMorePosts(false);
         } else {
@@ -125,10 +138,6 @@ export default function Posts({
     // });
   };
 
-  const removeImage = (id) => {
-    // setPosts(...posts, posts.filter((post) => post.id === id))
-  };
-
   const editPost = (id, newPost) => {
     // Find the old post in posts and then replace with newPost
     let oldPost = posts.filter((post) => post.id == id)[0];
@@ -141,104 +150,72 @@ export default function Posts({
     setPosts([...posts, post]);
   };
 
-  // Every time a post is added, edited, or deleted, update localStorage
-  useEffect(() => {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }, [posts]);
-
   return (
-    <Container className="component py-0" ref={mostOuterElement}>
-      <Row>
-        <Col lg={{ span: 6, offset: 3 }}>
-          <Row>
-            <Col lg={{ span: 10, offset: 1 }}>
-              {parentPost != null ? (
-                <Post
-                  post={parentPost}
-                  user={user}
-                  addComment={addComment}
-                  editPost={editParentPost}
-                  rootPost={true}
-                  removePost={removeParentPost}
-                  incrementNumChildPostsRoot={incrementNumChildPostsRoot}
-                  numCommentsRoot={numComments}
-                ></Post>
-              ) : (
-                <Card className="mt-5">
-                  <Card.Body className={styles.cardBody}>
-                    <PostForm
-                      key={0}
-                      user={user}
-                      dispatchUser={dispatchUser}
-                      addPost={addPost}
-                      postId={posts.length}
-                      forComments={false}
-                      parentPostId={null}
-                      replyTo={null}
-                      replyHandler={null}
-                      post={null}
-                    ></PostForm>
-                  </Card.Body>
-                </Card>
-              )}
-
-              <hr></hr>
-              {posts.map((post) => (
-                <Post
-                  key={post.id}
+    <>
+      {!onProfile && (
+        <>
+          {parentPost != null ? (
+            <Post
+              post={parentPost}
+              user={user}
+              addComment={addComment}
+              editPost={editParentPost}
+              rootPost={true}
+              removePost={removeParentPost}
+              incrementNumChildPostsRoot={incrementNumChildPostsRoot}
+              numCommentsRoot={numComments}
+            ></Post>
+          ) : (
+            <Card className="mt-5">
+              <Card.Body className={styles.cardBody}>
+                <PostForm
+                  key={0}
                   user={user}
                   dispatchUser={dispatchUser}
-                  post={post}
-                  posts={posts}
-                  childId={posts.length}
                   addPost={addPost}
-                  removePost={removePost}
-                  editPost={editPost}
-                  
-                  decrementNumChildPostsRoot={decrementNumChildPostsRoot}
-                ></Post>
-              ))}
-              <div className="text-center mt-5">
-                {hasMorePosts ? (
-                  <>
-                    <div className="pb-2">
-                      <span>Scroll down to see more posts</span>
-                    </div>
-                    <div>
-                      <ArrowDown
-                        className={styles.arrowDown}
-                        size={48}
-                      ></ArrowDown>
-                    </div>
-                  </>
-                ) : (
-                  <div className="pb-2">
-                    <span>No more posts</span>
-                  </div>
-                )}
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Container>
+                  postId={posts.length}
+                  forComments={false}
+                  parentPostId={null}
+                  replyTo={null}
+                  replyHandler={null}
+                  post={null}
+                ></PostForm>
+              </Card.Body>
+            </Card>
+          )}
+        </>
+      )}
+
+      <hr></hr>
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          user={onProfile ? { data: user } : user}
+          dispatchUser={dispatchUser}
+          post={post}
+          posts={posts}
+          addPost={addPost}
+          removePost={removePost}
+          editPost={editPost}
+          decrementNumChildPostsRoot={decrementNumChildPostsRoot}
+        ></Post>
+      ))}
+      <div className="text-center mt-5">
+        {hasMorePosts ? (
+          <>
+            <div className="pb-2">
+              <span>Scroll down to see more posts</span>
+            </div>
+            <div>
+              <ArrowDown className={styles.arrowDown} size={48}></ArrowDown>
+            </div>
+          </>
+        ) : (
+          <div className="pb-2">
+            <span>No more posts</span>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
-
-// case "ADD_POST":
-//   return {
-//     ...state,
-//     data: {
-//       ...state.data,
-//       posts: [...state.data.posts, action.payload],
-//     },
-//   };
-// case "DELETE_POST":
-//   return {
-//     ...state,
-//     data: {
-//       ...state.data,
-//       // Filter out the post the use has just deleted
-//       posts: state.data.posts.filter((post) => post !== action.payload),
-//     },
-//   };

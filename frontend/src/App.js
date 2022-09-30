@@ -4,7 +4,7 @@ import Footer from "./fragments/Footer";
 import NavigationBar from "./fragments/NavigationBar";
 import { Outlet, Routes, Route, useLocation } from "react-router-dom";
 import Comments from "./pages/forum/Comments";
-import Posts from "./pages/forum/Posts";
+import PostsPage from "./pages/forum/PostsPage";
 
 const userReducer = (state, action) => {
   switch (action.type) {
