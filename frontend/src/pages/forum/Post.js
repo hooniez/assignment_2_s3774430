@@ -23,7 +23,12 @@ import {
 import Comments from "./Comments";
 import styles from "./Post.module.css";
 
-import { deletePost, getNumChildPosts } from "../../data/repository";
+import {
+  deletePost,
+  getNumComments,
+  getHearterIds,
+  getThumbDownerIds,
+} from "../../data/repository";
 
 import PostForm from "./PostForm";
 import EditModal from "./EditModal";
@@ -53,12 +58,15 @@ export default function Post({
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [replyModalVisible, setReplyModalVisible] = useState(false);
   const [numComments, setNumComments] = useState(0);
+  const [hearterIds, setHearterIds] = useState(new Set());
+  const [thumbDownerIds, setThumbDownerIds] = useState(new Set());
 
   const [imgSrc, setImgSrc] = useState(post.imgSrc);
 
-  async function setNumChildPosts() {
-    const numChildPosts = await getNumChildPosts(post.id);
-    setNumComments(numChildPosts);
+  async function loadPostData() {
+    setNumComments(await getNumComments(post.id));
+    setHearterIds(new Set(await getHearterIds(post.id)));
+    setThumbDownerIds(new Set(await getThumbDownerIds(post.id)));
   }
 
   const incrementNumChildPosts = () => {
@@ -70,7 +78,7 @@ export default function Post({
   };
 
   useEffect(() => {
-    setNumChildPosts();
+    loadPostData();
   }, []);
 
   const commentsModalToggler = () => {
@@ -137,6 +145,8 @@ export default function Post({
             numCommentsRoot={numCommentsRoot}
             onProfile={onProfile}
             profileUser={profileUser}
+            hearterIds={hearterIds}
+            thumbDownerIds={thumbDownerIds}
           />
         </Card.Body>
       </Card>

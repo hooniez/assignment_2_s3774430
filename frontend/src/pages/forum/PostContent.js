@@ -9,6 +9,10 @@ import {
   Chat,
   Heart,
   Megaphone,
+  Heartbreak,
+  HandThumbsDown,
+  HandThumbsDownFill,
+  HeartFill,
 } from "react-bootstrap-icons";
 import PostForm from "./PostForm";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -34,6 +38,8 @@ export default function PostContent({
   numCommentsRoot,
   onProfile,
   profileUser,
+  hearterIds,
+  thumbDownerIds,
 }) {
   let navigate = useNavigate();
   // If the user who posted a post has been deleted, show deletedUserIcon.
@@ -187,14 +193,57 @@ export default function PostContent({
                   onClick={commentsModalToggler}
                   role="button"
                 >
-                  <Heart
-                    className={`${styles.iconMargin} ${styles.icons}`}
-                  ></Heart>
-                  <span className={styles.greyedOutText}>{numComments}</span>
+                  {hearterIds.has(user.data.id) ? (
+                    <>
+                      <HeartFill
+                        color="red"
+                        className={`${styles.iconMargin} ${styles.icons}`}
+                      ></HeartFill>
+                      <span className={styles.greyedOutText}>
+                        {hearterIds.size}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Heart
+                        className={`${styles.iconMargin} ${styles.icons}`}
+                      ></Heart>
+                      <span className={styles.greyedOutText}>
+                        {hearterIds.size}
+                      </span>
+                    </>
+                  )}
                 </div>
               </Col>
               <Col xs={3}>
-                <Megaphone role="button"></Megaphone>
+                <div
+                  className="d-inline-block"
+                  onClick={commentsModalToggler}
+                  role="button"
+                >
+                  {thumbDownerIds.has(user.data.id) ? (
+                    <>
+                      <HandThumbsDownFill
+                        color="black"
+                        className={`${styles.iconMargin} ${styles.icons}`}
+                        role="button"
+                      ></HandThumbsDownFill>
+                      <span className={styles.greyedOutText}>
+                        {thumbDownerIds.size}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <HandThumbsDown
+                        className={`${styles.iconMargin} ${styles.icons}`}
+                        role="button"
+                      ></HandThumbsDown>
+                      <span className={styles.greyedOutText}>
+                        {thumbDownerIds.size}
+                      </span>
+                    </>
+                  )}
+                </div>
               </Col>
             </Row>
           )}

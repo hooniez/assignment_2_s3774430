@@ -15,20 +15,25 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
 db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
+db.react = require("./models/react.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
 db.user.hasMany(db.post, {
   foreignKey: "postedBy",
 });
-
 db.post.belongsTo(db.user, {
   foreignKey: "postedBy",
 });
 
+// Use the function table db.follow in a self-referential relationship
 db.user.belongsToMany(db.user, {
   as: "followed",
   through: db.follow,
 });
+
+// Associate user with post through the react table
+db.user.belongsToMany(db.post, { through: db.react });
+db.post.belongsToMany(db.user, { through: db.react });
 
 // Create a junction table called Follow to keep track of who follows whom
 
@@ -40,7 +45,7 @@ db.sync = async () => {
   // await db.sequelize.sync();
 
   // Can sync with force if the schema has become out of date - note that syncing with force is a destructive operation.
-
+  await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
   await db.sequelize.sync({ force: true });
 
   await seedData();
@@ -212,33 +217,25 @@ async function seedData() {
       followedId: 4,
     });
   }
+
+  let reactionExists = (await db.react.count()) > 0;
+  if (!reactionExists) {
+    await db.react.create({
+      userId: 1,
+      postId: 1,
+      reaction: 1,
+    });
+    await db.react.create({
+      userId: 3,
+      postId: 1,
+      reaction: -1,
+    });
+    await db.react.create({
+      userId: 4,
+      postId: 1,
+      reaction: -1,
+    });
+  }
 }
 
 module.exports = db;
-
-// module.exports = (sequelize, DataTypes) =>
-//   sequelize.define(
-//     "follow",
-//     {
-//       followingId: {
-//         type: DataTypes.INTEGER,
-//         primaryKey: true,
-//         references: {
-//           model: "users",
-//           key: "id",
-//         },
-//       },
-//       followedId: {
-//         type: DataTypes.INTEGER,
-//         primaryKey: true,
-//         references: {
-//           model: "users",
-//           key: "id",
-//         },
-//       },
-//     },
-//     {
-//       // Don't add the timestamp attributes (updatedAt, createdAt).
-//       timestamps: false,
-//     }
-//   );

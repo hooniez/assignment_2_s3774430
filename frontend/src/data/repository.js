@@ -60,9 +60,19 @@ async function getMorePostsByUser(userId, offset) {
   return response.data;
 }
 
-async function getNumChildPosts(id) {
+async function getNumComments(id) {
   const response = await axios.get(API_HOST + `/api/posts/count/${id}`);
 
+  return response.data;
+}
+
+async function getHearterIds(id) {
+  const response = await axios.get(API_HOST + `/api/reacts/hearters/${id}`);
+  return response.data;
+}
+
+async function getThumbDownerIds(id) {
+  const response = await axios.get(API_HOST + `/api/reacts/thumbdowners/${id}`);
   return response.data;
 }
 
@@ -222,7 +232,7 @@ export {
   editUser,
   getPosts,
   getMorePosts,
-  getNumChildPosts,
+  getNumComments,
   createPost,
   deletePost,
   updatePost,
@@ -239,4 +249,6 @@ export {
   getPostsByUser,
   getMorePostsByUser,
   getUsers,
+  getHearterIds,
+  getThumbDownerIds,
 };
