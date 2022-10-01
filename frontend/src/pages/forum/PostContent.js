@@ -32,15 +32,12 @@ export default function PostContent({
   incrementNumChildPostsRoot,
   addComment,
   numCommentsRoot,
+  onProfile,
+  profileUser,
 }) {
   let navigate = useNavigate();
   // If the user who posted a post has been deleted, show deletedUserIcon.
   const avatarSrc = post.user.isDeleted ? deletedUserIcon : post.user.avatarSrc;
-
-  // If the user who posted a post has been deleted, show Delted User.
-  const posterName = post.user.isDeleted
-    ? "Deleted User"
-    : `${post.user.firstName} ${post.user.lastName}`;
 
   // If the user who posted a post has been deleted, show nothing.
   const posterEmail = post.user.isDeleted ? "" : `${post.user.email}`;
@@ -73,7 +70,20 @@ export default function PostContent({
         <div className={`${styles.contentContainer} flex-grow-1`}>
           <div className="d-flex justify-content-between pb-1">
             <div>
-              <span className={styles.name}>{posterName}</span>
+              {onProfile ? (
+                <span className={styles.name}>
+                  {profileUser.id === user.data.id
+                    ? `${user.data.firstName} ${user.data.lastName}`
+                    : `${profileUser.firstName} ${profileUser.lastName}`}
+                </span>
+              ) : (
+                <span className={styles.name}>
+                  {post.user.isDeleted
+                    ? "Deleted User"
+                    : `${post.user.firstName} ${post.user.lastName}`}
+                </span>
+              )}
+
               {!post.user.isDeleted && (
                 <>
                   <span>&nbsp;&#183;&nbsp;</span>

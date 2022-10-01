@@ -117,3 +117,22 @@ exports.edit = async (req, res) => {
 
   return res.json(ret);
 };
+
+exports.getUsers = async (req, res) => {
+  const ids = req.params.ids.split(",");
+  let users;
+
+  if (ids.length === 0) {
+    res.json([]);
+  } else {
+    users = await db.user.findAll({
+      where: {
+        id: {
+          [db.Op.or]: ids,
+        },
+      },
+    });
+  }
+
+  res.json(users);
+};

@@ -33,6 +33,7 @@ import {
   getTotalNumPosts,
 } from "../../data/repository";
 import Posts from "../forum/Posts";
+import FollowModal from "./FollowModal";
 
 export default function Profile() {
   const [user, dispatchUser, ,] = useOutletContext();
@@ -45,6 +46,7 @@ export default function Profile() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
   const [isPasswordMatched, setIsPasswordMatched] = useState(true);
+  const [followModalVisible, setFollowModalVisible] = useState(false);
   const { state } = useLocation();
   const [welcomeToastVisible, setWelcomeToastVisible] = useState(
     state.justLoggedIn
@@ -169,7 +171,6 @@ export default function Profile() {
 
       const currUser = await verifyUser(user.data.email, password);
       if (currUser !== null) {
-        console.log("hello");
         payload = {
           ...payload,
           firstName: document.getElementById("floatingFirstName").value,
@@ -202,6 +203,10 @@ export default function Profile() {
 
   const confirmDeleteHandler = () => setDeleteModalHidden(false);
   const closeDeleteHandler = () => setDeleteModalHidden(true);
+
+  const followModalToggler = () => {
+    setFollowModalVisible(!followModalVisible);
+  };
 
   // a list of avatars from whcih to assign to a user
   const avatars = [
@@ -507,14 +512,32 @@ export default function Profile() {
                     Joined: {getMonthAndYear()}
                   </Card.Subtitle>
                   <Card.Subtitle className="d-flex">
-                    <div className="me-2">
+                    <div
+                      role="button"
+                      className="me-2"
+                      onClick={followModalToggler}
+                    >
                       <strong>{following.length}</strong>
                       <small className="text-muted"> Following</small>
                     </div>
-                    <div>
+                    <div role="button" onClick={followModalToggler}>
                       <strong>{followers.length}</strong>
                       <small className="text-muted"> Followers</small>
                     </div>
+                    {followModalVisible && (
+                      <FollowModal
+                        followModalVisible={followModalVisible}
+                        followModalToggler={followModalToggler}
+                        user={state.user}
+                        self={user.data.id === state.user.id}
+                        followingIds={following}
+                        setFollowingIds={setFollowing}
+                        followersIds={followers}
+                        setFollowersIds={setFollowers}
+                        loggedInUser={user.data}
+                        dispatchUser={dispatchUser}
+                      ></FollowModal>
+                    )}
                   </Card.Subtitle>
                 </>
               )}

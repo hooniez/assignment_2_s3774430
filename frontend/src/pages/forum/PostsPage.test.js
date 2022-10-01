@@ -9,7 +9,7 @@ import {
 import Signin from "../authentication/Signin";
 import App from "../../App";
 import Profile from "../profile/Profile";
-import Posts from "./Posts";
+import PostsPage from "./PostsPage";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { act } from "react-dom/test-utils";
@@ -43,7 +43,7 @@ beforeEach(async () => {
         <Route path="/" element={<App />}>
           <Route path="/signin" element={<Signin />} />
           <Route path="/profiles/:email" element={<Profile />} />
-          <Route path="/posts" element={<Posts />} />
+          <Route path="/posts" element={<PostsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

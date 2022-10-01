@@ -1,0 +1,12 @@
+.avatar {
+  border: 0.5px solid #666;
+  border-radius: 50%;
+  width: 3em;
+  height: 3em;
+  height: auto;
+}
+
+.greyedOutText {
+  color: #666;
+  font-size: 0.875em;
+}

@@ -66,14 +66,6 @@ exports.getAllFollowing = async (req, res) => {
 
   const followingIds = following.map((entry) => entry.followedId);
 
-  // const users = await db.user.findAll({
-  //   where: {
-  //     id: {
-  //       [db.Op.or]: followingIds,
-  //     },
-  //   },
-  // });
-
   res.json(followingIds);
 };
 
@@ -88,13 +80,6 @@ exports.getAllFollowers = async (req, res) => {
 
   const followersIds = followers.map((entry) => entry.userId);
 
-  // const users = await db.user.findAll({
-  //   where: {
-  //     id: {
-  //       [db.Op.or]: followersIds,
-  //     },
-  //   },
-  // });
   res.json(followersIds);
 };
 

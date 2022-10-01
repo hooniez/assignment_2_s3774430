@@ -44,6 +44,8 @@ export default function Post({
   incrementNumChildPostsRoot,
   decrementNumChildPostsRoot,
   numCommentsRoot,
+  onProfile,
+  profileUser,
 }) {
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -133,6 +135,8 @@ export default function Post({
             numComments={numComments}
             isReplying={false}
             numCommentsRoot={numCommentsRoot}
+            onProfile={onProfile}
+            profileUser={profileUser}
           />
         </Card.Body>
       </Card>

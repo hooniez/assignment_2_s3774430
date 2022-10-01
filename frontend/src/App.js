@@ -44,9 +44,9 @@ const userReducer = (state, action) => {
 function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
     data: null,
-    following: null,
+    following: [],
     followed: null,
-    followers: null,
+    followers: [],
     isLoggedIn: false,
   });
 

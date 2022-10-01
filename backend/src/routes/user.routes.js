@@ -20,6 +20,9 @@ module.exports = (express, app) => {
   // Edit an existing user
   router.put("/", controller.edit);
 
+  // Get users by ids
+  router.get("/:ids", controller.getUsers);
+
   // Add routes to server.
   app.use("/api/users", router);
 };

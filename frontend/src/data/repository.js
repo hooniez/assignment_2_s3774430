@@ -31,6 +31,11 @@ async function editUser(user) {
   return response.data;
 }
 
+async function getUsers(ids) {
+  const response = await axios.get(API_HOST + `/api/users/${ids}`);
+  return response.data;
+}
+
 // ---------------------------------- Post ----------------------------------
 
 async function getPosts() {
@@ -39,9 +44,7 @@ async function getPosts() {
 }
 
 async function getMorePosts(offset) {
-  const response = await axios.get(
-    API_HOST + `/api/posts/moreNew/${offset}`
-  );
+  const response = await axios.get(API_HOST + `/api/posts/moreNew/${offset}`);
   return response.data;
 }
 
@@ -234,5 +237,6 @@ export {
   getAllFollowing,
   getAllFollowers,
   getPostsByUser,
-  getMorePostsByUser
+  getMorePostsByUser,
+  getUsers,
 };

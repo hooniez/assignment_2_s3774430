@@ -34,7 +34,6 @@ export default function Posts({
     let newPosts;
     if (parentPost == null) {
       if (onProfile) {
-        console.log(user.id);
         newPosts = await getPostsByUser(profileUser.id);
       } else {
         newPosts = await getPosts();
@@ -198,6 +197,8 @@ export default function Posts({
           removePost={removePost}
           editPost={editPost}
           decrementNumChildPostsRoot={decrementNumChildPostsRoot}
+          onProfile={onProfile}
+          profileUser={profileUser}
         ></Post>
       ))}
       <div className="text-center mt-5">

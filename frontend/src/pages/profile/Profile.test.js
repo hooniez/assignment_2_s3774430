@@ -73,7 +73,7 @@ test("Display the updated name when the user presses the save button", async () 
     fireEvent.click(saveButton);
   });
 
-  // Check whether the updated name is visible, but the previous name is not.
-  expect(screen.queryByText("Hoonie Moon")).toBeInTheDocument();
+  // Check whether the updated name is visible in two instances (on the profile card as well as the mock post underneath it), but the previous name is not.
+  expect(screen.queryAllByText("Hoonie Moon")).toHaveLength(2);
   expect(screen.queryByText("Myeonghoon Sun")).toBeNull();
 });
