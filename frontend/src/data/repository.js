@@ -90,7 +90,7 @@ async function updatePost(post) {
   return response.data;
 }
 
-// Comments
+// ---------------------------------- Comment ----------------------------------
 
 async function getComments(id) {
   const response = await axios.get(API_HOST + `/api/posts/${id}/comments`);
@@ -104,7 +104,7 @@ async function getMoreComments(id, existingIds) {
   return response.data;
 }
 
-// Follow
+// ---------------------------------- Follow ----------------------------------
 
 // Create a follow entry
 async function follow(followingEmail, followedEmail) {
@@ -134,6 +134,29 @@ async function getAllFollowing(id) {
 async function getAllFollowers(id) {
   const response = await axios.get(
     API_HOST + `/api/follows/getAllFollowers/${id}`
+  );
+  return response.data;
+}
+
+// ---------------------------------- React ----------------------------------
+
+async function removeReaction(userId, postId) {
+  const response = await axios.delete(
+    API_HOST + `/api/reacts/removeReaction/${userId}/${postId}`
+  );
+  return response.data;
+}
+
+async function thumbDown(userId, postId) {
+  const response = await axios.post(
+    API_HOST + `/api/reacts/thumbdown/${userId}/${postId}`
+  );
+  return response.data;
+}
+
+async function heart(userId, postId) {
+  const response = await axios.post(
+    API_HOST + `/api/reacts/heart/${userId}/${postId}`
   );
   return response.data;
 }
@@ -251,4 +274,7 @@ export {
   getUsers,
   getHearterIds,
   getThumbDownerIds,
+  removeReaction,
+  thumbDown,
+  heart,
 };

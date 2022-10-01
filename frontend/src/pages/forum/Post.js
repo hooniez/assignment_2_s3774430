@@ -28,6 +28,9 @@ import {
   getNumComments,
   getHearterIds,
   getThumbDownerIds,
+  removeReaction,
+  thumbDown,
+  heart,
 } from "../../data/repository";
 
 import PostForm from "./PostForm";
@@ -68,6 +71,49 @@ export default function Post({
     setHearterIds(new Set(await getHearterIds(post.id)));
     setThumbDownerIds(new Set(await getThumbDownerIds(post.id)));
   }
+
+  const heartHandler = async () => {
+    console.log(1);
+    // If the user has already given a thumbdown, remove the entry
+    if (thumbDownerIds.has(user.data.id)) {
+      console.log(2);
+      await removeReaction(user.data.id, post.id);
+      thumbDownerIds.delete(user.data.id);
+      setThumbDownerIds(new Set([...thumbDownerIds]));
+    }
+    // If the user has yet given a heart, create an entry
+    if (!hearterIds.has(user.data.id)) {
+      console.log(3);
+      await heart(user.data.id, post.id);
+      setHearterIds(new Set([...hearterIds, user.data.id]));
+    } else {
+      // If the user has given a heart, remove the entry
+      console.log(4);
+      await removeReaction(user.data.id, post.id);
+      hearterIds.delete(user.data.id);
+      setHearterIds(new Set([...hearterIds]));
+    }
+  };
+
+  const thumbDownHandler = async () => {
+    // If the user has already given a heart, remove the entry
+    if (hearterIds.has(user.data.id)) {
+      await removeReaction(user.data.id, post.id);
+      hearterIds.delete(user.data.id);
+      setHearterIds(new Set([...hearterIds]));
+    }
+    // If the user has yet given a thumbdown, create an entry
+    if (!thumbDownerIds.has(user.data.id)) {
+      await thumbDown(user.data.id, post.id);
+      setThumbDownerIds(new Set([...thumbDownerIds, user.data.id]));
+    } else {
+      // If the user has given a thumbdown, remove the entry
+      await removeReaction(user.data.id, post.id);
+      thumbDownerIds.delete(user.data.id);
+
+      setThumbDownerIds(new Set([...thumbDownerIds]));
+    }
+  };
 
   const incrementNumChildPosts = () => {
     setNumComments(numComments + 1);
@@ -147,6 +193,8 @@ export default function Post({
             profileUser={profileUser}
             hearterIds={hearterIds}
             thumbDownerIds={thumbDownerIds}
+            heartHandler={heartHandler}
+            thumbDownHandler={thumbDownHandler}
           />
         </Card.Body>
       </Card>
