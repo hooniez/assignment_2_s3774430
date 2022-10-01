@@ -65,15 +65,12 @@ export default function Posts({
       let documentHeight = document.body.scrollHeight;
       let currentScroll =
         elementToListenToScroll.scrollY + elementToListenToScroll.innerHeight;
-      console.log(currentScroll);
       if (documentHeight === currentScroll) {
         let ids = posts.map((post) => post.id);
         let newPosts;
         if (onProfile) {
-          console.log("working1");
           newPosts = await getMorePostsByUser(profileUser.id, posts.length);
         } else {
-          console.log("working2");
           newPosts = await getMorePosts(posts.length);
         }
 
@@ -189,7 +186,7 @@ export default function Posts({
         </>
       )}
 
-      <hr></hr>
+      <hr className="my-5"></hr>
       {posts.map((post) => (
         <Post
           key={post.id}

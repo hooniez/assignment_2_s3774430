@@ -86,4 +86,50 @@ export const handlers = [
   rest.get(API_HOST + `/api/follows/getAllFollowers/:id`, (req, res, ctx) => {
     return res(ctx.json([]));
   }),
+
+  // getHearterIds(id) in repository.js mocked below
+  rest.get(API_HOST + `/api/reacts/hearters/:id`, (req, res, ctx) => {
+    if (req.params.id === "1") {
+      return res(ctx.json([1, 3]));
+    } else {
+      return res(ctx.json([]));
+    }
+  }),
+
+  // getThumbDownerIds(id) in repository.js mocked below
+  rest.get(API_HOST + `/api/reacts/thumbdowners/:id`, (req, res, ctx) => {
+    return res(ctx.json([]));
+  }),
+
+  // removeReaction(userId, postId) in repository.js mocked below
+  rest.delete(
+    API_HOST + `/api/reacts/removeReaction/:userId/:postId`,
+    (req, res, ctx) => {
+      return res(ctx.json(1));
+    }
+  ),
+
+  // heart(userId, postId) in repository.js mocked below
+  rest.post(API_HOST + `/api/reacts/heart/:userId/:postId`, (req, res, ctx) => {
+    return res(
+      ctx.json({
+        dateReacted: "2022-10-01T09:17:06.888Z",
+        postId: "1",
+        reaction: 1,
+        userId: "1",
+      })
+    );
+  }),
+
+  // thumbDown(userId, postId) in repository.js mocked below
+  rest.post(API_HOST + `/api/reacts/thumbdown/:userId/:postId`, (req, res, ctx) => {
+    return res(
+      ctx.json({
+        dateReacted: "2022-10-01T09:18:06.888Z",
+        postId: "1",
+        reaction: -1,
+        userId: "1",
+      })
+    );
+  }),
 ];

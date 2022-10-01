@@ -228,7 +228,7 @@ async function seedData() {
     await db.react.create({
       userId: 3,
       postId: 1,
-      reaction: -1,
+      reaction: 1,
     });
     await db.react.create({
       userId: 4,

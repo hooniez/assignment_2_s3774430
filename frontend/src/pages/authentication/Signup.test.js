@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 
 import Signup from "./Signup";
 import App from "../../App";
@@ -48,17 +49,6 @@ afterEach(() => {
   cleanup();
 });
 
-// Tests whether the warning sign does not show when identical passwords are typed
-test("Do not show 'Passwords are identical' when identical passwords are typed", () => {
-  // Type in different passwords
-  fireEvent.change(passwordInput, { target: { value: "abcDEF1!" } });
-  fireEvent.change(confirmInput, { target: { value: "abcDEF1!" } });
-
-  fireEvent.click(signupSubmitButton);
-
-  expect(screen.queryByText("Passwords are not identical")).toBeNull();
-});
-
 // Tests whether the warning sign shows when different passwords are typed
 test("Show 'Passwords are not identical' when different passwords are typed", () => {
   // Type in different passwords
@@ -74,7 +64,7 @@ test("Show 'Passwords are not identical' when different passwords are typed", ()
 
 // Tests whether the warning sign shows when passwords entered are 7 characters or less (the same warning sign is displayed on render and therefore whether two of these signs are displayed is checked at the end)
 test("Show 2 instacnes of 'Use 8 or more character with a mix of lowercase and uppercase letters, numbers & symbols' when passwords entered are 7 characters or less", () => {
-  // Type in different passwords
+  // Type in 7 characters only
   fireEvent.change(passwordInput, { target: { value: "abcDE1!" } });
   fireEvent.change(confirmInput, { target: { value: "abcDE1!" } });
 

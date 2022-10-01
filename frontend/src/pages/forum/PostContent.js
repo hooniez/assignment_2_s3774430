@@ -204,14 +204,19 @@ export default function PostContent({
                       : heartHandler
                   }
                   role="button"
+                  data-test-button={`heartButton${post.id}`}
                 >
                   {hearterIds.has(user?.data.id) ? (
                     <>
                       <HeartFill
                         color="red"
                         className={`${styles.iconMargin} ${styles.icons}`}
+                        data-test-icon={`heartFill${post.id}`}
                       ></HeartFill>
-                      <span className={styles.greyedOutText}>
+                      <span
+                        className={styles.greyedOutText}
+                        data-test-span={`heartFill${post.id}`}
+                      >
                         {hearterIds.size}
                       </span>
                     </>
@@ -219,8 +224,12 @@ export default function PostContent({
                     <>
                       <Heart
                         className={`${styles.iconMargin} ${styles.icons}`}
+                        data-test-icon={`heart${post.id}`}
                       ></Heart>
-                      <span className={styles.greyedOutText}>
+                      <span
+                        className={styles.greyedOutText}
+                        data-test-span={`heart${post.id}`}
+                      >
                         {hearterIds.size}
                       </span>
                     </>
@@ -239,6 +248,7 @@ export default function PostContent({
                       : thumbDownHandler
                   }
                   role="button"
+                  data-test-button={`thumbDownButton${post.id}`}
                 >
                   {thumbDownerIds.has(user?.data.id) ? (
                     <>
@@ -246,8 +256,12 @@ export default function PostContent({
                         color="grey"
                         className={`${styles.iconMargin} ${styles.icons}`}
                         role="button"
+                        data-test-icon={`thumbDownFill${post.id}`}
                       ></HandThumbsDownFill>
-                      <span className={styles.greyedOutText}>
+                      <span
+                        className={styles.greyedOutText}
+                        data-test-span={`thumbDownFill${post.id}`}
+                      >
                         {thumbDownerIds.size}
                       </span>
                     </>
@@ -256,8 +270,12 @@ export default function PostContent({
                       <HandThumbsDown
                         className={`${styles.iconMargin} ${styles.icons}`}
                         role="button"
+                        data-test-icon={`thumbDown${post.id}`}
                       ></HandThumbsDown>
-                      <span className={styles.greyedOutText}>
+                      <span
+                        className={styles.greyedOutText}
+                        data-test-span={`thumbDown${post.id}`}
+                      >
                         {thumbDownerIds.size}
                       </span>
                     </>

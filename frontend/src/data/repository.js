@@ -12,6 +12,7 @@ async function findUser(email) {
 
 async function createUser(user) {
   const response = await axios.post(API_HOST + "/api/users", user);
+  console.log(response.data);
   return response.data;
 }
 
@@ -158,6 +159,7 @@ async function heart(userId, postId) {
   const response = await axios.post(
     API_HOST + `/api/reacts/heart/${userId}/${postId}`
   );
+
   return response.data;
 }
 

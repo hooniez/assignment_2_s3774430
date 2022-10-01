@@ -118,3 +118,65 @@ test("Correctly display a new post when it is added via the PostForm component a
   // Check whether the text has been correctly updated (the length is supposed to be 2 as this post is featured in the comments page as well).
   expect(screen.queryAllByText("HEY ANYBODY HERE???").length).toBe(2);
 });
+
+// Tests whether the number of user ids that have given a heart raction each is correctly shown on the PostsPage. The mock API returns an array of two ids for the mockPost whose id is 1. See if that is correctly loaded on the PostPage. One of the returned ids is 1, which is the id of the user who logged in from beforeEach. Test the interactions by clicking the heart and thumbdown icons.
+test("Correctly display the number of each reaction when it first loaded as well as when the user interacts with each reaction icon", async () => {
+  let heartFillSpan = container.querySelector("[data-test-span='heartFill1']");
+  // According to the return value of the mock API, there should be two hearts. Check that is the case.
+  expect(heartFillSpan.textContent).toBe("2");
+
+  // The number of thumbs-down should be 0. Check it is the case.
+  let thumbDownSpan = container.querySelector("[data-test-span='thumbDown1']");
+  expect(thumbDownSpan.textContent).toBe("0");
+
+  // One of the two hearts is by the logged-in user himself. Click the heart button to see whether the count goes to 1 as expected.
+  let heartButton = container.querySelector(
+    "[data-test-button='heartButton1']"
+  );
+
+  await act(async () => {
+    fireEvent.click(heartButton);
+  });
+  expect(heartFillSpan.textContent).toBe("1");
+  expect(thumbDownSpan.textContent).toBe("0");
+
+  // Click the heart button again to revert the count to 2 again.
+  await act(async () => {
+    fireEvent.click(heartButton);
+  });
+  expect(heartFillSpan.textContent).toBe("2");
+
+  // Now, click the thumbDownButton to make the heart count go down to 1 while the thumbdown count to go up to 1.
+  let thumbDownButton = container.querySelector(
+    "[data-test-button='thumbDownButton1']"
+  );
+
+  await act(async () => {
+    fireEvent.click(thumbDownButton);
+  });
+
+  let thumbDownFillSpan = container.querySelector(
+    "[data-test-span='thumbDownFill1']"
+  );
+  expect(thumbDownFillSpan.textContent).toBe("1");
+  let heartSpan = container.querySelector("[data-test-span='heart1']");
+  expect(heartSpan.textContent).toBe("1");
+
+  // Now, click the thumbDownButton to make the thumbdown count go down to 0 and back up to 1.
+  await act(async () => {
+    fireEvent.click(thumbDownButton);
+  });
+
+  expect(thumbDownSpan.textContent).toBe("0");
+  await act(async () => {
+    fireEvent.click(thumbDownButton);
+  });
+  expect(thumbDownFillSpan.textContent).toBe("1");
+
+  // Finally, click the heart button to see that the heart count goes back to 2 and the thumbdown count goes down to 0.
+  await act(async () => {
+    fireEvent.click(heartButton);
+  });
+  expect(heartFillSpan.textContent).toBe("2");
+  expect(thumbDownSpan.textContent).toBe("0");
+});

@@ -75,7 +75,6 @@ export default function Post({
   }
 
   const heartHandler = async () => {
-    console.log("heartHandler");
     heartDBHandler();
     heartStateHandler();
   };
@@ -100,7 +99,6 @@ export default function Post({
   };
 
   const heartStateHandler = () => {
-    console.log("heartSateHandler");
     // If the user has already given a thumbdown, remove the entry
     if (thumbDownerIds.has(user.data.id)) {
       thumbDownerIds.delete(user.data.id);
