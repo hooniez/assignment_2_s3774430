@@ -56,6 +56,14 @@ export default function Profile() {
       ? [user.data?.avatarSrc]
       : [state.user.avatarSrc]
   );
+  
+  // From another profile page, clicking a NavLink may not update these states. Manually update them when state.user is changed.
+  useEffect(() => {
+    setAvatarUrls([state.user.avatarSrc]);
+    setFollowing(state.following);
+    setFollowers(state.followers);
+  }, [state.user, state.following, state.followers]);
+
   // States related to follow
   const [isFollowed, setIsFollowed] = useState(
     user.following?.includes(state.user.id)

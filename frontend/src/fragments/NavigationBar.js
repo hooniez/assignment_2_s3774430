@@ -2,12 +2,13 @@ import logo from "../logo.png";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import styles from "./NavigationBar.module.css";
 import { ToastContainer, Toast } from "react-bootstrap";
 import { useEffect, useState } from "react";
 
 export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
+  const navigate = useNavigate();
   const signOutUser = (event) => {
     dispatchUser({ type: "SIGNOUT_USER" });
   };
@@ -23,17 +24,29 @@ export default function NavigationBar({ isLoggedIn, dispatchUser, user }) {
     </Nav>
   );
 
+  // const toProfile = () => {
+  //   navigate(`/profiles/${user.email}`, {
+  //     state: {
+  //       user: user.data,
+  //       justLoggedIn: false,
+  //       following: user.following,
+  //       followers: user.followers,
+  //     },
+  //   });
+  // };
+
   const isLoggedInJSX = (
     <Nav className="d-flex justify-content-between flex-grow-1">
       <div className="d-flex">
         <NavLink
-          end
+          // onClick={toProfile}
           to={`/profiles/${user.data?.email}`}
           state={{
             user: user.data,
             justLoggedIn: false,
             following: user.following,
             followers: user.followers,
+            rerender: true,
           }}
           className="nav-link"
         >

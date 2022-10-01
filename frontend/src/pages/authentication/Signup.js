@@ -86,12 +86,18 @@ export default function Signup() {
   };
 
   const signupWithoutMFA = async (payload) => {
+    let newUser = await createUser(payload);
     dispatchUser({
       type: "SIGNIN_USER",
-      payload: payload,
+      payload: newUser,
     });
     navigate(`/profiles/${payload.email}`, {
-      state: { user: await createUser(payload), justLoggedIn: true },
+      state: {
+        user: newUser,
+        justLoggedIn: true,
+        following: [],
+        followers: [],
+      },
     });
   };
 
@@ -116,6 +122,7 @@ export default function Signup() {
           avatars[Math.floor(Math.random() * avatars.length)]
         }/${email}.svg`,
         isBlocked: false,
+        isDeleted: false,
         secretKey: null,
       };
       signupWithoutMFA(payload);

@@ -20,7 +20,7 @@ root.render(
       <Route path="/" element={<App />}>
         <Route path="/" element={<Hero />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/profiles/:email" element={<Profile />} />
+        <Route path="/profiles/:email" element={<Profile key={Date.now()} />} />
         <Route path="/signin" element={<SignInForm />} />
         <Route path="/posts" element={<PostsPage key={0} />} />
       </Route>
