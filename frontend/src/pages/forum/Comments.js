@@ -16,6 +16,8 @@ export default function Comments({
   numComments,
   incrementNumChildPostsRoot,
   decrementNumChildPostsRoot,
+  heartHandlerRoot,
+  thumbDownHandlerRoot,
 }) {
   return (
     <Modal
@@ -45,6 +47,8 @@ export default function Comments({
             removeParentPost={removePost}
             incrementNumChildPostsRoot={incrementNumChildPostsRoot}
             decrementNumChildPostsRoot={decrementNumChildPostsRoot}
+            heartHandlerRoot={heartHandlerRoot}
+            thumbDownHandlerRoot={thumbDownHandlerRoot}
           ></PostsPage>
         )}
       </Modal.Body>

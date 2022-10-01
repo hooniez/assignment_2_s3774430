@@ -42,6 +42,9 @@ export default function PostContent({
   thumbDownerIds,
   heartHandler,
   thumbDownHandler,
+  heartHandlerRoot,
+  thumbDownHandlerRoot,
+  rootPost,
 }) {
   let navigate = useNavigate();
   // If the user who posted a post has been deleted, show deletedUserIcon.
@@ -192,10 +195,17 @@ export default function PostContent({
               <Col xs={3}>
                 <div
                   className="d-inline-block"
-                  onClick={heartHandler}
+                  onClick={
+                    rootPost
+                      ? () => {
+                          heartHandlerRoot();
+                          heartHandler();
+                        }
+                      : heartHandler
+                  }
                   role="button"
                 >
-                  {hearterIds.has(user.data.id) ? (
+                  {hearterIds.has(user?.data.id) ? (
                     <>
                       <HeartFill
                         color="red"
@@ -220,10 +230,17 @@ export default function PostContent({
               <Col xs={3}>
                 <div
                   className="d-inline-block"
-                  onClick={thumbDownHandler}
+                  onClick={
+                    rootPost
+                      ? () => {
+                          thumbDownHandlerRoot();
+                          thumbDownHandler();
+                        }
+                      : thumbDownHandler
+                  }
                   role="button"
                 >
-                  {thumbDownerIds.has(user.data.id) ? (
+                  {thumbDownerIds.has(user?.data.id) ? (
                     <>
                       <HandThumbsDownFill
                         color="grey"

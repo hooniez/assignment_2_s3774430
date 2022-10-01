@@ -15,6 +15,8 @@ export default function PostsPage({
   incrementNumChildPostsRoot,
   decrementNumChildPostsRoot,
   numComments,
+  heartHandlerRoot,
+  thumbDownHandlerRoot,
 }) {
   const [user = defaultUser, dispatchUser] = useOutletContext();
 
@@ -33,6 +35,8 @@ export default function PostsPage({
             decrementNumChildPostsRoot={decrementNumChildPostsRoot}
             numComments={numComments}
             dispatchUser={dispatchUser}
+            heartHandlerRoot={heartHandlerRoot}
+            thumbDownHandlerRoot={thumbDownHandlerRoot}
           ></Posts>
         </Col>
       </Row>

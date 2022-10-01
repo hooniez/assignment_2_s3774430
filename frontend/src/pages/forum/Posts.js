@@ -26,6 +26,8 @@ export default function Posts({
   dispatchUser,
   onProfile,
   profileUser,
+  heartHandlerRoot,
+  thumbDownHandlerRoot,
 }) {
   const [posts, setPosts] = useState([]);
   const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -163,6 +165,8 @@ export default function Posts({
               removePost={removeParentPost}
               incrementNumChildPostsRoot={incrementNumChildPostsRoot}
               numCommentsRoot={numComments}
+              heartHandlerRoot={heartHandlerRoot}
+              thumbDownHandlerRoot={thumbDownHandlerRoot}
             ></Post>
           ) : (
             <Card className="mt-5">

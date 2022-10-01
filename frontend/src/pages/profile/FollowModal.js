@@ -14,7 +14,7 @@ export default function FollowModal({
   setFollowersIds,
   self,
   loggedInUser,
-  dispatchUser
+  dispatchUser,
 }) {
   const [followingUsers, setFollowingUsers] = useState([]);
   const [followerUsers, setFollowerUsers] = useState([]);
@@ -50,6 +50,7 @@ export default function FollowModal({
           <Tab eventKey="Following" title="Following">
             {followingUsers.map((user) => (
               <UserEntry
+                key={user.id}
                 user={user}
                 self={self}
                 setFollowingIds={setFollowingIds}
@@ -65,7 +66,7 @@ export default function FollowModal({
           </Tab>
           <Tab eventKey="Followers" title="Followers">
             {followerUsers.map((user) => (
-              <UserEntry user={user}></UserEntry>
+              <UserEntry key={user.id} user={user}></UserEntry>
             ))}
           </Tab>
         </Tabs>
