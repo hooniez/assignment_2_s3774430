@@ -1,41 +1,45 @@
 module.exports = (sequelize, DataTypes) =>
   sequelize.define(
-    "post",
+    "user",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      postedBy: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "users",
-          key: "id",
-        },
-      },
-      parentId: {
-        type: DataTypes.INTEGER,
-      },
-      text: {
-        type: DataTypes.TEXT,
+      email: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      datePosted: {
+      firstName: {
+        type: DataTypes.STRING(40),
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.STRING(40),
+        allowNull: false,
+      },
+      passwordHash: {
+        type: DataTypes.STRING(96),
+        allowNull: false,
+      },
+      dateJoined: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      imgSrc: {
+      avatarSrc: {
         type: DataTypes.STRING,
+      },
+      isBlocked: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      isDeletedByAdmin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+      secretKey: {
+        type: DataTypes.STRING,
       },
     },
     {

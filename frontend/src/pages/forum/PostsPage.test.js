@@ -120,7 +120,7 @@ test("Correctly display a new post when it is added via the PostForm component a
 });
 
 // Tests whether the number of user ids that have given a heart raction each is correctly shown on the PostsPage. The mock API returns an array of two ids for the mockPost whose id is 1. See if that is correctly loaded on the PostPage. One of the returned ids is 1, which is the id of the user who logged in from beforeEach. Test the interactions by clicking the heart and thumbdown icons.
-test("Correctly display the number of each reaction when it first loaded as well as when the user interacts with each reaction icon", async () => {
+test("Correctly display the number of each reaction when posts are first loaded as well as when the user interacts with each reaction icon", async () => {
   let heartFillSpan = container.querySelector("[data-test-span='heartFill1']");
   // According to the return value of the mock API, there should be two hearts. Check that is the case.
   expect(heartFillSpan.textContent).toBe("2");
