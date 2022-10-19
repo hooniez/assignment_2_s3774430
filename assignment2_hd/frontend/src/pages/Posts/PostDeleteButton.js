@@ -3,18 +3,16 @@ import PostsContext from "../../contexts/PostsContext";
 import { useContext } from "react";
 import { deletePost } from "../../data/repository";
 
-export default function PostDeleteButton({ post }) {
+export default function PostDeleteButton({ post, postIdx }) {
   const { posts, dispatchPosts } = useContext(PostsContext);
 
   const handleBlock = async () => {
     const res = await deletePost(post.id);
 
-    const idx = posts.findIndex((el) => el.id === post.id);
-
     if (post.isDeletedByAdmin) {
-      dispatchPosts({ type: "UNDELETE_POST", payload: idx });
+      dispatchPosts({ type: "UNDELETE_POST", payload: postIdx });
     } else {
-      dispatchPosts({ type: "DELETE_POST", payload: idx });
+      dispatchPosts({ type: "DELETE_POST", payload: postIdx });
     }
   };
 

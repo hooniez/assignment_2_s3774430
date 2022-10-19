@@ -163,6 +163,15 @@ async function heart(userId, postId) {
   return response.data;
 }
 
+// ---------------------------------- Login ----------------------------------
+
+async function createLoginEntry(userId) {
+  const response = await axios.post(
+    API_HOST + `/api/logins/${userId}`
+  );
+  return response.data;
+}
+
 const mockUsers = [
   {
     id: 1,
@@ -279,4 +288,5 @@ export {
   removeReaction,
   thumbDown,
   heart,
+  createLoginEntry,
 };

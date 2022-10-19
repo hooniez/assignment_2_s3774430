@@ -71,12 +71,19 @@ async function deletePost(id) {
   return data.delete_post;
 }
 
-async function getReactions(id) {
+async function getReactions(postId) {
   const query = gql`
-    all_reactions($postId: Int) {
-      reaction
+    query ($postId: Int) {
+      all_reactions(postId: $postId) {
+        reaction
+      }
     }
-  `
+  `;
+  const variables = { postId };
+
+  const data = await request(GRAPH_QL_URL, query, variables);
+
+  return data.all_reactions;
 }
 
 export { getUsers, blockUser, getPosts, deletePost, getReactions };

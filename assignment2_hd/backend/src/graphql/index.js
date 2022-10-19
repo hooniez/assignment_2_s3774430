@@ -80,13 +80,12 @@ graphql.root = {
   },
 
   all_reactions: async (args) => {
+    console.log(args);
     return await db.react.findAll({
       where: {
-        postId: args.id
-      }
+        postId: args.postId,
+      },
     });
-
-    
   },
 };
 

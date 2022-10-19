@@ -1,17 +1,32 @@
 import { Table, Button } from "react-bootstrap";
 import PostsContext from "../../contexts/PostsContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PostDeleteButton from "./PostDeleteButton";
 import { PieChart } from "react-bootstrap-icons";
 import AnalyticsModal from "../../fragments/AnalyticsModal";
 
 export default function PostsTable() {
   const { posts, dispatchPosts } = useContext(PostsContext);
-  const [isGraphicModalVisible, setIsGraphicModalVisible] = useState(false);
+  const [isGraphicModalVisible, setIsGraphicModalVisible] = useState([]);
 
-  const toggleGraphicModalVisible = () => {
-    setIsGraphicModalVisible(!isGraphicModalVisible);
+  const toggleGraphicModalVisible = (idx) => {
+    setIsGraphicModalVisible(
+      Object.values({
+        ...isGraphicModalVisible,
+        [idx]: !isGraphicModalVisible[idx],
+      })
+    );
   };
+
+  useEffect(() => {
+    // Set isGraphicModalVisible for each post to false
+    let arr = [];
+    for (let i = 0; i < posts.length; i++) {
+      arr.push(false);
+    }
+
+    setIsGraphicModalVisible([...arr]);
+  }, [posts.length]);
 
   return (
     <Table striped>
@@ -24,23 +39,29 @@ export default function PostsTable() {
         </tr>
       </thead>
       <tbody>
-        {posts.map((post) => (
+        {posts.map((post, idx) => (
           <tr key={post.id}>
             <td>{post.id}</td>
             <td>{post.text}</td>
             <td>
-              <PostDeleteButton post={post} />
+              <PostDeleteButton post={post} postIdx={idx} />
             </td>
             <td className="text-center">
               <PieChart
                 size={20}
                 role="button"
-                onClick={toggleGraphicModalVisible}
+                onClick={() => {
+                  toggleGraphicModalVisible(idx);
+                }}
               ></PieChart>
-              <AnalyticsModal
-                isGraphicModalVisible={isGraphicModalVisible}
-                toggleGraphicModalVisible={toggleGraphicModalVisible}
-              />
+              {isGraphicModalVisible[idx] && (
+                <AnalyticsModal
+                  isGraphicModalVisible={isGraphicModalVisible}
+                  toggleGraphicModalVisible={toggleGraphicModalVisible}
+                  post={post}
+                  postIdx={idx}
+                />
+              )}
             </td>
           </tr>
         ))}

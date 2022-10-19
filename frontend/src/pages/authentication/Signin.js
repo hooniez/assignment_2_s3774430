@@ -15,6 +15,7 @@ import {
   getAllFollowing,
   getAllFollowers,
   verifyUser,
+  createLoginEntry,
 } from "../../data/repository";
 import MFA from "./MFA";
 
@@ -31,6 +32,7 @@ export default function Signin() {
   const navigate = useNavigate();
 
   const signinWithoutMFA = async (user) => {
+    await createLoginEntry(user.id);
     dispatchUser({ type: "SIGNIN_USER", payload: user });
 
     // Get the ids of all the users whom the logged-in user follows
@@ -80,6 +82,7 @@ export default function Signin() {
     const res = await verifyUser(email, password);
     if (!res.hasOwnProperty("error")) {
       // setupMFA(user);
+      
       signinWithoutMFA(res);
     } else {
       setError(res.error);

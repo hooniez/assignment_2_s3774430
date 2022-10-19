@@ -18,6 +18,16 @@ const PostsReducer = (state, action) => {
           isDeletedByAdmin: false,
         },
       });
+    
+    case "SET_REACTION_FOR_POST_BY_IDX":
+      return Object.values({
+        ...state,
+        [action.payload.idx]: {
+          ...state[action.payload.idx],
+          reactions: action.payload.reactions,
+        }
+      })
+    
     default:
       throw new Error("Error!");
   }

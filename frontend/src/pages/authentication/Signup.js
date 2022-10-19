@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import formatDate from "../../util/formatDate";
-import { createUser, findUser } from "../../data/repository";
+import { createUser, findUser, createLoginEntry } from "../../data/repository";
 import MFA from "./MFA";
 
 export default function Signup() {
@@ -87,6 +87,7 @@ export default function Signup() {
 
   const signupWithoutMFA = async (payload) => {
     let newUser = await createUser(payload);
+    await createLoginEntry(newUser.id);
     dispatchUser({
       type: "SIGNIN_USER",
       payload: newUser,
