@@ -129,7 +129,13 @@ export default function PostContent({
               </div>
             )}
           </div>
-          <div dangerouslySetInnerHTML={{ __html: post.text }} />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: post.isDeletedByAdmin
+                ? "[**** This post has been deleted by the admin ***]"
+                : post.text,
+            }}
+          />
           {post.imgSrc && (
             <div className={styles.uploadedImageContainer}>
               {isReplying ? (

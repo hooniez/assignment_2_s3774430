@@ -23,12 +23,12 @@ app.use(
   graphqlHTTP({
     schema: graphql.schema,
     rootValue: graphql.root,
-    graphiql: true
+    graphiql: true,
   })
 );
 
 // Set port, listen for requests.
-const PORT = 4000;
+const PORT = 4009;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
