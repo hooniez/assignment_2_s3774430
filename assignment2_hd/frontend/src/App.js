@@ -5,8 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./fragments/Navbar";
 import Footer from "./fragments/Footer";
 import Posts from "./pages/Posts/Posts";
-
-import UsersPerDayChart from "./fragments/UsersPerDayChart";
+import Hero from "./pages/Hero";
 
 function App() {
   return (
@@ -15,7 +14,7 @@ function App() {
         <Navbar></Navbar>
         <div className="container my-3 flex-grow-1">
           <Routes>
-            <Route path="/" element={<UsersPerDayChart />} />
+            <Route path="/" element={<Hero />} />
             <Route path="/users" element={<Users />} />
             <Route path="/posts" element={<Posts />} />
           </Routes>

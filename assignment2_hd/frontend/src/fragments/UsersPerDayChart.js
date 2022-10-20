@@ -92,7 +92,7 @@ export default function UsersPerDayChart() {
   }, []);
   return Object.keys(data).length !== 0 ? (
     <div className="mt-5">
-      <h1>Number of users using LAN per day</h1>
+      <h2 className="text-center">Number of Users Using LAN</h2>
       <Line data={data} />
     </div>
   ) : (
