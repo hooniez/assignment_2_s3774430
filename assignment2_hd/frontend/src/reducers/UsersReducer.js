@@ -18,6 +18,14 @@ const UsersReducer = (state, action) => {
           isBlocked: false,
         },
       });
+      case "SET_FOLLOW_METRICS_FOR_USER_BY_IDX":
+        return Object.values({
+          ...state,
+          [action.payload.idx]: {
+            ...state[action.payload.idx],
+            followMetrics: action.payload.followMetrics,
+          }
+        })
     default:
       throw new Error("Error!");
   }

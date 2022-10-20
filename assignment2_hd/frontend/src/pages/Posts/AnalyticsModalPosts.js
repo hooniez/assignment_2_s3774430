@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "react-bootstrap";
-import PostsContext from "../contexts/PostsContext";
-import { getReactions } from "../data/repository";
-import ReactionChart from "./ReactionChart";
+import PostsContext from "../../contexts/PostsContext";
+import { getReactions } from "../../data/repository";
+import ReactionChart from "../../fragments/ReactionChart";
 
-export default function AnalyticsModal({
+export default function AnalyticsModalPosts({
   isGraphicModalVisible,
   toggleGraphicModalVisible,
   post,
@@ -34,10 +34,7 @@ export default function AnalyticsModal({
       });
     };
 
-    // If post is provided as a prop, show reaction-realted analytics
-    if (post != null) {
-      loadReactions();
-    }
+    loadReactions();
   }, []);
 
   return (

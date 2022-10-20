@@ -14,9 +14,10 @@ db.sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 // Include models.
 db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
-// db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
+db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
 db.react = require("./models/react.js")(db.sequelize, DataTypes);
 db.login = require("./models/login.js")(db.sequelize, DataTypes);
+db.visit = require("./models/visit.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
 db.user.hasMany(db.post, {
@@ -27,10 +28,10 @@ db.post.belongsTo(db.user, {
 });
 
 // Use the function table db.follow in a self-referential relationship
-// db.user.belongsToMany(db.user, {
-//   as: "followed",
-//   through: db.follow,
-// });
+db.user.belongsToMany(db.user, {
+  as: "followed",
+  through: db.follow,
+});
 
 // Associate user with post through the react table
 db.user.belongsToMany(db.post, { through: db.react });
@@ -44,7 +45,14 @@ db.login.belongsTo(db.user, {
   foreignKey: "userId",
 });
 
-// Create a junction table called Follow to keep track of who follows whom
+// Use the function table db.visit in a self-referential relationship
+db.user.belongsToMany(db.user, {
+  as: "visited",
+  through: {
+    model: db.visit,
+    unique: false,
+  },
+});
 
 // Learn more about associations here: https://sequelize.org/master/manual/assocs.html
 

@@ -34,6 +34,7 @@ async function getPosts() {
       all_posts {
         id
         text
+        isDeletedByAdmin
       }
     }
   `;
@@ -101,6 +102,38 @@ async function getNumUsersPerDay() {
   return data.all_recent_logins;
 }
 
+async function getFollowMetrics(userId) {
+  const query = gql`
+    query ($userId: Int) {
+      all_follow_metrics(userId: $userId) {
+        userId
+        followedId
+      }
+    }
+  `;
+
+  const variables = { userId };
+
+  const data = await request(GRAPH_QL_URL, query, variables);
+
+  return data.all_follow_metrics;
+}
+
+async function getProfileVisits(userId) {
+  const query = gql`
+    query ($userId: Int) {
+      all_profile_visits(userId: $userId) {
+        visitedId
+        dateVisited
+      }
+    }
+  `;
+
+  const variables = { userId };
+  const data = await request(GRAPH_QL_URL, query, variables);
+  return data.all_profile_visits;
+}
+
 export {
   getUsers,
   blockUser,
@@ -108,4 +141,6 @@ export {
   deletePost,
   getReactions,
   getNumUsersPerDay,
+  getFollowMetrics,
+  getProfileVisits,
 };

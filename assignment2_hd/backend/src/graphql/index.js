@@ -56,12 +56,26 @@ graphql.schema = buildSchema(`
     dateLoggedIn: Date
   }
 
+  type Follow {
+    userId: Int,
+    followedId: Int
+  }
+
+  type Visit {
+    id: Int,
+    userId: Int,
+    visitedId: Int,
+    dateVisited: Date
+  }
+
   # Queries (read-only operations).
   type Query {
     all_users: [User],
     all_posts: [Post],
     all_reactions(postId: Int): [React],
     all_recent_logins: [Login],
+    all_follow_metrics(userId: Int): [Follow],
+    all_profile_visits(userId: Int): [Visit],
   }
 
   # Mutations (modify data in the underlying data-source, i.e., the database).
@@ -76,7 +90,12 @@ graphql.schema = buildSchema(`
 graphql.root = {
   // Queries.
   all_users: async () => {
-    return await db.user.findAll({ include: { model: db.post, as: "posts" } });
+    return await db.user.findAll({
+      where: {
+        isDeleted: false,
+      },
+      include: { model: db.post, as: "posts" },
+    });
   },
 
   block_user: async (args) => {
@@ -94,7 +113,11 @@ graphql.root = {
   },
 
   all_posts: async () => {
-    return await db.post.findAll();
+    return await db.post.findAll({
+      where: {
+        isDeleted: false,
+      },
+    });
   },
 
   delete_post: async (args) => {
@@ -126,6 +149,29 @@ graphql.root = {
         dateLoggedIn: {
           [db.Op.gte]: moment().subtract(7, "days").toDate(),
         },
+      },
+    });
+  },
+
+  all_follow_metrics: async (args) => {
+    return await db.follow.findAll({
+      where: {
+        [db.Op.or]: [
+          {
+            userId: args.userId,
+          },
+          {
+            followedId: args.userId,
+          },
+        ],
+      },
+    });
+  },
+
+  all_profile_visits: async (args) => {
+    return await db.visit.findAll({
+      where: {
+        visitedId: args.userId,
       },
     });
   },

@@ -62,7 +62,7 @@ const convertResToData = (res) => {
   return ret;
 };
 
-export default function NumUsersPerDayChart() {
+export default function UsersPerDayChart() {
   const [data, setData] = useState({});
   let dates;
   let numLogins;
@@ -90,5 +90,12 @@ export default function NumUsersPerDayChart() {
     };
     loadNumUsersPerDay();
   }, []);
-  return Object.keys(data).length !== 0 ? <Line data={data} /> : <div></div>;
+  return Object.keys(data).length !== 0 ? (
+    <div className="mt-5">
+      <h1>Number of users using LAN per day</h1>
+      <Line data={data} />
+    </div>
+  ) : (
+    <div></div>
+  );
 }

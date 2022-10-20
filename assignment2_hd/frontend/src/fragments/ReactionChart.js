@@ -22,7 +22,10 @@ export default function ReactionChart({ postIdx }) {
   };
   return (
     <Container>
-      <Pie data={data} />
+      <div>
+        <h2 className="text-center">Reaction Metrics</h2>
+        <Pie data={data} />
+      </div>
     </Container>
   );
 }

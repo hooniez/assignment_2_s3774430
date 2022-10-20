@@ -3,7 +3,7 @@ import PostsContext from "../../contexts/PostsContext";
 import { useContext, useEffect, useState } from "react";
 import PostDeleteButton from "./PostDeleteButton";
 import { PieChart } from "react-bootstrap-icons";
-import AnalyticsModal from "../../fragments/AnalyticsModal";
+import AnalyticsModalPosts from "./AnalyticsModalPosts";
 
 export default function PostsTable() {
   const { posts, dispatchPosts } = useContext(PostsContext);
@@ -55,7 +55,7 @@ export default function PostsTable() {
                 }}
               ></PieChart>
               {isGraphicModalVisible[idx] && (
-                <AnalyticsModal
+                <AnalyticsModalPosts
                   isGraphicModalVisible={isGraphicModalVisible}
                   toggleGraphicModalVisible={toggleGraphicModalVisible}
                   post={post}
