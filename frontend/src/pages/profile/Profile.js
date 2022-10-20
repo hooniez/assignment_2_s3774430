@@ -56,7 +56,7 @@ export default function Profile() {
       ? [user.data?.avatarSrc]
       : [state.user.avatarSrc]
   );
-  
+
   // From another profile page, clicking a NavLink may not update these states. Manually update them when state.user is changed.
   useEffect(() => {
     setAvatarUrls([state.user.avatarSrc]);
@@ -525,11 +525,11 @@ export default function Profile() {
                       className="me-2"
                       onClick={followModalToggler}
                     >
-                      <strong>{following.length}</strong>
+                      <strong>{following?.length}</strong>
                       <small className="text-muted"> Following</small>
                     </div>
                     <div role="button" onClick={followModalToggler}>
-                      <strong>{followers.length}</strong>
+                      <strong>{followers?.length}</strong>
                       <small className="text-muted"> Followers</small>
                     </div>
                     {followModalVisible && (

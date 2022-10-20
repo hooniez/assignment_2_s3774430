@@ -49,7 +49,7 @@ export default function Signup() {
   }
 
   function confirmPassword(password) {
-    return password === document.querySelector("#formSignupPassword").value;
+    return password === document.querySelector("#formSignupPassword")?.value;
   }
   /* validation logic */
 

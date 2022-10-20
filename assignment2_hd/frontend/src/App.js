@@ -1,5 +1,6 @@
 import "./App.css";
 import Users from "./pages/Users/Users";
+import NumUsersPerDayChart from "./fragments/NumUsersPerDayChart";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./fragments/Navbar";
@@ -13,6 +14,7 @@ function App() {
         <Navbar></Navbar>
         <div className="container my-3 ">
           <Routes>
+            <Route path="/" element={<NumUsersPerDayChart />} />
             <Route path="/users" element={<Users />} />
             <Route path="/posts" element={<Posts />} />
           </Routes>

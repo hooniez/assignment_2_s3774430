@@ -86,4 +86,26 @@ async function getReactions(postId) {
   return data.all_reactions;
 }
 
-export { getUsers, blockUser, getPosts, deletePost, getReactions };
+async function getNumUsersPerDay() {
+  const query = gql`
+    {
+      all_recent_logins {
+        userId
+        dateLoggedIn
+      }
+    }
+  `;
+
+  const data = await request(GRAPH_QL_URL, query);
+
+  return data.all_recent_logins;
+}
+
+export {
+  getUsers,
+  blockUser,
+  getPosts,
+  deletePost,
+  getReactions,
+  getNumUsersPerDay,
+};

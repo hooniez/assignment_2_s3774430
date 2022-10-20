@@ -166,8 +166,15 @@ async function heart(userId, postId) {
 // ---------------------------------- Login ----------------------------------
 
 async function createLoginEntry(userId) {
+  const response = await axios.post(API_HOST + `/api/logins/${userId}`);
+  return response.data;
+}
+
+// ---------------------------------- Login ----------------------------------
+
+async function createVisitEntry(visitingEmail, visitedEmail) {
   const response = await axios.post(
-    API_HOST + `/api/logins/${userId}`
+    API_HOST + `/api/visits/${visitingEmail}/${visitedEmail}`
   );
   return response.data;
 }
@@ -289,4 +296,5 @@ export {
   thumbDown,
   heart,
   createLoginEntry,
+  createVisitEntry,
 };

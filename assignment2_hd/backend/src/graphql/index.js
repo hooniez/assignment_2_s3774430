@@ -3,9 +3,35 @@ const db = require("../database");
 
 const graphql = {};
 
+const { GraphQLScalarType } = require("graphql");
+const { Kind } = require("graphql/language");
+
+const moment = require("moment");
+
+const resolverMap = {
+  Date: new GraphQLScalarType({
+    name: "Date",
+    description: "Date custom type",
+    parseValue(value) {
+      return new Date(value);
+    },
+    serialize(value) {
+      return value.getItem();
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return parseInt(ast.value, 10);
+      }
+      return null;
+    },
+  }),
+};
+
 // GraphQL.
 // Construct a schema, using GraphQL schema language
 graphql.schema = buildSchema(`
+  scalar Date
+
   type User {
     id: Int,
     email: String,
@@ -25,11 +51,17 @@ graphql.schema = buildSchema(`
     reaction: Int
   }
 
+  type Login {
+    userId: Int,
+    dateLoggedIn: Date
+  }
+
   # Queries (read-only operations).
   type Query {
     all_users: [User],
     all_posts: [Post],
-    all_reactions(postId: Int): [React]
+    all_reactions(postId: Int): [React],
+    all_recent_logins: [Login],
   }
 
   # Mutations (modify data in the underlying data-source, i.e., the database).
@@ -84,6 +116,16 @@ graphql.root = {
     return await db.react.findAll({
       where: {
         postId: args.postId,
+      },
+    });
+  },
+
+  all_recent_logins: async (args) => {
+    return await db.login.findAll({
+      where: {
+        dateLoggedIn: {
+          [db.Op.gte]: moment().subtract(7, "days").toDate(),
+        },
       },
     });
   },

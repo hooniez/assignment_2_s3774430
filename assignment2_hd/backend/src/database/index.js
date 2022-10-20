@@ -16,6 +16,7 @@ db.user = require("./models/user.js")(db.sequelize, DataTypes);
 db.post = require("./models/post.js")(db.sequelize, DataTypes);
 // db.follow = require("./models/follow.js")(db.sequelize, DataTypes);
 db.react = require("./models/react.js")(db.sequelize, DataTypes);
+db.login = require("./models/login.js")(db.sequelize, DataTypes);
 
 // One user can have many posts while each post belongs to one user
 db.user.hasMany(db.post, {
@@ -34,6 +35,14 @@ db.post.belongsTo(db.user, {
 // Associate user with post through the react table
 db.user.belongsToMany(db.post, { through: db.react });
 db.post.belongsToMany(db.user, { through: db.react });
+
+// One user can have many logins while each login belongs to one user
+db.user.hasMany(db.login, {
+  foreignKey: "userId",
+});
+db.login.belongsTo(db.user, {
+  foreignKey: "userId",
+});
 
 // Create a junction table called Follow to keep track of who follows whom
 

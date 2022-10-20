@@ -17,6 +17,7 @@ import {
 import PostForm from "./PostForm";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  createVisitEntry,
   findUser,
   getAllFollowers,
   getAllFollowing,
@@ -54,7 +55,10 @@ export default function PostContent({
   const posterEmail = post.user.isDeleted ? "" : `${post.user.email}`;
 
   const visitProfile = async () => {
-    console.log(post.user);
+    // If user is not the same as post.user, create a visit entry
+    if (user.data.email != post.user.email) {
+      await createVisitEntry(user.data.email, post.user.email);
+    }
     navigate(`/profiles/${posterEmail}`, {
       state: {
         user: await findUser(posterEmail),
