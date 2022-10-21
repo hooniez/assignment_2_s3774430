@@ -3,18 +3,16 @@ import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import formatDate from "../../util/formatDate";
 import { createUser, findUser, createLoginEntry } from "../../data/repository";
-import MFA from "./MFA";
+// import MFA from "./MFA";
 
 export default function Signup() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
-
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
-  const [isMFAVisible, setIsMFAVisible] = useState(false);
-
+  // const [isMFAVisible, setIsMFAVisible] = useState(false);
   const [, dispatchUser] = useOutletContext();
-  const [MFApayload, setMFAPayload] = useState(null);
+  // const [MFApayload, setMFAPayload] = useState(null);
   const navigate = useNavigate();
 
   // a list of avatars from whcih to assign to a user
@@ -88,10 +86,12 @@ export default function Signup() {
   const signupWithoutMFA = async (payload) => {
     let newUser = await createUser(payload);
     await createLoginEntry(newUser.id);
+    // The same action type used for sign-in can be used for sign-up
     dispatchUser({
       type: "SIGNIN_USER",
       payload: newUser,
     });
+
     navigate(`/profiles/${payload.email}`, {
       state: {
         user: newUser,
@@ -126,8 +126,8 @@ export default function Signup() {
         isDeleted: false,
         secretKey: null,
       };
-      signupWithoutMFA(payload);
       // setupMFA(payload);
+      signupWithoutMFA(payload);
     } else {
       // If not valid, indicate to the user what inputs are not yet validated.
       setIsPasswordValid(validatePassword(password));
@@ -135,26 +135,26 @@ export default function Signup() {
     }
   };
 
-  const setupMFA = async (payload) => {
-    setMFAPayload(payload);
-    setIsMFAVisible(true);
-  };
+  // const setupMFA = async (payload) => {
+  //   setMFAPayload(payload);
+  //   setIsMFAVisible(true);
+  // };
 
   // The function gets called within MFA if the user has successfully scanned the QR code and typed in the OTP
-  const signupWithMFA = async (secretKey) => {
-    await createUser({ ...MFApayload, secretKey: secretKey });
-    dispatchUser({
-      type: "SIGNIN_USER",
-      payload: { ...MFApayload, secretKey: secretKey },
-    });
-    navigate(`/profiles/${MFApayload.email}`, {
-      state: { justLoggedIn: true },
-    });
-  };
+  // const signupWithMFA = async (secretKey) => {
+  //   await createUser({ ...MFApayload, secretKey: secretKey });
+  //   dispatchUser({
+  //     type: "SIGNIN_USER",
+  //     payload: { ...MFApayload, secretKey: secretKey },
+  //   });
+  //   navigate(`/profiles/${MFApayload.email}`, {
+  //     state: { justLoggedIn: true },
+  //   });
+  // };
 
   return (
     <Container className="component">
-      {MFApayload != null && (
+      {/* {MFApayload != null && (
         <MFA
           isMFAVisible={isMFAVisible}
           setIsMFAVisible={setIsMFAVisible}
@@ -162,7 +162,7 @@ export default function Signup() {
           MFApayload={MFApayload}
           onSuccess={signupWithMFA}
         ></MFA>
-      )}
+      )} */}
 
       <Row>
         <Col lg={{ span: 4, offset: 4 }}>

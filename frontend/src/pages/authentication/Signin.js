@@ -11,25 +11,29 @@ import {
 import { useNavigate, useOutletContext } from "react-router-dom";
 import logo from "../../logo.png";
 import {
-  findUser,
   getAllFollowing,
   getAllFollowers,
   verifyUser,
   createLoginEntry,
 } from "../../data/repository";
-import MFA from "./MFA";
+// import MFA from "./MFA";
 
 export default function Signin() {
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
-
   const [isErrorToastVisible, setIsErrorToastVisible] = useState(false);
   const [error, setError] = useState("");
-  const [isMFAVisible, setIsMFAVisible] = useState(false);
-
-  const [MFApayload, setMFAPayload] = useState(null);
-
   const [, dispatchUser] = useOutletContext();
   const navigate = useNavigate();
+  // const [isMFAVisible, setIsMFAVisible] = useState(false);
+  // const [MFApayload, setMFAPayload] = useState(null);
+
+  const togglePasswordVisability = () => {
+    setIsPasswordVisble(!isPasswordVisible);
+  };
+
+  const errorToastToggler = () => {
+    setIsErrorToastVisible(!isErrorToastVisible);
+  };
 
   const signinWithoutMFA = async (user) => {
     await createLoginEntry(user.id);
@@ -44,7 +48,6 @@ export default function Signin() {
 
     // Get the ids of all the users who follow the logged-in user
     const followers = await getAllFollowers(user.id);
-
     dispatchUser({
       type: "UPDATE_FOLLOWERS",
       payload: followers,
@@ -60,20 +63,20 @@ export default function Signin() {
     });
   };
 
-  const setupMFA = (user) => {
-    setMFAPayload(user);
-    setIsMFAVisible(true);
-  };
+  // const signinWithMFA = async () => {
+  //   setIsMFAVisible(false);
+  //   dispatchUser({ type: "SIGNIN_USER", payload: MFApayload });
+  //   navigate(`/profiles/${MFApayload.email}`, {
+  //     state: { user: await findUser(MFApayload.email), justLoggedIn: true },
+  //   });
+  // };
 
-  const signinWithMFA = async () => {
-    setIsMFAVisible(false);
-    dispatchUser({ type: "SIGNIN_USER", payload: MFApayload });
-    navigate(`/profiles/${MFApayload.email}`, {
-      state: { user: await findUser(MFApayload.email), justLoggedIn: true },
-    });
-  };
+  // const setupMFA = (user) => {
+  //   setMFAPayload(user);
+  //   setIsMFAVisible(true);
+  // };
 
-  const signinSubmitHandler = async (event) => {
+  const signinHandler = async (event) => {
     event.preventDefault();
     let email = document.getElementById("formSignInEmail").value.toLowerCase();
     let password = document.getElementById("formSignInPassword").value;
@@ -82,7 +85,6 @@ export default function Signin() {
     const res = await verifyUser(email, password);
     if (!res.hasOwnProperty("error")) {
       // setupMFA(user);
-      
       signinWithoutMFA(res);
     } else {
       setError(res.error);
@@ -90,17 +92,9 @@ export default function Signin() {
     }
   };
 
-  const togglePasswordVisability = () => {
-    setIsPasswordVisble(!isPasswordVisible);
-  };
-
-  const errorToastToggler = () => {
-    setIsErrorToastVisible(!isErrorToastVisible);
-  };
-
   return (
     <Container className="component">
-      {MFApayload !== null && (
+      {/* {MFApayload !== null && (
         <MFA
           isMFAVisible={isMFAVisible}
           setIsMFAVisible={setIsMFAVisible}
@@ -108,7 +102,7 @@ export default function Signin() {
           MFApayload={MFApayload}
           onSuccess={signinWithMFA}
         />
-      )}
+      )} */}
 
       <Row>
         <Col lg={{ span: 4, offset: 4 }} className="position-relative">
@@ -121,14 +115,14 @@ export default function Signin() {
               autohide
             >
               <Toast.Header className="justify-content-between">
-                <img src={logo} width="50" height="20" />
+                <img src={logo} alt="logo" width="50" height="20" />
               </Toast.Header>
               <Toast.Body className="text-white">
                 <strong>{error}</strong>
               </Toast.Body>
             </Toast>
           </ToastContainer>
-          <Form className="my-5" onSubmit={signinSubmitHandler}>
+          <Form className="my-5" onSubmit={signinHandler}>
             <header className="mb-5">
               <h1 className="text-center">Sign in</h1>
             </header>
