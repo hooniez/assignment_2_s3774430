@@ -25,7 +25,6 @@ ChartJS.register(
 
 // Convert res to data that can be used by a Line chart
 const convertResToData = (res) => {
-  console.log(res);
   let ret = {};
   let dateToVisits = {};
   let datesSet = new Set();
@@ -59,8 +58,6 @@ const convertResToData = (res) => {
     numVisits.push(dateToVisits[date]);
   });
 
-  console.log(`datesArr: ${datesArr}`);
-
   ret["dates"] = datesArr;
   ret["numVisits"] = numVisits;
   return ret;
@@ -77,7 +74,6 @@ export default function VisitChart({ userIdx }) {
       const res = await getProfileVisits(users[userIdx].id);
 
       const ret = convertResToData(res);
-      console.log(ret);
 
       dates = ret.dates;
       numVisits = ret.numVisits;

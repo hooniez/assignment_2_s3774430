@@ -1,0 +1,8 @@
+@keyframes warning {
+  from {background-color: #dc3545}
+  to {background-color: #fff}
+}
+
+.warning {
+  animation: warning 1s infinite;
+}

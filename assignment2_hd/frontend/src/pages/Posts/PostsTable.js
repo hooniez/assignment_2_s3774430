@@ -1,9 +1,10 @@
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Toast } from "react-bootstrap";
 import PostsContext from "../../contexts/PostsContext";
 import { useContext, useEffect, useState } from "react";
 import PostDeleteButton from "./PostDeleteButton";
 import { PieChart } from "react-bootstrap-icons";
 import AnalyticsModalPosts from "./AnalyticsModalPosts";
+import styles from "./PostsTable.module.css";
 
 export default function PostsTable() {
   const { posts, dispatchPosts } = useContext(PostsContext);
@@ -29,7 +30,7 @@ export default function PostsTable() {
   }, [posts.length]);
 
   return (
-    <Table striped>
+    <Table>
       <thead>
         <tr>
           <th>Id</th>
@@ -40,7 +41,14 @@ export default function PostsTable() {
       </thead>
       <tbody>
         {posts.map((post, idx) => (
-          <tr key={post.id}>
+          <tr
+            key={post.id}
+            className={
+              post?.thumbdowns?.length >= 5 && !post?.isDeletedByAdmin
+                ? styles.warning
+                : ""
+            }
+          >
             <td>{post.id}</td>
             <td>{post.text}</td>
             <td>

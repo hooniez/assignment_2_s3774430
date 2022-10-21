@@ -18,16 +18,25 @@ const PostsReducer = (state, action) => {
           isDeletedByAdmin: false,
         },
       });
-    
+
     case "SET_REACTION_FOR_POST_BY_IDX":
       return Object.values({
         ...state,
         [action.payload.idx]: {
           ...state[action.payload.idx],
           reactions: action.payload.reactions,
-        }
-      })
-    
+        },
+      });
+
+    case "SET_THUMBDOWNS_FOR_POST_BY_IDX":
+      return Object.values({
+        ...state,
+        [action.payload.idx]: {
+          ...state[action.payload.idx],
+          thumbdowns: action.payload.thumbdowns,
+        },
+      });
+
     default:
       throw new Error("Error!");
   }
