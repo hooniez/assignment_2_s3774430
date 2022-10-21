@@ -54,17 +54,10 @@ db.user.belongsToMany(db.user, {
   },
 });
 
-// Learn more about associations here: https://sequelize.org/master/manual/assocs.html
-
 // Include a sync option with seed data logic included.
 db.sync = async () => {
-  // Sync schema.
-  // await db.sequelize.sync();
-
-  // Can sync with force if the schema has become out of date - note that syncing with force is a destructive operation.
   await db.sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
   await db.sequelize.sync();
-
   // await seedData();
 };
 

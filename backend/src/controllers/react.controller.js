@@ -1,12 +1,17 @@
 const db = require("../database");
 
-// The value of 1 in the column reaction refers to the heart
-exports.getHearterIds = async (req, res) => {
+const Reactions = {
+  Heart: 1,
+  Thumbdown: -1,
+};
+
+// Get the ids of users who have given a heart reaction to the post
+exports.hearterIds = async (req, res) => {
   const hearters = await db.react.findAll({
     attribute: "userId",
     where: {
       postId: req.params.id,
-      reaction: 1,
+      reaction: Reactions.Heart,
     },
   });
 
@@ -14,20 +19,21 @@ exports.getHearterIds = async (req, res) => {
   res.json(heartersIds);
 };
 
-// The value of -1 in the column reaction refers to the heart
-exports.getThumbDownerIds = async (req, res) => {
-  const thumbDowners = await db.react.findAll({
+// Get the ids of users who have given a thumbdown reaction to the post
+exports.thumbdownerIds = async (req, res) => {
+  const thumbdowners = await db.react.findAll({
     attribute: "userId",
     where: {
       postId: req.params.id,
-      reaction: -1,
+      reaction: Reactions.Thumbdown,
     },
   });
 
-  const thumbDownersIds = thumbDowners.map((entry) => entry.userId);
-  res.json(thumbDownersIds);
+  const thumbdownersIds = thumbdowners.map((entry) => entry.userId);
+  res.json(thumbdownersIds);
 };
 
+// Remove an entry
 exports.removeReaction = async (req, res) => {
   const ret = await db.react.destroy({
     where: {
@@ -38,20 +44,22 @@ exports.removeReaction = async (req, res) => {
   res.json(ret);
 };
 
-exports.thumbDown = async (req, res) => {
+// Create an entry for a thumbdown
+exports.thumbdown = async (req, res) => {
   const ret = await db.react.create({
     userId: req.params.userId,
     postId: req.params.postId,
-    reaction: -1,
+    reaction: Reactions.Thumbdown,
   });
   res.json(ret);
 };
 
+// Create an entry for a heart
 exports.heart = async (req, res) => {
   const ret = await db.react.create({
     userId: req.params.userId,
     postId: req.params.postId,
-    reaction: 1,
+    reaction: Reactions.Heart,
   });
   res.json(ret);
 };

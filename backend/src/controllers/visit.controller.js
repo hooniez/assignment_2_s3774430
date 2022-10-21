@@ -1,8 +1,7 @@
 const db = require("../database");
 
-// Create a new visit entry in the database
+// Create a visit entry
 exports.create = async (req, res) => {
-  console.log(req.params);
   const visitingUser = await db.user.findOne({
     attribute: "id",
     where: {

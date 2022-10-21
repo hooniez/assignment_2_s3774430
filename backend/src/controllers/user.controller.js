@@ -1,15 +1,15 @@
 const db = require("../database");
 const argon2 = require("argon2");
 
-// Select all users from the database.
-exports.all = async (req, res) => {
+// Select all users
+exports.users = async (req, res) => {
   const users = await db.user.findAll();
 
   res.json(users);
 };
 
-// Select one user from the database.
-exports.one = async (req, res) => {
+// Select one user by email
+exports.userByEmail = async (req, res) => {
   const user = await db.user.findOne({
     where: {
       email: req.params.email,
@@ -20,7 +20,7 @@ exports.one = async (req, res) => {
   res.json(user);
 };
 
-// Select one user from the database if username and password are a match.
+// Select one user if username and password are a match.
 exports.login = async (req, res) => {
   const user = await db.user.findOne({
     where: {
@@ -43,12 +43,13 @@ exports.login = async (req, res) => {
       error = { error: "The user is blocked" };
       res.json(error);
     } else {
+      // if the user is found without any error
       res.json(user);
     }
   }
 };
 
-// Create a user in the database.
+// Create a user
 exports.create = async (req, res) => {
   const passwordHash = await argon2.hash(req.body.password, {
     type: argon2.argon2id,
@@ -68,7 +69,7 @@ exports.create = async (req, res) => {
   res.json(user);
 };
 
-// Delete a user from the table
+// Delete a user by email (soft-delete by setting isDeleted to true)
 exports.delete = async (req, res) => {
   const ret = await db.user.update(
     {
@@ -81,44 +82,31 @@ exports.delete = async (req, res) => {
   res.json(ret);
 };
 
+// Edit a user
 exports.edit = async (req, res) => {
-  let user;
+  let user = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    avatarSrc: req.body.avatarSrc,
+  };
 
+  // If the user is editing the password as well
   if (Object.keys(req.body).includes("password")) {
-    console.log("includes");
     const hash = await argon2.hash(req.body.password, {
       type: argon2.argon2id,
     });
-
-    ret = await db.user.update(
-      {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        avatarSrc: req.body.avatarSrc,
-        passwordHash: hash,
-      },
-      {
-        where: { email: req.body.email },
-      }
-    );
-  } else {
-    console.log("doesn't include");
-    ret = await db.user.update(
-      {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        avatarSrc: req.body.avatarSrc,
-      },
-      {
-        where: { email: req.body.email },
-      }
-    );
+    user.passwordHash = hash;
   }
+
+  ret = await db.user.update(user, {
+    where: { email: req.body.email },
+  });
 
   return res.json(ret);
 };
 
-exports.getUsers = async (req, res) => {
+// Get users by ids
+exports.usersByIds = async (req, res) => {
   const ids = req.params.ids.split(",");
   let users;
 
