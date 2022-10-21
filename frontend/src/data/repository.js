@@ -1,8 +1,8 @@
 import axios from "axios";
+import { request, gql } from "graphql-request";
 
-// TODO: extract the two lines below in a separate file.
 const API_HOST = "http://localhost:4000";
-const USER_KEY = "user";
+const GRAPH_QL_URL = "http://localhost:4009/graphql";
 
 // ---------------------------------- User ----------------------------------
 async function findUser(email) {
@@ -145,6 +145,7 @@ async function removeReaction(userId, postId) {
   const response = await axios.delete(
     API_HOST + `/api/reacts/removeReaction/${userId}/${postId}`
   );
+  await getAllThumbDowns(postId);
   return response.data;
 }
 
@@ -152,6 +153,7 @@ async function thumbDown(userId, postId) {
   const response = await axios.post(
     API_HOST + `/api/reacts/thumbdown/${userId}/${postId}`
   );
+  await getAllThumbDowns(postId);
   return response.data;
 }
 
@@ -170,13 +172,35 @@ async function createLoginEntry(userId) {
   return response.data;
 }
 
-// ---------------------------------- Login ----------------------------------
+// ---------------------------------- Visit ----------------------------------
 
 async function createVisitEntry(visitingEmail, visitedEmail) {
   const response = await axios.post(
     API_HOST + `/api/visits/${visitingEmail}/${visitedEmail}`
   );
   return response.data;
+}
+
+// ------------------------------- GraphQL thumbdown request ------------------
+
+// Make a graphql request to let the admin server know the thumbdown has been generated and check whether the number of thumbdowns for the post exceeds 5.
+async function getAllThumbDowns(postId) {
+  const query = gql`
+    query ($postId: Int) {
+      all_thumbdowns(postId: $postId) {
+        userId
+        postId
+        reaction
+        dateReacted
+      }
+    }
+  `;
+
+  const variables = { postId };
+
+  const data = await request(GRAPH_QL_URL, query, variables);
+
+  return data.all_thumbdowns;
 }
 
 const mockUsers = [

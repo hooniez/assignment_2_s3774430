@@ -104,7 +104,7 @@ export default function Post({
       thumbDownerIds.delete(user.data.id);
       setThumbDownerIds(new Set([...thumbDownerIds]));
     }
-    // If the user has yet given a heart, create an entry
+    // If the user has not yet given a heart, create an entry
     if (!hearterIds.has(user.data.id)) {
       setHearterIds(new Set([...hearterIds, user.data.id]));
     } else {
@@ -119,7 +119,7 @@ export default function Post({
     if (hearterIds.has(user.data.id)) {
       await removeReaction(user.data.id, post.id);
     }
-    // If the user has yet given a thumbdown, create an entry
+    // If the user has not yet given a thumbdown, create an entry
     if (!thumbDownerIds.has(user.data.id)) {
       await thumbDown(user.data.id, post.id);
     } else {

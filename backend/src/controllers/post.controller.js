@@ -2,8 +2,8 @@ const db = require("../database");
 
 const POST_LIMIT = 10;
 
-// Select all root posts from the database.
-exports.new = async (req, res) => {
+// Select root posts
+exports.rootPosts = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
       parentId: null,
@@ -14,15 +14,11 @@ exports.new = async (req, res) => {
     include: db.user,
   });
 
-  // Can use eager loading to join tables if needed, for example:
-  // const posts = await db.post.findAll({ include: db.user });
-
-  // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
-
   res.json(posts);
 };
 
-exports.newByUserId = async (req, res) => {
+// Select root posts made by a particular user
+exports.rootPostsByUserId = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
       postedBy: Number(req.params.userId),
@@ -38,7 +34,8 @@ exports.newByUserId = async (req, res) => {
   res.json(posts);
 };
 
-exports.moreNewPosts = async (req, res) => {
+// Select more root posts
+exports.moreRootPosts = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
       parentId: null,
@@ -50,15 +47,11 @@ exports.moreNewPosts = async (req, res) => {
     include: db.user,
   });
 
-  // Can use eager loading to join tables if needed, for example:
-  // const posts = await db.post.findAll({ include: db.user });
-
-  // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
-
   res.json(posts);
 };
 
-exports.moreNewPostsByUserId = async (req, res) => {
+// Select root posts made by a particular user
+exports.moreRootPostsByUserId = async (req, res) => {
   const posts = await db.post.findAll({
     where: {
       postedBy: Number(req.params.userId),
@@ -74,19 +67,20 @@ exports.moreNewPostsByUserId = async (req, res) => {
   res.json(posts);
 };
 
-exports.totalCountById = async (req, res) => {
-  // console.log(req.params.id);
+// Get the number of child posts by the parent post id
+exports.countByParentId = async (req, res) => {
   const count = await db.post.count({
+    // Find rows whose parentID is the provided id
     where: {
-      postedBy: Number(req.params.id),
-      parentId: null,
+      parentId: req.params.id,
       isDeleted: false,
     },
   });
+
   res.json(count);
 };
 
-// Create a post in the database.
+// Create a new post
 exports.create = async (req, res) => {
   const newPost = await db.post.create({
     postedBy: req.body.postedBy,
@@ -101,18 +95,7 @@ exports.create = async (req, res) => {
   res.json(newPostWithUser);
 };
 
-exports.countById = async (req, res) => {
-  const count = await db.post.count({
-    // Find rows whose parentID is the provided id
-    where: {
-      parentId: req.params.id,
-      isDeleted: false,
-    },
-  });
-
-  res.json(count);
-};
-
+// Delete a post by id
 exports.delete = async (req, res) => {
   const ret = await db.post.update(
     {
@@ -123,6 +106,7 @@ exports.delete = async (req, res) => {
   res.json(ret);
 };
 
+// Edit an existing post
 exports.edit = async (req, res) => {
   const editedPost = await db.post
     .update(
@@ -145,7 +129,7 @@ exports.edit = async (req, res) => {
 };
 
 // Select comments from the database.
-exports.newComments = async (req, res) => {
+exports.comments = async (req, res) => {
   const comments = await db.post.findAll({
     where: {
       parentId: req.params.id,
@@ -155,15 +139,10 @@ exports.newComments = async (req, res) => {
     include: db.user,
   });
 
-  // Can use eager loading to join tables if needed, for example:
-  // const posts = await db.post.findAll({ include: db.user });
-
-  // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
-
   res.json(comments);
 };
 
-exports.moreNewComments = async (req, res) => {
+exports.moreComments = async (req, res) => {
   const existingIds = req.params.existingIds.split(",");
 
   const posts = await db.post.findAll({
@@ -176,10 +155,17 @@ exports.moreNewComments = async (req, res) => {
     include: db.user,
   });
 
-  // Can use eager loading to join tables if needed, for example:
-  // const posts = await db.post.findAll({ include: db.user });
-
-  // Learn more about eager loading here: https://sequelize.org/master/manual/eager-loading.html
-
   res.json(posts);
 };
+
+// exports.totalCountById = async (req, res) => {
+//   // console.log(req.params.id);
+//   const count = await db.post.count({
+//     where: {
+//       postedBy: Number(req.params.id),
+//       parentId: null,
+//       isDeleted: false,
+//     },
+//   });
+//   res.json(count);
+// };

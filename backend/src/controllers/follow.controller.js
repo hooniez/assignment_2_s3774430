@@ -2,6 +2,7 @@ const db = require("../database");
 
 // Create a new follow entry in the database
 exports.create = async (req, res) => {
+  // Find the two users involved in this new follow entry to be created
   const followingUser = await db.user.findOne({
     attribute: "id",
     where: {
@@ -15,6 +16,7 @@ exports.create = async (req, res) => {
     },
   });
 
+  // Create a new entry
   const followEntry = await db.follow.create({
     userId: followingUser.id,
     followedId: followedUser.id,
@@ -24,6 +26,7 @@ exports.create = async (req, res) => {
 
 // Delete a follow entry
 exports.delete = async (req, res) => {
+  // Find the two users involved in this follow entry to be deleted
   const followingUser = await db.user.findOne({
     attribute: "id",
     where: {
@@ -37,6 +40,7 @@ exports.delete = async (req, res) => {
     },
   });
 
+  // Delete the entry
   const followEntry = await db.follow.destroy({
     where: {
       userId: followingUser.id,
@@ -45,15 +49,6 @@ exports.delete = async (req, res) => {
   });
   res.json(followEntry);
 };
-
-// // Get all followers
-// exports.getAllFollowers = async (req, res) => {
-//   const followers = await db.follow.findAll({
-//     where: {
-
-//     }
-//   })
-// }
 
 // Get the ids of all the users whom the logged-in user follows
 exports.getAllFollowing = async (req, res) => {
@@ -82,6 +77,3 @@ exports.getAllFollowers = async (req, res) => {
 
   res.json(followersIds);
 };
-
-// // Create a new follow entry
-// router.post("/:followingEmail/:followedEmail", controller.create);

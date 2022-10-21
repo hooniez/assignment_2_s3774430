@@ -2,37 +2,35 @@ module.exports = (express, app) => {
   const controller = require("../controllers/post.controller.js");
   const router = express.Router();
 
-  // Select new posts.
-  router.get("/", controller.new);
+  // Select root posts.
+  router.get("/", controller.rootPosts);
 
-  // Select new posts by userId.
-  router.get("/:userId", controller.newByUserId);
+  // Select more root posts
+  router.get("/moreNew/:offset", controller.moreRootPosts);
 
-  // Select more new posts
-  router.get("/moreNew/:offset", controller.moreNewPosts);
+  // Select root posts by userId.
+  router.get("/:userId", controller.rootPostsByUserId);
 
-  // Select more new posts by userId
-  router.get("/:userId/moreNew/:offset", controller.moreNewPostsByUserId);
+  // Select more root posts by userId
+  router.get("/:userId/moreNew/:offset", controller.moreRootPostsByUserId);
 
   // Get the number of child posts by the parent post id
-  router.get("/count/:id", controller.countById);
+  router.get("/count/:id", controller.countByParentId);
 
-  // Create a new post.
+  // Create a new post
   router.post("/", controller.create);
 
-  // Delete a post by id.
+  // Delete a post by id
   router.delete("/delete/:id", controller.delete);
 
   // Edit an existing post
   router.put("/", controller.edit);
 
-  // Select new comments
-  router.get("/:id/comments", controller.newComments);
+  // Select comments
+  router.get("/:id/comments", controller.comments);
 
-  // Select more new posts
-  router.get("/:id/moreNew/:existingIds", controller.moreNewComments);
-
-  // API_HOST + `/api/posts/${id}/moreNew/${existingIds}`
+  // Select more comments
+  router.get("/:id/moreNew/:existingIds", controller.moreComments);
 
   // Add routes to server.
   app.use("/api/posts", router);
