@@ -2,7 +2,6 @@ import { Modal, Tabs, Tab } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { getUsers } from "../../data/repository";
 import UserEntry from "./UserEntry";
-import { FilePdf } from "react-bootstrap-icons";
 
 export default function FollowModal({
   followModalToggler,
@@ -11,7 +10,6 @@ export default function FollowModal({
   followingIds,
   setFollowingIds,
   followersIds,
-  setFollowersIds,
   self,
   loggedInUser,
   dispatchUser,
@@ -26,14 +24,16 @@ export default function FollowModal({
   }
 
   async function getFollowedUsers(ids) {
-    setFollowerUsers(await getUsers(ids));
+    if (ids.length !== 0) {
+      setFollowerUsers(await getUsers(ids));
+    }
   }
 
   // Load initial data
   useEffect(() => {
     getFollowingUsers(followingIds);
     getFollowedUsers(followersIds);
-  }, []);
+  }, [followingIds, followersIds]);
 
   return (
     <Modal show={followModalVisible} onHide={followModalToggler}>

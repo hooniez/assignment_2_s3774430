@@ -10,10 +10,10 @@ export default function Signup() {
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordVisible, setIsPasswordVisble] = useState(false);
-  // const [isMFAVisible, setIsMFAVisible] = useState(false);
   const [, dispatchUser] = useOutletContext();
-  // const [MFApayload, setMFAPayload] = useState(null);
   const navigate = useNavigate();
+  // const [isMFAVisible, setIsMFAVisible] = useState(false);
+  // const [MFApayload, setMFAPayload] = useState(null);
 
   // a list of avatars from whcih to assign to a user
   const avatars = [

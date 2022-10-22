@@ -1,10 +1,8 @@
-import { useState, useEffect, useReducer } from "react";
+import { useReducer } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "./fragments/Footer";
 import NavigationBar from "./fragments/NavigationBar";
-import { Outlet, Routes, Route, useLocation } from "react-router-dom";
-import Comments from "./pages/forum/Comments";
-import PostsPage from "./pages/forum/PostsPage";
+import { Outlet } from "react-router-dom";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -19,6 +17,8 @@ const userReducer = (state, action) => {
         ...state,
         data: null,
         isLoggedIn: false,
+        following: [],
+        followers: [],
       };
     case "EDIT_USER":
       return {
@@ -45,7 +45,7 @@ function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
     data: null,
     following: [],
-    followed: null,
+    // followed: null,
     followers: [],
     isLoggedIn: false,
   });

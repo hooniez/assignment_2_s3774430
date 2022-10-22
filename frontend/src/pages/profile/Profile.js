@@ -11,7 +11,6 @@ import {
   FloatingLabel,
   Toast,
   ToastContainer,
-  AccordionButton,
 } from "react-bootstrap";
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -29,41 +28,31 @@ import {
   verifyUser,
   follow,
   unfollow,
-  getUserPosts,
-  getTotalNumPosts,
 } from "../../data/repository";
 import Posts from "../forum/Posts";
 import FollowModal from "./FollowModal";
 
 export default function Profile() {
   const [user, dispatchUser, ,] = useOutletContext();
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const [editHidden, setEditHidden] = useState(true);
   const [deleteModalHidden, setDeleteModalHidden] = useState(true);
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false);
-  const [currAvatarIdx, setCurrAvatarIdx] = useState(0);
   const [passwordInputHidden, setPasswordInputHidden] = useState(true);
   const [isPasswordIdentical, setIsPasswordIdentical] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
-  const [isPasswordVisible, setIsPasswordVisble] = useState(false);
   const [isPasswordMatched, setIsPasswordMatched] = useState(true);
   const [followModalVisible, setFollowModalVisible] = useState(false);
-  const { state } = useLocation();
   const [welcomeToastVisible, setWelcomeToastVisible] = useState(
     state.justLoggedIn
   );
+  const [currAvatarIdx, setCurrAvatarIdx] = useState(0);
   const [avatarUrls, setAvatarUrls] = useState(
     user.data?.id === state.user.id
       ? [user.data?.avatarSrc]
       : [state.user.avatarSrc]
   );
-
-  // From another profile page, clicking a NavLink may not update these states. Manually update them when state.user is changed.
-  useEffect(() => {
-    setAvatarUrls([state.user.avatarSrc]);
-    setFollowing(state.following);
-    setFollowers(state.followers);
-  }, [state.user, state.following, state.followers]);
-
   // States related to follow
   const [isFollowed, setIsFollowed] = useState(
     user.following?.includes(state.user.id)
@@ -74,33 +63,28 @@ export default function Profile() {
   const [followers, setFollowers] = useState(
     user.data?.id === state.user.id ? user.followers : state.followers
   );
-  const [posts, setPosts] = useState([]);
-  const [numPages, setNumPages] = useState(0);
-  const postLimit = 5;
-
   const newPasswordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const submitButtonRef = useRef(null);
 
-  const navigate = useNavigate();
+  // From another profile page, clicking a NavLink may not update these states. Manually update them when state.user is changed.
+  useEffect(() => {
+    setAvatarUrls([state.user.avatarSrc]);
+    setFollowing(state.following);
+    setFollowers(state.followers);
+  }, [state.user, state.following, state.followers]);
 
-  const editShowHandler = (event) => {
-    setEditHidden(!editHidden);
-  };
-
-  // const loadPosts = async () => {
-  //   setPosts(await getUserPosts(state.user.id, postLimit, posts.length));
-  // };
-
-  // useEffect(() => {
-  //   // Load user posts
-  //   loadPosts();
-  // }, []);
-
-  const welcomeToastToggler = () => {
+  // Visibility togglers
+  const editShowHandler = () => setEditHidden(!editHidden);
+  const welcomeToastToggler = () =>
     setWelcomeToastVisible(!welcomeToastVisible);
-  };
+  const togglePasswordInputVisibility = () =>
+    setPasswordInputHidden(!passwordInputHidden);
+  const followModalToggler = () => setFollowModalVisible(!followModalVisible);
+  const confirmDeleteHandler = () => setDeleteModalHidden(false);
+  const closeDeleteHandler = () => setDeleteModalHidden(true);
 
+  // Validation logic
   function validatePassword(password) {
     /* A regex pattern that matches invalid passwords
         - Anything with less than eight characters OR
@@ -120,7 +104,6 @@ export default function Profile() {
 
   let confirmPasswordTimeoutId;
   let validatePasswordTimeoutId;
-
   const timeDelayed = 1000;
 
   const confirmPasswordHandler = (event) => {
@@ -195,6 +178,7 @@ export default function Profile() {
         setIsPasswordMatched(true);
         event.target.reset();
       } else {
+        // If the verification fails
         setIsPasswordMatched(false);
       }
     }
@@ -207,13 +191,6 @@ export default function Profile() {
       type: "SIGNOUT_USER",
     });
     navigate("/");
-  };
-
-  const confirmDeleteHandler = () => setDeleteModalHidden(false);
-  const closeDeleteHandler = () => setDeleteModalHidden(true);
-
-  const followModalToggler = () => {
-    setFollowModalVisible(!followModalVisible);
   };
 
   // a list of avatars from whcih to assign to a user
@@ -239,10 +216,6 @@ export default function Profile() {
     } else {
       setCurrAvatarIdx(currAvatarIdx - 1);
     }
-  };
-
-  const togglePasswordInputVisibility = () => {
-    setPasswordInputHidden(!passwordInputHidden);
   };
 
   const appendAvatarUrlHandler = () => {
@@ -276,11 +249,11 @@ export default function Profile() {
       await unfollow(user.data.email, state.user.email);
       dispatchUser({
         type: "UPDATE_FOLLOWING",
-        payload: user.following.filter((id) => id != state.user.id),
+        payload: user.following.filter((id) => id !== state.user.id),
       });
       setIsFollowed(false);
       setFollowers(
-        followers.filter((followerId) => followerId != user.data.id)
+        followers.filter((followerId) => followerId !== user.data.id)
       );
     }
   };
@@ -313,7 +286,7 @@ export default function Profile() {
                 autohide
               >
                 <Toast.Header className="justify-content-between">
-                  <img src={logo} width="50" height="20" />
+                  <img src={logo} alt="logo" width="50" height="20" />
                 </Toast.Header>
                 <Toast.Body className="text-white">
                   <strong>{`Welcome, ${user.data?.firstName}!`}</strong>
@@ -511,7 +484,7 @@ export default function Profile() {
               {editHidden && (
                 <>
                   <Card.Subtitle className="mb-4 text-muted">
-                    {user.data?.id == state.user.id
+                    {user.data?.id === state.user.id
                       ? user.data?.email
                       : state.user.email}
                   </Card.Subtitle>
