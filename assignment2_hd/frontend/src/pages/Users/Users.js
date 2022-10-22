@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { getUsers } from "../../data/repository";
 import UsersTable from "./UsersTable";
 import UsersContext from "../../contexts/UsersContext";
@@ -11,7 +11,6 @@ export default function Users() {
   useEffect(() => {
     const loadUsers = async () => {
       const currentUsers = await getUsers();
-
       dispatchUsers({ type: "SET_USERS", payload: currentUsers });
     };
 

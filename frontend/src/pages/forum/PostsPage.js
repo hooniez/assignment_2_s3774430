@@ -17,7 +17,6 @@ export default function PostsPage({
   thumbDownHandlerRoot,
 }) {
   const [user = defaultUser, dispatchUser] = useOutletContext();
-
   const mostOuterElement = useRef(null);
 
   return (

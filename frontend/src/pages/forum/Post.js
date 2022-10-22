@@ -243,7 +243,7 @@ export default function Post({
         className={styles.crudModal}
         backdropClassName={styles.crudModalBackdrop}
       />
-
+      
       {commentsModalVisible && !rootPost && (
         <Comments
           parentPost={post}

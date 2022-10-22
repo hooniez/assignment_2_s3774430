@@ -12,6 +12,5 @@ export default function getTotalNumChildPosts(post, posts) {
       }
     }
   }
-
   return res;
 }

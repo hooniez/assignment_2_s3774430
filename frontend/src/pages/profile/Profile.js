@@ -85,6 +85,7 @@ export default function Profile() {
   const closeDeleteHandler = () => setDeleteModalHidden(true);
   const followModalToggler = (tabName) => {
     setFollowModalVisible(!followModalVisible);
+    // Open a Following tab if Following is clicked, ditto for Followers
     setFollowTab(tabName);
   };
 

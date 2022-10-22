@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import gql from "graphql-tag";
 import { getPosts } from "../../data/repository";
 import PostsTable from "./PostsTable";

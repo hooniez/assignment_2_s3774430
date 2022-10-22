@@ -19,7 +19,7 @@ export default function ImageModal({
     >
       <Modal.Header closeButton></Modal.Header>
       <Modal.Body className="text-center">
-        <img src={post.imgSrc} className={styles.uploadedImage} />
+        <img src={post.imgSrc} className={styles.uploadedImage} alt="post" />
       </Modal.Body>
     </Modal>
   );

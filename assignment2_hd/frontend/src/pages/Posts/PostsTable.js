@@ -1,4 +1,4 @@
-import { Table, Button, Toast } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import PostsContext from "../../contexts/PostsContext";
 import { useContext, useEffect, useState } from "react";
 import PostDeleteButton from "./PostDeleteButton";
@@ -7,7 +7,7 @@ import AnalyticsModalPosts from "./AnalyticsModalPosts";
 import styles from "./PostsTable.module.css";
 
 export default function PostsTable() {
-  const { posts, dispatchPosts } = useContext(PostsContext);
+  const { posts } = useContext(PostsContext);
   const [isGraphicModalVisible, setIsGraphicModalVisible] = useState([]);
 
   const toggleGraphicModalVisible = (idx) => {

@@ -45,7 +45,6 @@ function App() {
   const [user, dispatchUser] = useReducer(userReducer, {
     data: null,
     following: [],
-    // followed: null,
     followers: [],
     isLoggedIn: false,
   });

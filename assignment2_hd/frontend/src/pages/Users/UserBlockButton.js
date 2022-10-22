@@ -7,8 +7,9 @@ export default function UserBlockButton({ user }) {
   const { users, dispatchUsers } = useContext(UsersContext);
 
   const handleBlock = async () => {
-    const res = await blockUser(user.id);
+    await blockUser(user.id);
 
+    // Find the index corresponding to the user deleted in users from UsersContext
     const idx = users.findIndex((el) => el.id === user.id);
 
     if (user.isBlocked) {

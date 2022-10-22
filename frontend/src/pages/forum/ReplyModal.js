@@ -11,7 +11,7 @@ export default function ReplyModal({
   addComment,
   numComments,
   incrementNumChildPosts,
-  incrementNumChildPostsRoot
+  incrementNumChildPostsRoot,
 }) {
   return (
     <Modal
@@ -24,7 +24,6 @@ export default function ReplyModal({
       <Modal.Header closeButton>
         <Modal.Title>Reply</Modal.Title>
       </Modal.Header>
-
       <Modal.Body>
         <Container>
           <PostContent

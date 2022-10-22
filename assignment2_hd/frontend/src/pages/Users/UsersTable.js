@@ -1,4 +1,4 @@
-import { Table, Button } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import UsersContext from "../../contexts/UsersContext";
 import { useContext, useEffect, useState } from "react";
 import UserBlockButton from "./UserBlockButton";
@@ -6,7 +6,7 @@ import { PieChart } from "react-bootstrap-icons";
 import AnalyticsModalUsers from "./AnalyticsModalUsers";
 
 export default function UsersTable() {
-  const { users, dispatchUsers } = useContext(UsersContext);
+  const { users } = useContext(UsersContext);
   const [isGraphicModalVisible, setIsGraphicModalVisible] = useState([]);
 
   const toggleGraphicModalVisible = (idx) => {

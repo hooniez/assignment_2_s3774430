@@ -1,4 +1,4 @@
-import { Button, Container, Row } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { unfollow } from "../../data/repository";
 import styles from "./UserEntry.module.css";
 import { useState } from "react";
@@ -25,10 +25,10 @@ export default function UserEntry({
   };
 
   const unFollowingHandler = async () => {
-    let newFollowingIds = followingIds.filter((id) => id != user.id);
+    let newFollowingIds = followingIds.filter((id) => id !== user.id);
     setFollowingIds(newFollowingIds);
     setFollowingUsers(
-      followingUsers.filter((followingUser) => followingUser.id != user.id)
+      followingUsers.filter((followingUser) => followingUser.id !== user.id)
     );
     await unfollow(loggedInUser.email, user.email);
     dispatchUser({
@@ -40,7 +40,11 @@ export default function UserEntry({
     <Container>
       <div className="my-3 d-flex justify-content-between align-items-center">
         <div>
-          <img src={user.avatarSrc} className={`${styles.avatar} me-2`} />
+          <img
+            src={user.avatarSrc}
+            className={`${styles.avatar} me-2`}
+            alt="avatar"
+          />
           <span className="me-2">{`${user.firstName} ${user.lastName}`}</span>
           <small className={styles.greyedOutText}>{user.email}</small>
         </div>

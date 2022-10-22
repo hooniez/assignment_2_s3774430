@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "react-bootstrap";
 import PostsContext from "../../contexts/PostsContext";
 import { getReactions } from "../../data/repository";
@@ -10,7 +10,8 @@ export default function AnalyticsModalPosts({
   post,
   postIdx,
 }) {
-  const { posts, dispatchPosts } = useContext(PostsContext);
+  const { dispatchPosts } = useContext(PostsContext);
+
   useEffect(() => {
     const loadReactions = async () => {
       // currentReactions: [{reaction: 1}, {reaction: 1}, {reaction: -1}]
@@ -21,7 +22,7 @@ export default function AnalyticsModalPosts({
       // Count the number of likes and dislikes: from the example above,
       // res == [2, 1] after forEach.
       reactions.forEach((el) => {
-        if (el == 1) {
+        if (el === 1) {
           res[0] += 1;
         } else {
           res[1] += 1;
@@ -35,7 +36,7 @@ export default function AnalyticsModalPosts({
     };
 
     loadReactions();
-  }, []);
+  }, [dispatchPosts, post?.id, postIdx]);
 
   return (
     <Modal

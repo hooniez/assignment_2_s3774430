@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import {
   Modal,
   ModalBody,
@@ -7,7 +7,6 @@ import {
   Row,
 } from "react-bootstrap";
 import UsersContext from "../../contexts/UsersContext";
-import ReactionChart from "../../fragments/ReactionChart";
 import { getFollowMetrics } from "../../data/repository";
 import FollowChart from "../../fragments/FollowChart";
 import VisitChart from "../../fragments/VisitChart";
@@ -18,7 +17,7 @@ export default function AnalyticsModalUsers({
   user,
   userIdx,
 }) {
-  const { users, dispatchUsers } = useContext(UsersContext);
+  const { dispatchUsers } = useContext(UsersContext);
 
   const Follow = {
     Following: 0,
@@ -47,7 +46,7 @@ export default function AnalyticsModalUsers({
     };
 
     loadFollowMetrics();
-  }, []);
+  }, [Follow?.Followers, Follow?.Following, dispatchUsers, user?.id, userIdx]);
 
   return (
     <Modal

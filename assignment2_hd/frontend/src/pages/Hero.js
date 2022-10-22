@@ -1,4 +1,4 @@
-import { Carousel, Image } from "react-bootstrap";
+import { Carousel } from "react-bootstrap";
 import users from "../users.png";
 import posts from "../posts.png";
 import logo from "../logo.png";
@@ -17,7 +17,6 @@ export default function Hero() {
           <div className="d-flex justify-content-center">
             <img className="d-block" src={users} alt="users" />
           </div>
-
           <div className="text-center py-5">
             <hr className="my-5" />
             <h3>Users Page</h3>
@@ -93,7 +92,7 @@ export default function Hero() {
         </Carousel.Item>
       </Carousel>
       <div className="d-flex justify-content-center mt-5">
-        <img src={logo} />
+        <img src={logo} alt="logo" />
       </div>
     </>
   );
