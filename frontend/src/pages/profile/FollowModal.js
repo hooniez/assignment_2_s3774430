@@ -13,6 +13,7 @@ export default function FollowModal({
   self,
   loggedInUser,
   dispatchUser,
+  activeKey,
 }) {
   const [followingUsers, setFollowingUsers] = useState([]);
   const [followerUsers, setFollowerUsers] = useState([]);
@@ -46,7 +47,7 @@ export default function FollowModal({
         </div>
       </Modal.Header>
       <Modal.Body>
-        <Tabs fill>
+        <Tabs fill activeKey={activeKey}>
           <Tab eventKey="Following" title="Following">
             {followingUsers.map((user) => (
               <UserEntry

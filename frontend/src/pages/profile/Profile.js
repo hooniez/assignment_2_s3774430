@@ -63,6 +63,7 @@ export default function Profile() {
   const [followers, setFollowers] = useState(
     user.data?.id === state.user.id ? user.followers : state.followers
   );
+  const [followTab, setFollowTab] = useState(null);
   const newPasswordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const submitButtonRef = useRef(null);
@@ -80,9 +81,12 @@ export default function Profile() {
     setWelcomeToastVisible(!welcomeToastVisible);
   const togglePasswordInputVisibility = () =>
     setPasswordInputHidden(!passwordInputHidden);
-  const followModalToggler = () => setFollowModalVisible(!followModalVisible);
   const confirmDeleteHandler = () => setDeleteModalHidden(false);
   const closeDeleteHandler = () => setDeleteModalHidden(true);
+  const followModalToggler = (tabName) => {
+    setFollowModalVisible(!followModalVisible);
+    setFollowTab(tabName);
+  };
 
   // Validation logic
   function validatePassword(password) {
@@ -496,17 +500,21 @@ export default function Profile() {
                     <div
                       role="button"
                       className="me-2"
-                      onClick={followModalToggler}
+                      onClick={() => followModalToggler("Following")}
                     >
                       <strong>{following?.length}</strong>
                       <small className="text-muted"> Following</small>
                     </div>
-                    <div role="button" onClick={followModalToggler}>
+                    <div
+                      role="button"
+                      onClick={() => followModalToggler("Followers")}
+                    >
                       <strong>{followers?.length}</strong>
                       <small className="text-muted"> Followers</small>
                     </div>
                     {followModalVisible && (
                       <FollowModal
+                        activeKey={followTab}
                         followModalVisible={followModalVisible}
                         followModalToggler={followModalToggler}
                         user={state.user}
