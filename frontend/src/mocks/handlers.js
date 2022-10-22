@@ -122,13 +122,26 @@ export const handlers = [
   }),
 
   // thumbDown(userId, postId) in repository.js mocked below
-  rest.post(API_HOST + `/api/reacts/thumbdown/:userId/:postId`, (req, res, ctx) => {
+  rest.post(
+    API_HOST + `/api/reacts/thumbdown/:userId/:postId`,
+    (req, res, ctx) => {
+      return res(
+        ctx.json({
+          dateReacted: "2022-10-01T09:18:06.888Z",
+          postId: "1",
+          reaction: -1,
+          userId: "1",
+        })
+      );
+    }
+  ),
+
+  // createLoginEntry(userId) in repository.js mocked below
+  rest.post(API_HOST + `/api/logins/:userId`, (req, res, ctx) => {
     return res(
       ctx.json({
-        dateReacted: "2022-10-01T09:18:06.888Z",
-        postId: "1",
-        reaction: -1,
-        userId: "1",
+        dateLoggedIn: "2022-10-01T09:18:06.888Z",
+        userId: 1,
       })
     );
   }),

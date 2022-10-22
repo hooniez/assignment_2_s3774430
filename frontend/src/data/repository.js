@@ -200,6 +200,7 @@ async function getAllThumbDowns(postId) {
 
   const data = await request(GRAPH_QL_URL, query, variables);
 
+  console.log(data.all_thumbdowns);
   return data.all_thumbdowns;
 }
 
