@@ -1,6 +1,6 @@
 const db = require("../database");
 
-const POST_LIMIT = 10;
+const POST_LIMIT = 5;
 
 // Select root posts
 exports.rootPosts = async (req, res) => {

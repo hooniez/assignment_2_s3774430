@@ -46,14 +46,14 @@ export default function Posts({
         }
 
         setPosts([...newPosts]);
-        if (newPosts.length < 10) {
+        if (newPosts.length < 5) {
           setHasMorePosts(false);
         }
       } else {
         // If the Posts component is used for comments
         newPosts = await getComments(parentPost.id);
         setPosts([...newPosts]);
-        if (newPosts.length < 10) {
+        if (newPosts.length < 5) {
           setHasMorePosts(false);
         }
       }
