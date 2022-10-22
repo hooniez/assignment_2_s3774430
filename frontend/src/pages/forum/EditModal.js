@@ -15,7 +15,7 @@ export default function EditModal({
   imageRemoveHandler,
   backdropClassName,
   className,
-  editParentPost
+  editParentPost,
 }) {
   return (
     <Modal
@@ -46,14 +46,6 @@ export default function EditModal({
       </Modal.Body>
       {imgSrc && (
         <div className="d-flex justify-content-center pb-3">
-          {/* <Button
-          variant="secondary"
-          className="rounded-0 d-block"
-          onClick={imageRemoveHandler}
-        >
-          Remove the image
-        </Button> */}
-
           <div className={`${styles.canvasImageContainers} position-relative`}>
             <X
               className={styles.x}

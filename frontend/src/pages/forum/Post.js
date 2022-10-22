@@ -1,25 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  Container,
-  Card,
-  Button,
-  Form,
-  Row,
-  Col,
-  Image,
-} from "react-bootstrap";
-import {
-  ArrowReturnRight,
-  Chat,
-  ChatTextFill,
-  Cpu,
-  Heart,
-  Megaphone,
-  PencilFill,
-  TrashFill,
-  X,
-} from "react-bootstrap-icons";
+import { Card } from "react-bootstrap";
 import Comments from "./Comments";
 import styles from "./Post.module.css";
 
@@ -33,10 +13,8 @@ import {
   heart,
 } from "../../data/repository";
 
-import PostForm from "./PostForm";
 import EditModal from "./EditModal";
 import PostContent from "./PostContent";
-import PostsPage from "./PostsPage";
 import ReplyModal from "./ReplyModal";
 import ImageModal from "./ImageModal";
 import DeleteModal from "./DeleteModal";
@@ -67,12 +45,6 @@ export default function Post({
   const [thumbDownerIds, setThumbDownerIds] = useState(new Set());
 
   const [imgSrc, setImgSrc] = useState(post.imgSrc);
-
-  async function loadPostData() {
-    setNumComments(await getNumComments(post.id));
-    setHearterIds(new Set(await getHearterIds(post.id)));
-    setThumbDownerIds(new Set(await getThumbDownerIds(post.id)));
-  }
 
   const heartHandler = async () => {
     heartDBHandler();
@@ -153,8 +125,13 @@ export default function Post({
   };
 
   useEffect(() => {
+    async function loadPostData() {
+      setNumComments(await getNumComments(post.id));
+      setHearterIds(new Set(await getHearterIds(post.id)));
+      setThumbDownerIds(new Set(await getThumbDownerIds(post.id)));
+    }
     loadPostData();
-  }, []);
+  }, [post.id]);
 
   const commentsModalToggler = () => {
     setCommentsModalVisible(!commentsModalVisible);
@@ -183,12 +160,6 @@ export default function Post({
   const editModalToggler = () => {
     setEditModalVisible(!editModalVisible);
     setImgSrc(post.imgSrc);
-  };
-
-  const editSubmitHandler = (e) => {
-    e.preventDefault();
-    editPost(post.postId, e.target[0].value);
-    setEditModalVisible(false);
   };
 
   const imgModalToggleHandler = (e) => {

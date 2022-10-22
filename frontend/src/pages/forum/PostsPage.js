@@ -1,9 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import { Container, Row, Col } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
-
-import styles from "./PostsPage.module.css";
 
 import Posts from "./Posts";
 
@@ -43,21 +41,3 @@ export default function PostsPage({
     </Container>
   );
 }
-
-// case "ADD_POST":
-//   return {
-//     ...state,
-//     data: {
-//       ...state.data,
-//       posts: [...state.data.posts, action.payload],
-//     },
-//   };
-// case "DELETE_POST":
-//   return {
-//     ...state,
-//     data: {
-//       ...state.data,
-//       // Filter out the post the use has just deleted
-//       posts: state.data.posts.filter((post) => post !== action.payload),
-//     },
-//   };

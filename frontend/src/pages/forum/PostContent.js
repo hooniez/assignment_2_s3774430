@@ -1,4 +1,4 @@
-import { Card, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import styles from "./PostContent.module.css";
 import deletedUserIcon from "./delete-user.png";
 import convertTime from "../../util/convertTime";
@@ -8,14 +8,12 @@ import {
   ArrowReturnRight,
   Chat,
   Heart,
-  Megaphone,
-  Heartbreak,
   HandThumbsDown,
   HandThumbsDownFill,
   HeartFill,
 } from "react-bootstrap-icons";
 import PostForm from "./PostForm";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   createVisitEntry,
   findUser,
@@ -56,7 +54,7 @@ export default function PostContent({
 
   const visitProfile = async () => {
     // If user is not the same as post.user, create a visit entry
-    if (user.data.email != post.user.email) {
+    if (user.data.email !== post.user.email) {
       await createVisitEntry(user.data.email, post.user.email);
     }
     navigate(`/profiles/${posterEmail}`, {
@@ -143,13 +141,18 @@ export default function PostContent({
           {post.imgSrc && (
             <div className={styles.uploadedImageContainer}>
               {isReplying ? (
-                <img src={post.imgSrc} className={styles.uploadedImage} />
+                <img
+                  src={post.imgSrc}
+                  className={styles.uploadedImage}
+                  alt="post"
+                />
               ) : (
                 <img
                   src={post.imgSrc}
                   className={styles.uploadedImage}
                   role="button"
                   onClick={imgToggleHandler}
+                  alt="post"
                 />
               )}
             </div>

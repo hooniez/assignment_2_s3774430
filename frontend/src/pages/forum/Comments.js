@@ -1,8 +1,5 @@
-import { useEffect, useState, useParams, useRef } from "react";
-import { Modal, Toast, ToastContainer } from "react-bootstrap";
-import PostForm from "./PostForm";
+import { Modal } from "react-bootstrap";
 import styles from "./Comments.module.css";
-import { getComments } from "../../data/repository";
 import { XLg } from "react-bootstrap-icons";
 import PostsPage from "./PostsPage";
 

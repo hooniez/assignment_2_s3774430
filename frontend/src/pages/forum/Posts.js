@@ -32,76 +32,83 @@ export default function Posts({
   const [posts, setPosts] = useState([]);
   const [hasMorePosts, setHasMorePosts] = useState(true);
 
-  async function loadPosts() {
-    let newPosts;
-    if (parentPost == null) {
-      if (onProfile) {
-        newPosts = await getPostsByUser(profileUser.id);
-      } else {
-        newPosts = await getPosts();
-      }
-
-      setPosts([...newPosts]);
-      if (newPosts.length < 10) {
-        setHasMorePosts(false);
-      }
-    } else {
-      newPosts = await getComments(parentPost.id);
-      setPosts([...newPosts]);
-      if (newPosts.length < 10) {
-        setHasMorePosts(false);
-      }
-    }
-  }
   // Load posts
   useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const handleScroll = async (e) => {
-    let elementToListenToScroll;
-    if (parentPost == null) {
-      elementToListenToScroll = window;
-      let documentHeight = document.body.scrollHeight;
-      let currentScroll =
-        elementToListenToScroll.scrollY + elementToListenToScroll.innerHeight;
-      if (documentHeight === currentScroll) {
-        let ids = posts.map((post) => post.id);
-        let newPosts;
+    async function loadPosts() {
+      let newPosts;
+      // If the Posts component is used for root posts
+      if (parentPost == null) {
         if (onProfile) {
-          newPosts = await getMorePostsByUser(profileUser.id, posts.length);
+          // If the Posts component is used in the Profile component
+          newPosts = await getPostsByUser(profileUser.id);
         } else {
-          newPosts = await getMorePosts(posts.length);
+          newPosts = await getPosts();
         }
 
-        if (newPosts.length === 0) {
+        setPosts([...newPosts]);
+        if (newPosts.length < 10) {
           setHasMorePosts(false);
-        } else {
-          setPosts([...posts, ...newPosts]);
         }
-      }
-    } else {
-      elementToListenToScroll = document.getElementById(
-        `modalBody${parentPost.id}`
-      );
-      if (
-        elementToListenToScroll.scrollHeight -
-          elementToListenToScroll.scrollTop ===
-        elementToListenToScroll.clientHeight
-      ) {
-        let ids = posts.map((post) => post.id);
-
-        let newPosts = await getMoreComments(parentPost.id, ids.join(","));
-        if (newPosts.length === 0) {
+      } else {
+        // If the Posts component is used for comments
+        newPosts = await getComments(parentPost.id);
+        setPosts([...newPosts]);
+        if (newPosts.length < 10) {
           setHasMorePosts(false);
-        } else {
-          setPosts([...posts, ...newPosts]);
         }
       }
     }
-  };
+    loadPosts();
+  }, [onProfile, parentPost, profileUser?.id]);
 
+  //
   useEffect(() => {
+    const handleScroll = async (e) => {
+      let elementToListenToScroll;
+      // For root posts
+      if (parentPost == null) {
+        // Add an event listener to window
+        elementToListenToScroll = window;
+        let documentHeight = document.body.scrollHeight;
+        let currentScroll =
+          elementToListenToScroll.scrollY + elementToListenToScroll.innerHeight;
+        if (documentHeight === currentScroll) {
+          let newPosts;
+          if (onProfile) {
+            newPosts = await getMorePostsByUser(profileUser.id, posts.length);
+          } else {
+            newPosts = await getMorePosts(posts.length);
+          }
+
+          if (newPosts.length === 0) {
+            setHasMorePosts(false);
+          } else {
+            setPosts([...posts, ...newPosts]);
+          }
+        }
+      } else {
+        // For comments, add an event listener to modalBody
+        elementToListenToScroll = document.getElementById(
+          `modalBody${parentPost.id}`
+        );
+        if (
+          elementToListenToScroll.scrollHeight -
+            elementToListenToScroll.scrollTop ===
+          elementToListenToScroll.clientHeight
+        ) {
+          // If the user has scrolled to the bottom
+          let ids = posts.map((post) => post.id);
+
+          let newPosts = await getMoreComments(parentPost.id, ids.join(","));
+          if (newPosts.length === 0) {
+            setHasMorePosts(false);
+          } else {
+            setPosts([...posts, ...newPosts]);
+          }
+        }
+      }
+    };
+
     let elementToListenToScroll;
     if (parentPost == null) {
       elementToListenToScroll = window;
@@ -121,7 +128,14 @@ export default function Posts({
     return () => {
       elementToListenToScroll.removeEventListener("scroll", handleScroll);
     };
-  }, [posts, setHasMorePosts]);
+  }, [
+    posts,
+    setHasMorePosts,
+    hasMorePosts,
+    onProfile,
+    parentPost,
+    profileUser?.id,
+  ]);
 
   const addPost = (post) => {
     setPosts([post, ...posts]);
@@ -130,15 +144,11 @@ export default function Posts({
   const removePost = (id) => {
     // removePost does not actually remove the post from the database, but sets its isDeleted property to false so that it is not displayed anymore.
     setPosts(posts.filter((post) => post.id !== id));
-    // dispatchUser({
-    //   type: "DELETE_POST",
-    //   payload: id,
-    // });
   };
 
   const editPost = (id, newPost) => {
     // Find the old post in posts and then replace with newPost
-    let oldPost = posts.filter((post) => post.id == id)[0];
+    let oldPost = posts.filter((post) => post.id === id)[0];
     let idx = posts.indexOf(oldPost);
     posts[idx] = newPost;
     setPosts([...posts]);

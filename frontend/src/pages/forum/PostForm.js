@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Row,
-  Col,
-  Card,
   Form,
   Button,
   Container,
@@ -10,10 +7,8 @@ import {
   Spinner,
   Alert,
   Toast,
-  ToastContainer,
-  Offcanvas,
 } from "react-bootstrap";
-import { FileEarmarkXFill, Image as ImageIcon, X } from "react-bootstrap-icons";
+import { Image as ImageIcon } from "react-bootstrap-icons";
 import Image from "react-bootstrap/Image";
 import styles from "./PostForm.module.css";
 import ReactQuill from "react-quill";
@@ -27,13 +22,10 @@ const resUrl = "https://res.cloudinary.com/duc4zmhl7/image/upload";
 export default function PostForm({
   user,
   addPost,
-
-  postId,
   forComments,
   parentPostId,
   replyTo,
   replyHandler,
-  className,
   isEditing,
   post,
   editImageChangeHandler,
@@ -42,7 +34,6 @@ export default function PostForm({
   postImgSrc,
   incrementNumChildPosts,
   replyModalToggelr,
-  editParentPost,
   addComment,
   incrementNumChildPostsRoot,
 }) {
@@ -73,11 +64,11 @@ export default function PostForm({
 
   useEffect(() => {
     // Disable/enable the post button
-
     let validateTextareaTimeoutId = setTimeout(() => {
       setIsPostable(validateTextarea(numCharsTyped));
     });
 
+    // Depending on the number of characters typed, change the color of a progress bar
     if (Math.floor((numCharsTyped / wordLimit) * 100) <= 70) {
       setProgressBarVariant("success");
     } else if (numCharsTyped <= wordLimit) {
@@ -94,7 +85,7 @@ export default function PostForm({
     return () => {
       clearTimeout(validateTextareaTimeoutId);
     };
-  }, [numCharsTyped]);
+  }, [numCharsTyped, progressBar?.classList]);
 
   // Get the number of actual letters without formatting characters
   function getNumLetters(formattedText) {
@@ -103,10 +94,7 @@ export default function PostForm({
 
   // The useEffect above will be invoked when the handler below is called.
   const textChangeHandler = (content) => {
-    // console.log(`hey ${event}`);
     setText(content);
-    // console.log(text);
-
     setNumCharsTyped(getNumLetters(content));
   };
 
@@ -161,8 +149,8 @@ export default function PostForm({
     const imagesToUpload = document.querySelector(
       `#${imageUploaderControlId}`
     ).files;
-    // Create a general JSON object containing information about post
 
+    // Create a general JSON object containing information about post
     let newPost;
     if (isEditing) {
       newPost = {
@@ -261,7 +249,11 @@ export default function PostForm({
       <div className="d-flex">
         <div className="d-flex-column">
           <div className="d-flex justify-content-center">
-            <img src={user?.data?.avatarSrc} className={styles.cardImg} />
+            <img
+              src={user?.data?.avatarSrc}
+              className={styles.cardImg}
+              alt="avatar"
+            />
           </div>
 
           <ProgressBar
