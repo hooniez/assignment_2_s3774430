@@ -7,7 +7,7 @@ import { Container, Row } from "react-bootstrap";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function FollowChart({ userIdx }) {
-  const { users, dispatchUsers } = useContext(UsersContext);
+  const { users } = useContext(UsersContext);
   const data = {
     labels: ["Following", "Followers"],
     datasets: [

@@ -29,6 +29,8 @@ const convertResToData = (res) => {
   let datesSet = new Set();
   let datesArr;
   let numLogins = [];
+
+  // Convert res into data acceptable by the chart
   res.forEach((el) => {
     let date = new Date(el.dateLoggedIn);
     // Remove the hour, minute, and second from date so that each date on the same day is identical
@@ -62,18 +64,19 @@ const convertResToData = (res) => {
   return ret;
 };
 
+// set dates, numVisits, and data necessary to render a chart
 export default function UsersPerDayChart() {
   const [data, setData] = useState({});
-  let dates;
-  let numLogins;
+  const [dates, setDates] = useState([]);
+  const [numLogins, setNumLogins] = useState([]);
 
   useEffect(() => {
     const loadNumUsersPerDay = async () => {
       const res = await getNumUsersPerDay();
       const ret = convertResToData(res);
 
-      dates = ret.dates;
-      numLogins = ret.numLogins;
+      setDates(ret.dates);
+      setNumLogins(ret.numLogins);
 
       setData({
         ...data,
@@ -89,7 +92,7 @@ export default function UsersPerDayChart() {
       });
     };
     loadNumUsersPerDay();
-  }, []);
+  }, [data, dates, numLogins]);
   return Object.keys(data).length !== 0 ? (
     <div className="mt-5">
       <h2 className="text-center">Number of Users Using LAN</h2>

@@ -7,7 +7,7 @@ import { Container } from "react-bootstrap";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function ReactionChart({ postIdx }) {
-  const { posts, dispatchPosts } = useContext(PostsContext);
+  const { posts } = useContext(PostsContext);
   const data = {
     labels: ["Like", "Dislike"],
     datasets: [

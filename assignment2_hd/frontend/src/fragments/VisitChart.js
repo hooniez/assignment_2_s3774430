@@ -30,6 +30,8 @@ const convertResToData = (res) => {
   let datesSet = new Set();
   let datesArr;
   let numVisits = [];
+
+  // Convert res into data acceptable by the chart
   res.forEach((el) => {
     let date = new Date(el.dateVisited);
     // Remove the hour, minute, and second from date so that each date on the same day is identical
@@ -64,19 +66,20 @@ const convertResToData = (res) => {
 };
 
 export default function VisitChart({ userIdx }) {
-  const { users, dispatchUsers } = useContext(UsersContext);
+  const { users } = useContext(UsersContext);
   const [data, setData] = useState({});
-  let dates;
-  let numVisits;
+  const [dates, setDates] = useState([]);
+  const [numVisits, setNumVisits] = useState([]);
 
   useEffect(() => {
+    // set dates, numVisits, and data necessary to render a chart
     const loadProfileVisits = async () => {
       const res = await getProfileVisits(users[userIdx].id);
 
       const ret = convertResToData(res);
 
-      dates = ret.dates;
-      numVisits = ret.numVisits;
+      setDates(ret.dates);
+      setNumVisits(ret.numVisits);
 
       setData({
         ...data,
@@ -92,7 +95,7 @@ export default function VisitChart({ userIdx }) {
       });
     };
     loadProfileVisits();
-  }, []);
+  }, [data, dates, numVisits, userIdx, users]);
   return Object.keys(data).length !== 0 ? (
     <div className="mt-5">
       <h2 className="text-center">Profile Visits by Other Users</h2>
