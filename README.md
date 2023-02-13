@@ -1,1 +1,3 @@
+# fwp_assignment_2
+
 The assignment is to develop a full-stack web application using ReactJS as the front-end, Node.js & Express.js with GraphQL and Sequelize ORM MySQL as the middle layer and backend database. The goal of the assignment is to demonstrate proficiency with web application development frameworks, implement a range of techniques and procedures for developing a small to medium-scale web application and design and manage the development life cycle of a complete application. The web application, known as Loop Agile Now (LAN), is meant for employees of the IT consultancy firm, Loop Agile, to make posts, reply to other posts, and maintain their profile details.
